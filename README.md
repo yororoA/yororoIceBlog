@@ -1,2 +1,0 @@
-# yororoIceBlog
-a blog platform
