@@ -1,0 +1,40 @@
+.feedback {
+  --inactive-color: #515254;
+  --active-color: #1877f2;
+
+  input[type=checkbox] {
+    display: none;
+
+    &:checked ~ label svg {
+      color: var(--active-color);
+      animation: keyframes-fill var(--transition-type);
+    }
+
+    @keyframes keyframes-fill {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      50% {
+        transform: scale(1.2) rotate(-10deg);
+      }
+    }
+  }
+
+  label svg {
+    width: var(--action-icon-width);
+    color: var(--inactive-color);
+    cursor: pointer;
+
+    transition: var(--transition-type);
+    -webkit-transition: var(--transition-type);
+    -moz-transition: var(--transition-type);
+    -ms-transition: var(--transition-type);
+    -o-transition: var(--transition-type);
+
+    &:hover {
+      transform: scale(1.3);
+    }
+  }
+}

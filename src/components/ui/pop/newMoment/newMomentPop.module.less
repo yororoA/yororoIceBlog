@@ -1,0 +1,170 @@
+.entire{
+  position: relative; /* 为右上角关闭按钮提供定位上下文 */
+  width: var(--nm-pop-width);
+  max-height: var(--nm-pop-max-height);
+  padding: var(--nm-pop-padding);
+  box-sizing: border-box;
+  overflow: auto;
+  /* 隐藏滚动条，但保留滚动功能 */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+
+  &::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+  }
+
+
+  section{
+    margin-bottom: var(--nm-section-gap);
+
+    label{
+      display: block;
+      margin-bottom: var(--nm-label-gap);
+      font-weight: 600;
+      font-size: var(--h4-fontsize);
+    }
+
+    input[type='text'],
+    textarea{
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box; /* 防止因内边距与边框导致的溢出 */
+      display: block;
+      padding: var(--nm-input-padding-y) var(--nm-input-padding-x);
+      border-radius: var(--nm-input-radius);
+      border: var(--nm-input-border);
+      border-style: solid;
+      background: var(--pop-bgc);
+      color: inherit;
+      outline: none;
+      font-size: var(--p-fontsize);
+    }
+
+    
+    textarea{
+      resize: none;
+      min-height: var(--nm-textarea-min-height);
+      overflow: auto;
+      /* 隐藏滚动条，但保留滚动功能 */
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+
+    @supports(field-sizing: content){
+      textarea{
+        field-sizing: content;
+        overflow: hidden;
+      }
+    }
+  }
+
+  
+  section[id='iv']{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--nm-grid-min), 1fr));
+    gap: var(--nm-grid-gap);
+    align-items: start;
+
+    /* 通过 :global 选中预览组件提供的 .iv，而不对子元素 img/video 施加样式 */
+    :global(.iv){
+      display: block;
+      width: 100%;
+      border-radius: var(--nm-iv-radius);
+      overflow: hidden;
+      background-color: var(--nm-iv-bgc);
+    }
+
+    /* 隐藏文件输入框 */
+    input[type='file']{
+      display: none;
+    }
+    
+
+    label[for='files']{
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: var(--nm-iv-radius);
+      overflow: hidden;
+      background-color: var(--nm-iv-bgc);
+      cursor: pointer;
+      position: relative;
+      /* 居中 + 号 */
+      display: grid;
+      place-items: center;
+      color:  var(--nm-iv-label-color);
+      user-select: none;
+      transition: background-color .2s ease-in-out, transform .1s ease-in-out;
+    }
+
+    label[for='files']::after{
+      content: '+';
+      font-size: var(--nm-iv-add-fontsize);
+      line-height: 1;
+    }
+
+    label[for='files']:hover{
+      background-color: var(--nm-iv-label-hover-bgc);
+    }
+  }
+
+  /* 提交按钮样式优化（作用于此弹层内的 submit 按钮） */
+  button[type='submit']{
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4rem;
+    margin-top: var(--nm-submit-gap-top);
+    padding: var(--nm-submit-padding-y) var(--nm-submit-padding-x);
+    border-radius: var(--btn-border-radius-normal, var(--nm-submit-radius));
+    border: .5rem solid transparent;
+    background: var(--accent, var(--nm-accent));
+    color: #fff;
+    font-size: var(--h3-fontsize);
+    line-height: 1;
+    cursor: pointer;
+    transition: transform .06s ease, background-color .15s ease, box-shadow .15s ease, border-color .15s ease;
+    box-shadow: var(--nm-submit-shadow);
+  }
+
+  /* 可互动态：仅在未禁用时响应 hover/active/focus */
+  button[type='submit']:not([disabled]):not([aria-disabled='true']):not(.is-disabled):hover{
+    background: color-mix(in oklab, var(--accent, var(--nm-accent)) 92%, black);
+    box-shadow: var(--nm-submit-shadow-hover);
+  }
+
+  button[type='submit']:not([disabled]):not([aria-disabled='true']):not(.is-disabled):active{
+    transform: translateY(1rem);
+  }
+
+  button[type='submit']:not([disabled]):not([aria-disabled='true']):not(.is-disabled):focus-visible{
+    outline: none;
+    border-color: color-mix(in oklab, var(--accent, var(--nm-accent)) 60%, white);
+    box-shadow: 0 0 0 3rem color-mix(in oklab, var(--accent, var(--nm-accent)) 35%, white);
+  }
+
+  /* 不可互动态：禁用、aria 或自定义类均视为不可互动 */
+  button[type='submit'][disabled],
+  button[type='submit'][aria-disabled='true'],
+  button[type='submit'].is-disabled{
+    opacity: .6;
+    cursor: not-allowed;
+    pointer-events: none;
+    filter: grayscale(.2);
+    background: color-mix(in oklab, var(--accent, var(--nm-accent)) 75%, white);
+    border-color: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* “添加文件”卡片的不可互动态（可用 aria-disabled 或类控制） */
+  section[id='iv'] label[for='files'][aria-disabled='true'],
+  section[id='iv'] label[for='files'].is-disabled{
+    opacity: .6;
+    cursor: not-allowed;
+    pointer-events: none;
+    filter: grayscale(.2);
+  }
+}

@@ -1,0 +1,29 @@
+.closeBtn {
+  --size: 15rem;
+  --bg: rgba(0,0,0,.5);
+  --bg-hover: rgba(0,0,0,.6);
+  --icon-color: #fff;
+
+  position: absolute;
+  top: 4rem;
+  right: 4rem;
+  width: var(--size);
+  height: var(--size);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--icon-color);
+  cursor: pointer;
+  transition: background-color .15s ease, transform .06s ease;
+  user-select: none;
+  border-style: none;
+}
+
+.closeBtn:hover { background: var(--bg-hover); }
+.closeBtn:active { transform: scale(.96); }
+
+/* 确保在弹层里覆盖定位上下文 */
+:global(.popItemRelative) {
+  position: relative;
+}

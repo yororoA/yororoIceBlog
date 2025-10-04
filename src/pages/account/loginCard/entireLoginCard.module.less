@@ -1,0 +1,30 @@
+.entire {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+
+  // account, register, passenger section page
+  background: linear-gradient(to right,
+      transparent 0%,
+      var(--entire-bgc) 20%);
+  border-top-right-radius: 10rem;
+  transition: width var(--transition);
+
+  section.suggestion {
+    margin: 20rem 0;
+
+    h3 {
+      display: inline;
+      margin-right: 5rem;
+
+
+      &.lr {
+        color: rgb(38, 145, 239);
+        cursor: pointer;
+      }
+    }
+  }
+}

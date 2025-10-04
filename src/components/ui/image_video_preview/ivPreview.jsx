@@ -1,0 +1,35 @@
+import React from 'react';
+import preview from './ivPreview.module.less';
+
+
+/* 图片预览
+* @items: [files, description]
+* - files: 图片或视频的url数组
+* - description: 同一次传递的文件必须为相同的类型, image/video
+* @prefix: 任意不与其他`IvPreview`组件重复的string,用于绑定key */
+const IvPreview = ({items, prefix}) => {
+	return (
+		<>
+			{items.map((item, index) =>
+				<div className={preview.iv} key={prefix + index}>
+					{
+						item[1] === 'image' ? <img src={item[0]} alt="" id={`${index}`}/> :
+							<video src={item[0]} id={`${index}`}/>
+					}
+					<label htmlFor={`${index}`}>
+						<svg viewBox="0 0 1024 1024" version="1.1"
+								 xmlns="http://www.w3.org/2000/svg">
+							<path
+								d="M977.216 909.056l-166.4-166.464a435.072 435.072 0 0 0 95.872-272.896 437.376 437.376 0 1 0-437.312 437.312 434.752 434.752 0 0 0 273.664-96.512l166.336 166.336a48.512 48.512 0 0 0 68.8 0.896 48.64 48.64 0 0 0-0.96-68.672zM128.064 469.76a341.312 341.312 0 1 1 682.624 0A341.312 341.312 0 0 1 128 469.76z"
+								fill="#ffffff"></path>
+							<path
+								d="M627.52 427.648H511.488V311.744c0-23.872-18.88-43.328-42.112-43.328s-42.112 19.456-42.112 43.328v115.968H311.296a42.816 42.816 0 0 0-43.328 42.176c0 23.296 19.456 42.048 43.328 42.048h115.968v115.968c0 23.872 18.88 43.392 42.112 43.392s42.112-19.52 42.112-43.392V511.936h115.968a42.816 42.816 0 0 0 43.328-42.112 42.752 42.752 0 0 0-43.264-42.176z"
+								fill="#ffffff"></path>
+						</svg>
+					</label>
+				</div>)}
+		</>
+	);
+};
+
+export default IvPreview;

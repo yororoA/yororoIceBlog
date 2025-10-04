@@ -1,0 +1,82 @@
+:root {
+    --h1-fontsize: 50rem;
+    --h2-fontsize: 25rem;
+    --h3-fontsize: 15rem;
+    --h4-fontsize: 10rem;
+    --p-fontsize: 8rem;
+
+    --entire-bgc: rgba(227, 226, 226, 0.6);
+    --backdrop-filter: blur(8rem);
+    --pop-bgc: rgba(255,255,255,.7);
+    --backdrop-bgc: rgba(0,0,0,.5);
+
+    --btn-border-radius-normal: 5rem;
+    --btn-border-radius-hover: 100rem;
+
+    --loginBtn-unableColor: rgba(61, 182, 125, .5);
+    --loginBtn-ableColor: rgba(61, 182, 125, 1);
+    --registerBtn-unableColor: rgba(56, 143, 227, .5);
+    --registerBtn-ableColor: rgba(56, 143, 227, 1);
+
+    --commonBtn-fontWeight: 600;
+    --addCommentBtn-bgc: rgba(56, 143, 227, .8);
+
+    --mainNav-height: 35rem;
+
+    --moments-headshot-borderRadius: 5rem;
+    --moments-headshot-width: 28rem;
+    --moments-zone-gap: 5rem;
+    --moments-content-liveGap: 1rem;
+    --moments-card-bgc: rgba(255, 255, 255, .7);
+    --moments-live-radius: 2rem;
+    --moments-card-content_footer-SeperatorLine: 1rem rgba(227, 226, 225, .8) solid;
+    --moments-card_comment-SeperatorLine: 1rem rgba(0, 0, 0, 0.8) dotted;
+    --transition-type: .2s ease-in-out;
+
+    --backdrop: rgba(225, 225, 225, .5);
+
+    --action-icon-width: 10rem;
+
+
+    /* newMoment 弹层相关变量 */
+    --nm-pop-width: 64vw;
+    --nm-pop-max-height: 85vh;
+    --nm-pop-padding: 8rem;
+    --nm-section-gap: 8rem;
+    --nm-label-gap: 4rem;
+    --nm-input-padding-y: 5rem;
+    --nm-input-padding-x: 6rem;
+    --nm-input-radius: 4rem;
+    --nm-input-border: .5rem solid rgba(125,125,125,.25);
+    --nm-textarea-min-height: 80rem;
+
+    --nm-grid-min: 80rem;
+    --nm-grid-gap: 6rem;
+    --nm-iv-radius: 6rem;
+    --nm-iv-bgc: rgba(0,0,0,.05);
+    --nm-iv-label-color: rgba(125,125,125,.7);
+    --nm-iv-label-hover-bgc: rgba(125,125,125,.12);
+    --nm-iv-add-fontsize: 20rem;
+
+    --nm-submit-gap-top: 12rem;
+    --nm-submit-padding-y: 8rem;
+    --nm-submit-padding-x: 10rem;
+    --nm-submit-radius: 8rem; /* 回退值，若未设置按钮半径变量 */
+    --nm-submit-shadow: 0 2rem 8rem rgba(0,0,0,.08);
+    --nm-submit-shadow-hover: 0 3rem 10rem rgba(0,0,0,.12);
+    --nm-accent: #4f46e5; /* 提交按钮主色（可覆盖） */
+
+    /* acknowledge 复选框变量 */
+    --ack-gap: 4rem;                    /* 文字与复选框之间的间距 */
+    --ack-size: 12rem;                  /* 复选框尺寸 */
+    --ack-radius: 3rem;                 /* 复选框圆角 */
+    --ack-border: .5rem solid rgba(125,125,125,.35);
+    --ack-bg: rgba(0,0,0,.05);
+    --ack-hover-bg: rgba(125,125,125,.12);
+    --ack-checked-bg: var(--nm-accent); /* 勾选时背景 */
+    --ack-checked-border: var(--nm-accent);
+    --ack-check-size: 70%;              /* 对勾图标占比 */
+    --ack-shadow: 0 1rem 2rem rgba(0,0,0,.04);
+    --ack-disabled-opacity: .6;
+    --ack-focus-ring-size: 3rem;        /* 焦点环粗细 */
+}

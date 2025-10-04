@@ -1,0 +1,71 @@
+.entire {
+  min-width: 13vw;
+  height: 75%;
+
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5vw);
+  border-radius: 1vw;
+  box-sizing: border-box;
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  font-size: var(--h4-fontsize);
+
+
+  /* From Uiverse.io by cuzpq */
+
+  --toggle-size: 16px;
+  --transition: .4s;
+  --size: var(--h4-fontsize);
+  --width: calc(2.7 * var(--size));
+  --height: calc(var(--width) / 2);
+  --block: calc((var(--height) - var(--size)) / 2);
+
+  .theme_checkbox {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: var(--width);
+    height: var(--height);
+    background: -webkit-gradient(linear, left top, right top, color-stop(50%, #efefef), color-stop(50%, #2a2a2a)) no-repeat;
+    background: -o-linear-gradient(left, #efefef 50%, #2a2a2a 50%) no-repeat;
+    background: linear-gradient(to right, #efefef 50%, #2a2a2a 50%) no-repeat;
+    background-size: 205%;
+    background-position: 0;
+    -webkit-transition: var(--transition);
+    -o-transition: var(--transition);
+    transition: var(--transition);
+    border-radius: 99rem;
+    position: relative;
+    cursor: pointer;
+    font-size: var(--toggle-size);
+  }
+
+  .theme_checkbox::before {
+    content: "";
+    width: var(--size);
+    height: var(--size);
+    position: absolute;
+    top: var(--block);
+    left: var(--block);
+    background: -webkit-gradient(linear, left top, right top, color-stop(50%, #efefef), color-stop(50%, #2a2a2a)) no-repeat;
+    background: -o-linear-gradient(left, #efefef 50%, #2a2a2a 50%) no-repeat;
+    background: linear-gradient(to right, #efefef 50%, #2a2a2a 50%) no-repeat;
+    background-size: 205%;
+    background-position: 100%;
+    border-radius: 50%;
+    -webkit-transition: var(--transition);
+    -o-transition: var(--transition);
+    transition: var(--transition);
+  }
+
+  .theme_checkbox:checked::before {
+    left: calc(100% - var(--size) - var(--block));
+    background-position: 0;
+  }
+
+  .theme_checkbox:checked {
+    background-position: 100%;
+  }
+}

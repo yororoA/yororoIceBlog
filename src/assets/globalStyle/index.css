@@ -1,0 +1,40 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+html {
+    font-size: calc(100vw / 750);
+    position: relative;
+}
+
+#portalSite{
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+h1{
+    font-size: var(--h1-fontsize);
+}
+
+h2{
+    font-size: var(--h2-fontsize);
+    line-height: var(--h2-fontsize);
+}
+
+h3{
+    font-size: var(--h3-fontsize);
+    line-height: var(--h3-fontsize);
+}
+
+h4{
+    font-size: var(--h4-fontsize);
+    line-height: var(--h4-fontsize);
+}
+
+p{
+    font-size: var(--p-fontsize);
+    line-height: var(--p-fontsize);
+    white-space: pre-wrap;
+}

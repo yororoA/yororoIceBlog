@@ -1,0 +1,19 @@
+// use for most btn's common style & welcome page's click btn
+button.common {
+  --transition: .15s;
+
+  height: fit-content;
+  font-size: var(--h3-fontsize);
+  padding: var(--h4-fontsize) var(--h3-fontsize);
+  border-radius: var(--btn-border-radius-normal);
+  border-color: gray;
+  border-style: solid;
+  background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+button.common:hover {
+  border-radius: var(--btn-border-radius-hover);
+  background-color: rgba(225, 225, 225, .8);
+}
