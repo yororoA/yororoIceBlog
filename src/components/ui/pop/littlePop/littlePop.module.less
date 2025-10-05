@@ -1,0 +1,36 @@
+@import (reference) "../../../../assets/globalStyle/root.css";
+
+.panel {
+  background: var(--pop-bgc);
+  border-radius: var(--moments-headshot-borderRadius);
+  box-shadow: 0 4rem 15rem rgba(0,0,0,.28);
+  max-width: 92vw;
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  padding: 8rem 10rem 4rem;
+  border-bottom: .5rem solid var(--dividing-line-color, rgba(0,0,0,.08));
+}
+
+.title {
+  margin: 0;
+  color: var(--text-color);
+}
+
+.body {
+  padding: 8rem 10rem;
+  color: var(--text-color);
+  overflow: auto;
+}
+
+.footer {
+  padding: 6rem 10rem 8rem;
+  border-top: .5rem solid var(--dividing-line-color, rgba(0,0,0,.08));
+  display: flex;
+  gap: 6rem;
+  justify-content: flex-end;
+}

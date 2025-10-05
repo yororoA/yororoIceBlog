@@ -1,0 +1,61 @@
+@import (reference) "../../../../../assets/globalStyle/root.css";
+
+/* 仅作用于 ToDraft 弹窗内按钮，不影响其他 CommonBtn */
+.title {
+  font-size: 14rem;
+  font-weight: 700;
+}
+
+.message {
+  margin: 8rem 0 0;
+  font-size: 12rem;
+  line-height: 1.5;
+}
+
+.btnGroup {
+  display: flex;
+  gap: 8rem;
+
+  .denyBtn {
+    /* 覆盖 CommonBtn 的默认外观 */
+    font-size: 12rem !important;
+    padding: 6rem 10rem !important;
+    line-height: 1 !important;
+    background-color: transparent !important;
+    border-color: rgba(125, 125, 125, .45) !important;
+    color: var(--text-color, rgba(0, 0, 0, .85)) !important;
+    font-weight: var(--commonBtn-fontWeight, 600);
+
+    &:hover {
+      background-color: rgba(125, 125, 125, .12) !important;
+    }
+  }
+
+
+  .confirmBtn {
+    font-size: 12rem !important;
+    padding: 6rem 10rem !important;
+    line-height: 1 !important;
+    background-color: var(--nm-accent) !important;
+    border-color: var(--nm-accent) !important;
+    color: #fff !important;
+    box-shadow: var(--nm-submit-shadow, 0 2rem 8rem rgba(0, 0, 0, .08));
+    font-weight: var(--commonBtn-fontWeight, 600);
+
+    &:hover {
+      box-shadow: var(--nm-submit-shadow-hover, 0 3rem 10rem rgba(0, 0, 0, .12));
+      filter: brightness(1.02);
+    }
+
+    &:active {
+      transform: translateY(1rem);
+    }
+  }
+
+  .denyBtn:focus-visible,
+  .confirmBtn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3rem rgba(79, 70, 229, .18), var(--nm-submit-shadow, 0 2rem 8rem rgba(0, 0, 0, .08));
+  }
+}
+
