@@ -9,7 +9,6 @@ import Pop from "../../../components/ui/pop/pop";
 import NewMoment from "../../../components/ui/pop/newMoment/newMoment";
 import {getMoments} from "../../../utils/getMoments";
 import {getLikesList} from "../../../utils/getLikesList";
-import {log} from "@craco/craco/dist/lib/logger";
 
 
 const MomentItem = ({data, liked}) => {
@@ -66,7 +65,7 @@ const Moments = () => {
 				<CommonBtn className={addContent.new} text={'New Moment'} onClick={() => setEditing(true)}/>
 			</section>
 			{editing &&
-				<Pop>
+				<Pop isLittle={false}>
 					<NewMoment onClose={() => setEditing(false)}/>
 				</Pop>}
 			{elements}

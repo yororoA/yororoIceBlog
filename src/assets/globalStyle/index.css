@@ -4,11 +4,16 @@
 }
 
 html {
+    --overflow: auto;
     font-size: calc(100vw / 750);
     position: relative;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: var(--overflow);
 }
 
-#portalSite{
+#portalSite,
+#littlePopPortal{
     position: absolute;
     top: 0;
     right: 0;
