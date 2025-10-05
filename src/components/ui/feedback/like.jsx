@@ -1,11 +1,13 @@
 import React from 'react';
 import like from './like.module.less';
 
-const Like = () => {
+const Like = (props) => {
+	const id = `${props._id}_moment_like`;
+
 	return (
 		<div className={like.feedback}>
-			<input type={"checkbox"} id={'like'}/>
-			<label htmlFor="like">
+			<input type={"checkbox"} id={id} onChange={props.onChange} checked={props.checked}/>
+			<label htmlFor={id}>
 				<svg
 					viewBox="0 0 27 27"
 					xmlns="http://www.w3.org/2000/svg"
@@ -17,6 +19,7 @@ const Like = () => {
 						fill="currentColor"
 					></path>
 				</svg>
+				<p>{props.likes}</p>
 			</label>
 		</div>
 	);

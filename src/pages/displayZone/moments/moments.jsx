@@ -8,9 +8,11 @@ import addContent from "../../../components/btn/addContent.module.less";
 import Pop from "../../../components/ui/pop/pop";
 import NewMoment from "../../../components/ui/pop/newMoment/newMoment";
 import {getMoments} from "../../../utils/getMoments";
+import {getLikesList} from "../../../utils/getLikesList";
+import {log} from "@craco/craco/dist/lib/logger";
 
 
-const MomentItem = ({data}) => {
+const MomentItem = ({data, liked}) => {
 	// 将moment卡片高度设定为内容展示区高度(有评论区高度限制
 	const heightRef = useRef();
 	const [contentHeight, setContentHeight] = useState(0);
@@ -24,7 +26,7 @@ const MomentItem = ({data}) => {
 	return (
 		<MomentIdContext value={data}>
 			<div className={moments.item} ref={heightRef}>
-				<MomentsCard sCTH={setContentHeight}/>
+				<MomentsCard sCTH={setContentHeight} liked={liked}/>
 				<MomentsComments sCMH={setCommentHeight}/>
 			</div>
 		</MomentIdContext>
@@ -40,9 +42,10 @@ const Moments = () => {
 	useEffect(() => {
 		async function f() {
 			const data = await getMoments();
+			const liked = await getLikesList(); // 已点赞列表
 			setElements(data.map(item => (
 				<div className={moments.entire} key={item._id}>
-					<MomentItem data={item}/>
+					<MomentItem data={item} liked={liked.includes(item._id)}/>
 				</div>
 			)));
 		}

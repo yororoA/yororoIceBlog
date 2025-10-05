@@ -16,7 +16,7 @@ export async function getMoments() {
 				filenames: Object.keys(filenames)
 			});
 		}
-		return rd;
+		return rd.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 	} else {
 		console.error(`${resp.status}: ${data.message}`);
 	}
