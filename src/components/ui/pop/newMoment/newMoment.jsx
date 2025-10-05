@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import IvPreview from "../../image_video_preview/ivPreview";
 import card from './newMomentPop.module.less';
 import CommonBtn from "../../../btn/commonBtn/commonBtn";
@@ -37,7 +37,7 @@ const NewMoment = ({onClose}) => {
 
 	// 检查是否完成必填项
 	const [allCompleted, setAllCompleted] = useState(false);
-	const handleCheckRequired = useCallback(e => {
+	const handleCheckRequired = useCallback(() => {
 		const fd = new FormData(formRef.current);
 		const fv = Object.fromEntries(fd.entries());
 		// 需要有非空格的有效值输入才能通过检测
@@ -52,8 +52,9 @@ const NewMoment = ({onClose}) => {
 	const published = useRef(false);
 	const addApi = useRef(`${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/post`);
 	const handleSubmitMoment = async (e) => {
+		console.log('confirm')
 		e.preventDefault();
-		const formElements = e.currentTarget;
+		const formElements = formRef.current;
 		// const files = Array.from(formElements.files.files);
 
 		const fd = new FormData();
@@ -64,24 +65,26 @@ const NewMoment = ({onClose}) => {
 		fd.append('acknowledge', String(formElements.acknowledge.checked || false));
 
 		const fileDescriptions = {};
-		if (images.length !== 0) {
-			images.forEach((file, index) => {
-				fileDescriptions[file.name] = index;
-			});
-			fd.append('descriptions', JSON.stringify(fileDescriptions));
+		if (published.current === true) { // 非草稿上传文件
+			if (images.length !== 0) {
+				images.forEach((file, index) => {
+					fileDescriptions[file.name] = index;
+				});
+				fd.append('descriptions', JSON.stringify(fileDescriptions));
 
-			for (const file of images) {
-				fd.append('files', file, file.name);
+				for (const file of images) {
+					fd.append('files', file, file.name);
+				}
 			}
-		}
-		if (videos.length !== 0) {
-			videos.forEach((file, index) => {
-				fileDescriptions[file.name] = index;
-			});
-			fd.append('descriptions', JSON.stringify(fileDescriptions));
+			if (videos.length !== 0) {
+				videos.forEach((file, index) => {
+					fileDescriptions[file.name] = index;
+				});
+				fd.append('descriptions', JSON.stringify(fileDescriptions));
 
-			for (const file of videos) {
-				fd.append('files', file, file.name);
+				for (const file of videos) {
+					fd.append('files', file, file.name);
+				}
 			}
 		}
 
@@ -119,22 +122,70 @@ const NewMoment = ({onClose}) => {
 		else onClose();
 	}, [onClose]);
 
+	// 文字输入
+	const [title, setTitle] = useState('');
+	const [content, setContent] = useState('');
+	// 原始草稿数据
+	const [previousDraft, setPreviousDraft] = useState({});
+	// 恢复草稿弹窗
+	const [viewRestore, setViewRestore] = useState(false);
+	// 获取草稿
+	const draftApi = useRef(`${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/get?isEditing=true`);
+	useEffect(() => {
+		// 获取草稿内容
+		async function f() {
+			const resp = await fetch(draftApi.current, {
+				method: 'GET'
+			});
+			const data = await resp.json();
+			if(data.data !== null){
+				const {title, content} = data.data;
+				setViewRestore(true);
+				setPreviousDraft({title, content});
+			}
+		}
+
+		f();
+	}, []);
+
 	return (
 		<>
 			<form action="" className={card.entire} onChange={handleCheckRequired} onSubmit={handleSubmitMoment}
 						ref={formRef}>
 				<>
 					<CloseButton onClick={handleCloseEdit}/>
-					{viewPop && <ToDraft onDeny={onClose} onConfirm={() => published.current = false}/>}
+					{/* 草稿保存弹窗 */}
+					{viewPop && <ToDraft
+						title={'close new moment edit'}
+						message={`whether to save edited content to draft(without saving pictures or videos)?`}
+						onDeny={onClose}
+						onConfirm={() => {
+						published.current = false;
+						// 即使存在空required字段也强制提交
+						formRef.current.noValidate = true;
+						formRef.current.requestSubmit();
+					}}/>}
+					{/* 草稿恢复弹窗	*/}
+					{viewRestore && <ToDraft
+						onDeny={() => setViewRestore(false)}
+						onConfirm={()=>{
+							setTitle(previousDraft.title);
+							setContent(previousDraft.content);
+							setViewRestore(false);
+						}}
+						message={'resume draft?'}
+					/>}
 				</>
 				<section>
 					<label htmlFor='newTitle'>{'title'}</label>
-					<input type="text" required={true} name={'title'} id={'newTitle'}/>
+					<input type="text" required={true} name={'title'} id={'newTitle'} value={title}
+								 onChange={e => setTitle(e.target.value)}/>
 				</section>
 
 				<section>
 					<label htmlFor="newContent">{'content'}</label>
-					<textarea required={true} placeholder={'文本内容'} name={'content'} id={'newContent'}/>
+					<textarea required={true} placeholder={'文本内容'} name={'content'} id={'newContent'} value={content}
+										onChange={e => setContent(e.target.value)}/>
 				</section>
 
 				<section id={'iv'}>
