@@ -1,6 +1,6 @@
 .entire {
   --header-height: var(--h3-fontsize);
-  --footer-height: 30rem;
+  --footer-height: 30rem; /* 再下调，进一步压缩底栏高度 */
 
   width: 50%;
   min-height: 145rem;
@@ -30,62 +30,66 @@
 
   div.cAll {
     display: flex;
-    justify-content: space-evenly;
     align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--moments-zone-gap) * .75);
     background-color: rgba(255, 255, 255, .8);
-    padding: calc(var(--moments-zone-gap) * .5);
-    color: rgba(125, 125, 125, 0.8);
+    padding: calc(var(--moments-zone-gap) * .5) calc(var(--moments-zone-gap) * 1);
+    color: rgba(125, 125, 125, 0.9);
     transition: var(--transition-type);
     border-top: var(--moments-card-content_footer-SeperatorLine);
 
-    &:hover {
-      background-color: rgba(226, 226, 226, 0.8);
-    }
+    &:hover { background-color: rgba(226, 226, 226, 0.8); }
 
     input {
-      width: 60%;
-      height: 100%;
-      background-color: transparent;
-      background-color: red;
+      flex: 1;
+      min-height: calc(var(--h4-fontsize) * 1.6);
+      padding: calc(var(--nm-input-padding-y) * .5) calc(var(--nm-input-padding-x) * .8);
+      border: var(--nm-input-border);
+      border-radius: var(--nm-input-radius);
+      background-color: rgba(0,0,0,.03);
+      color: inherit;
       font-size: var(--h4-fontsize);
       outline: none;
-      border: none;
 
-      &~label {
-        display: none;
-      }
+      &::placeholder { color: rgba(125,125,125,.7); }
+
+      &~label { display: none; }
     }
 
     button {
-      height: 100%;
-      padding: 0 calc(var(--h4-fontsize) * .75);
+      height: calc(var(--h4-fontsize) * 1.6);
+      padding: 0 calc(var(--h4-fontsize) * .9);
       font-size: var(--h4-fontsize);
-      display: flex;
+      display: inline-flex;
       justify-content: center;
       align-items: center;
 
-      &.btnInacitive {
+      /* 兼容现有类名（拼写保持不变） */
+      &.btnInacitive { /* 未激活：隐藏 */
         display: none;
         width: 0;
-        // transition: var(--transition-type);
+      }
+      &.btnInactive { /* 若后续修正拼写，可兼容此类名 */
+        display: none;
+        width: 0;
       }
 
       &.btnActive {
-        display: block;
-        background-color: green;
-        animation: forwards btnScale 1s;
+        display: inline-flex;
+        background-color: var(--addCommentBtn-bgc);
+        color: #fff;
+        box-shadow: 0 2rem 6rem rgba(0,0,0,.08);
+        border-color: transparent;
+        animation: forwards btnScale .3s ease;
       }
+      &.btnActive:hover { filter: brightness(1.03); }
+      &.btnActive:active { transform: translateY(1rem); }
     }
   }
 }
 
 @keyframes btnScale {
-  from {
-    width: 0;
-    opacity: 0;
-  } to {
-    // width: fit-content;
-    width: 40rem;
-    opacity: 1;
-  }
+  from { width: 0; opacity: 0; }
+  to { width: 40rem; opacity: 1; }
 }

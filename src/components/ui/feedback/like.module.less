@@ -22,19 +22,25 @@
     }
   }
 
-  label svg {
-    width: var(--action-icon-width);
-    color: var(--inactive-color);
-    cursor: pointer;
+  label {
+    display: flex;
+    align-items: center;
+    gap: var(--ack-gap);
 
-    transition: var(--transition-type);
-    -webkit-transition: var(--transition-type);
-    -moz-transition: var(--transition-type);
-    -ms-transition: var(--transition-type);
-    -o-transition: var(--transition-type);
+    svg {
+      width: var(--action-icon-width);
+      color: var(--inactive-color);
+      cursor: pointer;
 
-    &:hover {
-      transform: scale(1.3);
+      transition: var(--transition-type);
+      -webkit-transition: var(--transition-type);
+      -moz-transition: var(--transition-type);
+      -ms-transition: var(--transition-type);
+      -o-transition: var(--transition-type);
+
+      &:hover {
+        transform: scale(1.3);
+      }
     }
   }
 }
