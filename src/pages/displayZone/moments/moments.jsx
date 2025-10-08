@@ -17,7 +17,7 @@ const MomentItem = ({data, liked}) => {
 	const [contentHeight, setContentHeight] = useState(0);
 	const [commentHeight, setCommentHeight] = useState(0);
 	useEffect(() => {
-		console.log(contentHeight, commentHeight);
+		// console.log(contentHeight, commentHeight);
 		heightRef.current.style.height = `${Math.max(contentHeight, commentHeight)}px`;
 	}, [contentHeight, commentHeight]);
 
@@ -51,8 +51,6 @@ const Moments = () => {
 
 		// 未处在编辑状态时获取moments列表
 		if (!editing) f();
-		// 编辑状态获取可能存在的草稿并将其传给编辑区域
-		// else
 	}, [editing]);
 
 	const [elements, setElements] = useState('no moments yet' || []);

@@ -10,8 +10,6 @@ export async function getMoments() {
 		const rd = [];
 		for (const datum of data.data) {
 			const {uid, username, comments, content, title, createdAt, _id, likes, filenames} = datum;
-			console.log(datum)
-			console.log(filenames);
 			rd.push({
 				uid, username, title, content, _id, likes, comments,
 				createdAt: new Date(createdAt),

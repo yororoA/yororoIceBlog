@@ -25,7 +25,7 @@ window.fetch = async function (input, init) {
 			headers,
 		};
 
-		console.log(config)
+		// console.log(config)
 
 		// 注意：不要在这里随意修改 body（如 JSON 字符串/表单），避免破坏调用方
 		const resp = await originFetch(url, config);
