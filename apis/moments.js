@@ -7,6 +7,7 @@ const { connectMongo } = require('../utils/db/mongoose');
 const User = require('../models/user');
 
 const router = express.Router();
+const { broadcast } = require('../utils/sse/bus');
 
 // 处理 Mongo 文档键禁用的字符（'.' 与 '$'）
 const sanitizeKey = (s) => String(s).replace(/\./g, '\uFF0E').replace(/\$/g, '\uFF04');
@@ -131,6 +132,19 @@ router.post('/post', upload.any(), async (req, res) => {
           $set: { draft: null }
         }
       );
+      // SSE: 推送新发布的 moment
+      try {
+        broadcast('moment', {
+          type: 'moment.new',
+          data: {
+            _id: String(doc._id),
+            title: doc.title,
+            content: doc.content,
+            uid: doc.uid,
+            createdAt: doc.createdAt,
+          }
+        });
+      } catch (_) {}
     } else {
       // 草稿：记录当前草稿的 _id 到用户文档
       await User.updateOne({ uid: uidFromHeaderPost }, { $set: { draft: doc._id } });
@@ -210,11 +224,25 @@ router.post('/comment/post', async (req, res) => {
     const userDoc = await User.findOne({ uid }, { username: 1 }).lean();
     if (!userDoc) return res.status(404).json({ message: '用户不存在' });
     // 创建评论
-  const newComment = await Comment.create({ content: comment, uid, username: userDoc.username, momentId });
+    const newComment = await Comment.create({ content: comment, uid, username: userDoc.username, momentId });
     // 更新 moment 的 comments 数组
     await Moment.updateOne({ _id: momentId }, { $addToSet: { comments: newComment._id } });
     // 更新 user 的 comments 数组
     await User.updateOne({ uid }, { $addToSet: { comments: newComment._id } });
+    // SSE: 推送新评论
+    try {
+      broadcast('comment', {
+        type: 'comment.new',
+        data: {
+          _id: String(newComment._id),
+          momentId: String(momentId),
+          uid,
+          username: userDoc.username,
+          content: comment,
+          createdAt: newComment.createdAt,
+        }
+      });
+    } catch (_) {}
     return res.json({ message: 'ok', data: newComment });
   } catch (err) {
     console.error('POST /moments/comment/post error', err);
@@ -279,6 +307,10 @@ router.post('/comment/like', async (req, res) => {
     }
     const updated = await Comment.findById(commentId).lean();
     const newHasLiked = likeBool ? true : (inc === -1 ? false : hasLiked);
+    // SSE: 推送评论点赞更新
+    try {
+      broadcast('comment-like', { type: 'comment.like', data: { commentId, likes: updated ? updated.likes : null } });
+    } catch (_) {}
     return res.json({ message: 'ok', data: { commentId, likes: updated ? updated.likes : null, hasLiked: newHasLiked } });
   } catch (err) {
     console.error('POST /moments/comment/like error', err);
@@ -334,6 +366,10 @@ router.post('/like', async (req, res) => {
 
     const updated = await Moment.findById(momentId).lean();
     const newHasLiked = likeBool ? true : (inc === -1 ? false : hasLiked);
+    // SSE: 推送 moment 点赞更新
+    try {
+      broadcast('moment-like', { type: 'moment.like', data: { momentId, likes: updated ? updated.likes : null } });
+    } catch (_) {}
     return res.json({ message: 'ok', data: { momentId, likes: updated ? updated.likes : null, hasLiked: newHasLiked } });
   } catch (err) {
     console.error('POST /moments/like error', err);
