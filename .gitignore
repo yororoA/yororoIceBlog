@@ -1,0 +1,11 @@
+*.log
+
+/node_modules
+
+/.idea
+
+.env
+
+/public
+
+/utils/sendmail/aliyun.env
