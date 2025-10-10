@@ -27,7 +27,7 @@ module.exports = async function authMiddleware(req, res, next) {
     await connectMongo();
     const user = await User.findOne({ token }).lean();
     if (!user) {
-      return res.status(401).json({ message: '无效 token' });
+      return res.status(401).json({ message: `无效 token: ${token}` });
     }
 
     const now = new Date();
