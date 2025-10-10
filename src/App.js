@@ -1,11 +1,6 @@
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import {useNavigate} from "react-router-dom";
 import {lazy, useEffect} from "react";
-import Pop from "./components/ui/pop/pop";
-import NewMoment from "./components/ui/pop/newMoment/newMoment";
-import LittlePop from "./components/ui/pop/littlePop/littlePop";
-import ToDraft from "./components/ui/pop/littlePop/toDraft/toDraft";
-import {connectSSE} from "./utils/sse/connect";
 
 
 const Account = lazy(() => import('./pages/account/account'));
@@ -30,10 +25,6 @@ function AppContent() {
 			navigate('/account');
 		} else if (pathname === undefined) navigate('/town');
 	}, [navigate]);
-
-	useEffect(()=>{
-		connectSSE();
-	})
 
 	return (
 		<Routes>

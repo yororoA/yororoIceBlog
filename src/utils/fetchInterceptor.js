@@ -1,6 +1,4 @@
 /* fetch 拦截器 */
-
-
 const originFetch = window.fetch;
 
 window.fetch = async function (input, init) {
@@ -32,12 +30,14 @@ window.fetch = async function (input, init) {
 		if (!resp.ok) {
 			// 可根据状态码定向处理（此处保留原逻辑）
 			const data = await resp.json();
-			if (data.message.includes('token')){
+			if (data.message.includes('无效 token')) {
 				localStorage.removeItem('token');
 				localStorage.removeItem('uid');
+				// console.log(data);
 				window.location.href = '/account/login';
 			}
 		}
+		if (resp.headers['X-Refreshed-Token '] !== undefined) localStorage.setItem('token', resp.headers['X-Refreshed-Token ']);
 		return resp;
 	} else {
 		// 账户相关请求直接透传

@@ -1,8 +1,9 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import logo from '../../assets/images/logo.png'
 import SwitchTheme from "../../components/switchTheme/switchTheme";
 import page from './page.module.less';
 import {Outlet, useNavigate} from "react-router-dom";
+import {connectSSE, disconnectSSE} from "../../utils/sse/connect";
 
 const DisplayZone = () => {
 	const navigate = useNavigate();
@@ -17,32 +18,46 @@ const DisplayZone = () => {
 	}, [navigate]);
 
 
+	// sse连接
+	const [connect, setConnect] = useState(false);
+	useEffect(() => {
+		connectSSE().then(res => {
+			if (res === undefined) setConnect(true);
+		});
+
+		return () => disconnectSSE();
+	}, []);
+
+
 	return (
-		<div className={page.entire}>
-			<nav>
-				<img src={logo} alt="logo"/>
-				<div className={page.link} onClick={handleRedirect}>
-					{/* 生活动态 */}
-					<span id={'moments'}>{'Moments'}</span>
-					{/* 美图, 相册等图片展示 */}
-					<span id={'gallery'}>{'Gallery'}</span>
-					{/* 技术博客 */}
-					<span id={'knowledge'}>{'Knowledge'}</span>
-					{/* 归档 */}
-					<span id={'archive'}>{'Archive'}</span>
-					{/* 项目 */}
-					<span id={'projects'}>{'Projects'}</span>
-					{/* 个人简介等 */}
-					<span id={'about'}>{'About'}</span>
-					{/* 访客留言 */}
-					<span id={'talk'}>{'Talk'}</span>
-				</div>
-				<SwitchTheme/>
-			</nav>
-			<main>
-				<Outlet/>
-			</main>
-		</div>
+		<>
+			{connect &&
+				<div className={page.entire}>
+					<nav>
+						<img src={logo} alt="logo"/>
+						<div className={page.link} onClick={handleRedirect}>
+							{/* 生活动态 */}
+							<span id={'moments'}>{'Moments'}</span>
+							{/* 美图, 相册等图片展示 */}
+							<span id={'gallery'}>{'Gallery'}</span>
+							{/* 技术博客 */}
+							<span id={'knowledge'}>{'Knowledge'}</span>
+							{/* 归档 */}
+							<span id={'archive'}>{'Archive'}</span>
+							{/* 项目 */}
+							<span id={'projects'}>{'Projects'}</span>
+							{/* 个人简介等 */}
+							<span id={'about'}>{'About'}</span>
+							{/* 访客留言 */}
+							<span id={'talk'}>{'Talk'}</span>
+						</div>
+						<SwitchTheme/>
+					</nav>
+					<main>
+						<Outlet/>
+					</main>
+				</div>}
+		</>
 	);
 };
 

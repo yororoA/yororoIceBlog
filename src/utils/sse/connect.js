@@ -2,6 +2,8 @@ let abortCtrl;
 
 // 建立与服务器的server->client单向长连接,用于实时更新文章/评论列表
 export async function connectSSE() {
+	if (abortCtrl !== undefined) disconnectSSE();
+
 	const url = `${process.env.REACT_APP_SERVER_HOST}:9999/api/sse/subscribe`;
 	abortCtrl = new AbortController();
 	try {
@@ -86,6 +88,10 @@ function handleEvent(eventName, payload) {
 		case 'comment-like':
 			// payload: { type: 'comment.like', data: { commentId, likes } }
 			break;
+		case 'token':
+			// payload: { type: 'token.refresh', data: { token, expiresAt, refreshUtil} }
+			localStorage.setItem('token', payload.data.token);
+			break;
 		default:
 			// 其他事件
 			break;
@@ -100,7 +106,7 @@ function retry() {
 	retryTimer = setTimeout(connectSSE, 2000);
 }
 
-function disconnectSSE() {
+export function disconnectSSE() {
 	try {
 		abortCtrl?.abort();
 	} catch {
@@ -108,7 +114,7 @@ function disconnectSSE() {
 	clearTimeout(retryTimer);
 }
 
-window.addEventListener('beforeunload', disconnectSSE);
+// window.addEventListener('beforeunload', disconnectSSE);
 
 // 启动连接
 // connectSSE();
