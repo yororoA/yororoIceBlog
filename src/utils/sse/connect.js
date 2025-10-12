@@ -1,7 +1,7 @@
 let abortCtrl;
 
 // 建立与服务器的server->client单向长连接,用于实时更新文章/评论列表
-export async function connectSSE() {
+export async function connectSSE(dispatch) {
 	if (abortCtrl !== undefined) disconnectSSE();
 
 	const url = `${process.env.REACT_APP_SERVER_HOST}:9999/api/sse/subscribe`;
@@ -55,7 +55,7 @@ export async function connectSSE() {
 				if (data) {
 					try {
 						const payload = JSON.parse(data);
-						handleEvent(eventName, payload);
+						handleEvent(eventName, payload, dispatch);
 					} catch {
 						console.warn('non-json data', eventName, data);
 					}
@@ -70,7 +70,7 @@ export async function connectSSE() {
 	}
 }
 
-function handleEvent(eventName, payload) {
+function handleEvent(eventName, payload, dispatch) {
 	console.log(payload);
 	switch (eventName) {
 		case 'hello':
@@ -78,15 +78,19 @@ function handleEvent(eventName, payload) {
 			break;
 		case 'moment':
 			// payload: { type: 'moment.new', data: { _id, title, content, uid, createdAt } }
+			dispatch(payload);
 			break;
 		case 'comment':
 			// payload: { type: 'comment.new', data: { _id, momentId, uid, username, content, createdAt } }
+			dispatch(payload);
 			break;
 		case 'moment-like':
-			// payload: { type: 'moment.like', data: { momentId, likes } }
+			// payload: { type: 'moment.like', data: { momentId, likes, uid } }
+			dispatch(payload);
 			break;
 		case 'comment-like':
-			// payload: { type: 'comment.like', data: { commentId, likes } }
+			// payload: { type: 'comment.like', data: { commentId, likes, uid } }
+			dispatch(payload);
 			break;
 		case 'token':
 			// payload: { type: 'token.refresh', data: { token, expiresAt, refreshUtil} }

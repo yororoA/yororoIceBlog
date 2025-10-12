@@ -4,8 +4,11 @@ import SwitchTheme from "../../components/switchTheme/switchTheme";
 import page from './page.module.less';
 import {Outlet, useNavigate} from "react-router-dom";
 import {connectSSE, disconnectSSE} from "../../utils/sse/connect";
+import {useDispatch} from "react-redux";
+import {updatedCommentSlice, updatedMomentLikesSlice, updatedMomentSlice} from "../../store/slices";
 
 const DisplayZone = () => {
+	const uid = localStorage.getItem('uid');
 	const navigate = useNavigate();
 	// default home page
 	const pathname = window.location.pathname.split('/').filter(item => item !== '').at(-1);
@@ -17,16 +20,39 @@ const DisplayZone = () => {
 		if (e.target.id) navigate(e.target.id);
 	}, [navigate]);
 
-
+	// store新状态派发器
+	const dispatch = useDispatch();
+	const dispatchFn = useCallback((payload)=>{
+		const {momentNew} = updatedMomentSlice.actions;
+		const {commentNew} = updatedCommentSlice.actions;
+		const {momentLikesUpdated} = updatedMomentLikesSlice.actions;
+		// payload: {type, data}
+		const {type, data} = payload;
+		if(data.uid === uid)return;
+		console.log(data,'\n', typeof data);
+		switch (type){
+			case 'moment.new':
+				dispatch(momentNew(data));
+				break;
+			case 'comment.new':
+				dispatch(commentNew(data));
+				break;
+			case 'moment.like':
+				dispatch(momentLikesUpdated(data));
+				break;
+			default:
+				break;
+		}
+	},[dispatch, uid]);
 	// sse连接
 	const [connect, setConnect] = useState(false);
 	useEffect(() => {
-		connectSSE().then(res => {
+		connectSSE(dispatchFn).then(res => {
 			if (res === undefined) setConnect(true);
 		});
 
 		return () => disconnectSSE();
-	}, []);
+	}, [dispatchFn]);
 
 
 	return (
