@@ -5,7 +5,16 @@
     --h4-fontsize: 10rem;
     --p-fontsize: 8rem;
 
+    --switchCommon-margin: 5rem 0;
+    --nav-link-margin: 3rem 0;
+    --nav-link-padding: 8rem;
+    --logo-height: 35rem; /* logo height */
+    /*--mainNav-height: 80vh;*/
+
     --entire-bgc: rgba(227, 226, 226, 0.6);
+    /*--entire-bgc: black;*/
+    /*--nav-bgc: rgba(255, 255, 255, .7);*/
+    --nav-bgc: rgba(227,228,229,.6);
     --backdrop-filter: blur(8rem);
     --pop-bgc: rgba(255,255,255,.7);
     --backdrop-bgc: rgba(0,0,0,.5);
@@ -21,7 +30,6 @@
     --commonBtn-fontWeight: 600;
     --addCommentBtn-bgc: rgba(56, 143, 227, .8);
 
-    --mainNav-height: 35rem;
 
     --moments-headshot-borderRadius: 5rem;
     --moments-headshot-width: 28rem;

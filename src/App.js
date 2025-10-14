@@ -1,6 +1,6 @@
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import {useNavigate} from "react-router-dom";
-import {lazy, useEffect} from "react";
+import {lazy, useEffect, Suspense} from "react";
 
 
 const Account = lazy(() => import('./pages/account/account'));
@@ -27,18 +27,20 @@ function AppContent() {
 	}, [navigate]);
 
 	return (
-		<Routes>
-			{/* access allowed only after account */}
-			<Route path='/town' element={<DisplayZone/>}>
-				<Route path='moments' element={<Moments/>}/>
-			</Route>
+		<Suspense fallback={null}>
+			<Routes>
+				{/* access allowed only after account */}
+				<Route path='/town' element={<DisplayZone/>}>
+					<Route path='moments' element={<Moments/>}/>
+				</Route>
 
-			{/* account page */}
-			<Route path="/account" element={<Account/>}>
-				<Route path='login' element={<Login/>}/>
-				<Route path='register' element={<Register/>}/>
-			</Route>
-		</Routes>
+				{/* account page */}
+				<Route path="/account" element={<Account/>}>
+					<Route path='login' element={<Login/>}/>
+					<Route path='register' element={<Register/>}/>
+				</Route>
+			</Routes>
+		</Suspense>
 	);
 }
 

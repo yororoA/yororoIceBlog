@@ -21,8 +21,8 @@ export async function connectSSE(dispatch) {
 
 		if (!res.ok) {
 			console.error('SSE connect failed', res.status, res.statusText);
-			retry();
-			return;
+			retry(dispatch);
+			return Promise.reject();
 		}
 
 		const reader = res.body.getReader();
@@ -65,7 +65,8 @@ export async function connectSSE(dispatch) {
 	} catch (e) {
 		if (e.name !== 'AbortError') {
 			console.warn('SSE error', e);
-			retry();
+			retry(dispatch);
+			return Promise.reject('SSE error');
 		}
 	}
 }
@@ -104,10 +105,10 @@ function handleEvent(eventName, payload, dispatch) {
 
 let retryTimer;
 
-function retry() {
+function retry(dispatch) {
 	clearTimeout(retryTimer);
 	// 简单退避
-	retryTimer = setTimeout(connectSSE, 2000);
+	retryTimer = setTimeout(() => connectSSE(dispatch), 2000);
 }
 
 export function disconnectSSE() {

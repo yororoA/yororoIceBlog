@@ -12,21 +12,13 @@ import {getLikesList} from "../../../utils/getLikesList";
 
 
 const MomentItem = ({data, liked}) => {
-	// 将moment卡片高度设定为内容展示区高度(有评论区高度限制
-	const heightRef = useRef();
-	const [contentHeight, setContentHeight] = useState(0);
-	const [commentHeight, setCommentHeight] = useState(0);
-	useEffect(() => {
-		// console.log(contentHeight, commentHeight);
-		heightRef.current.style.height = `${Math.max(contentHeight, commentHeight)}px`;
-	}, [contentHeight, commentHeight]);
 
 
 	return (
 		<MomentIdContext value={data}>
-			<div className={moments.item} ref={heightRef}>
-				<MomentsCard sCTH={setContentHeight} liked={liked}/>
-				<MomentsComments sCMH={setCommentHeight}/>
+			<div className={moments.item}>
+				<MomentsCard liked={liked}/>
+				{/*<MomentsComments sCMH={setCommentHeight}/>*/}
 			</div>
 		</MomentIdContext>
 	)
@@ -43,9 +35,7 @@ const Moments = () => {
 			const data = await getMoments();
 			const liked = await getLikesList(); // 已点赞列表
 			setElements(data.map(item => (
-				<div className={moments.entire} key={item._id}>
-					<MomentItem data={item} liked={liked.includes(item._id)}/>
-				</div>
+				<MomentItem data={item} liked={liked.includes(item._id)} key={item._id}/>
 			)));
 		}
 
@@ -66,7 +56,9 @@ const Moments = () => {
 				<Pop isLittle={false}>
 					<NewMoment onClose={() => setEditing(false)}/>
 				</Pop>}
-			{elements}
+			<div className={moments.entire}>
+				{elements}
+			</div>
 		</>
 	);
 };

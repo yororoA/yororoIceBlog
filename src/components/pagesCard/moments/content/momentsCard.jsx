@@ -4,47 +4,67 @@ import card from './card.module.less';
 import Like from "../../../ui/feedback/like";
 import IvPreview from "../../../ui/image_video_preview/ivPreview";
 import MomentIdContext from "../../../../pages/displayZone/moments/momentIdContext";
-import {getMomentFiles} from "../../../../utils/getMomentFiles";
+import {getFiles} from "../../../../utils/getFiles";
 import {sendMomentLike} from "../../../../utils/sendMomentLike";
 
-const MomentsCard = ({sCTH, liked}) => {
+const MomentsCard = ({liked}) => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
 	const momentItem = useContext(MomentIdContext);
 	const {uid, username, content, title, createdAt, _id, likes, filenames} = momentItem;
 	const [ivs, setIvs] = useState([]);
 
-	const cardRef = useRef();
+	// 文字截断
+	const contentForRender = content.split('\r\n');
+	console.log(content)
+	const [overflow, setOverflow] = useState(false);
+	const [overflowSite, setOverflowSite] = useState(-1);
+	const [maxRenderedPLines, setPlines] = useState(0);
+	useEffect(() => {
+		const maxDisplayChars = 300;
+		let renderedCharsBeforeOverflow = 0;
+		let overflow = false;
+		let overflowSite = -1;
+		let maxRenderedPLines = 0;
+
+		for (const contentForRenderElement of contentForRender) {
+			if (renderedCharsBeforeOverflow + contentForRenderElement.length >= maxDisplayChars) {
+				overflow = true;
+				overflowSite = maxDisplayChars - renderedCharsBeforeOverflow;
+				break;
+			}
+			renderedCharsBeforeOverflow += contentForRenderElement.length;
+			maxRenderedPLines += 1;
+		}
+
+		setOverflow(overflow);
+		setOverflowSite(overflowSite);
+		setPlines(maxRenderedPLines);
+	}, [contentForRender]);
+	const texts = [];
+	for (let i = 0; i < contentForRender.length; i++) {
+		if (overflow){
+			if (overflowSite!==-1){
+				texts.push(<p className={card.caLink} key={`${_id}_content_${i}`}>{`${contentForRender[i].slice(0, overflowSite)}...`}</p>);
+			texts.push(<p className={card.caLink} key={`${_id}_content_${i+1}`}>{'view more'}</p>);
+			break;
+			}
+			texts.push(<p className={card.caLink} key={`${_id}_content_${i}`}>{'view more'}</p>);
+			break;
+		}
+		texts.push(<p className={card.caLink} key={`${_id}_content_${i}`}>{contentForRender[i]}</p>);
+	}
+
+
 	// 获取moment对应的文件
 	useEffect(() => {
 		// 首次异步获取媒体
 		async function f() {
-			const ivs = await getMomentFiles(filenames, 'moments');
+			const ivs = await getFiles(filenames, 'moments');
 			setIvs(ivs);
 		}
 
 		if (filenames.length !== 0) f();
 	}, [filenames]);
-
-	// 监测尺寸变化并测量
-	useEffect(() => {
-		if (!cardRef.current) return;
-		const el = cardRef.current;
-		const measure = () => sCTH(el?.offsetHeight || 0);
-		// 初次测量
-		measure();
-		// 尺寸变化自动测量
-		const ro = typeof ResizeObserver !== 'undefined'
-			? new ResizeObserver(measure)
-			: null;
-		if (ro) ro.observe(el);
-		// 退化：窗口尺寸变化时也测一次
-		const onResize = () => measure();
-		window.addEventListener('resize', onResize);
-		return () => {
-			if (ro) ro.disconnect();
-			window.removeEventListener('resize', onResize);
-		};
-	}, [sCTH]);
 
 	// 点赞
 	const [like, setLike] = useState(liked); // 是否点赞
@@ -58,16 +78,14 @@ const MomentsCard = ({sCTH, liked}) => {
 
 
 	return (
-		<div className={card.entire} ref={cardRef}>
+		<div className={card.entire}>
 			<div className={card.content}>
 				{/* alt=username */}
 				<img src={testImg} alt="headshot" className={card.headshot} id={uid}/>
 				<div className={card.body}>
 					<h4>{username}</h4>
 					<u><h4>{title}</h4></u>
-					{content.split('\r\n').map((item, index) =>
-						<p className={card.text}
-							 key={`${_id}_content_${index}`}>{item}</p>)}
+					{texts}
 					<div className={card.live}>
 						<IvPreview items={ivs.map(item => [item.url, 'image'])} prefix={`${_id}_iv`}/>
 					</div>

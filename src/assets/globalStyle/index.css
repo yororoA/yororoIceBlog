@@ -10,6 +10,7 @@ html {
     height: 100vh;
     overflow-x: hidden;
     overflow-y: var(--overflow);
+    background-color: var(--entire-bgc);
 }
 
 #portalSite,

@@ -22,15 +22,15 @@ const DisplayZone = () => {
 
 	// store新状态派发器
 	const dispatch = useDispatch();
-	const dispatchFn = useCallback((payload)=>{
+	const dispatchFn = useCallback((payload) => {
 		const {momentNew} = updatedMomentSlice.actions;
 		const {commentNew} = updatedCommentSlice.actions;
 		const {momentLikesUpdated} = updatedMomentLikesSlice.actions;
 		// payload: {type, data}
 		const {type, data} = payload;
-		if(data.uid === uid)return;
-		console.log(data,'\n', typeof data);
-		switch (type){
+		if (data.uid === uid) return;
+		console.log(data, '\n', typeof data);
+		switch (type) {
 			case 'moment.new':
 				dispatch(momentNew(data));
 				break;
@@ -43,13 +43,12 @@ const DisplayZone = () => {
 			default:
 				break;
 		}
-	},[dispatch, uid]);
+	}, [dispatch, uid]);
 	// sse连接
 	const [connect, setConnect] = useState(false);
 	useEffect(() => {
-		connectSSE(dispatchFn).then(res => {
-			if (res === undefined) setConnect(true);
-		});
+		setConnect(true)
+		connectSSE(dispatchFn).catch(()=>setConnect(false));
 
 		return () => disconnectSSE();
 	}, [dispatchFn]);
@@ -57,32 +56,33 @@ const DisplayZone = () => {
 
 	return (
 		<>
-			{connect &&
-				<div className={page.entire}>
-					<nav>
-						<img src={logo} alt="logo"/>
-						<div className={page.link} onClick={handleRedirect}>
-							{/* 生活动态 */}
-							<span id={'moments'}>{'Moments'}</span>
-							{/* 美图, 相册等图片展示 */}
-							<span id={'gallery'}>{'Gallery'}</span>
-							{/* 技术博客 */}
-							<span id={'knowledge'}>{'Knowledge'}</span>
-							{/* 归档 */}
-							<span id={'archive'}>{'Archive'}</span>
-							{/* 项目 */}
-							<span id={'projects'}>{'Projects'}</span>
-							{/* 个人简介等 */}
-							<span id={'about'}>{'About'}</span>
-							{/* 访客留言 */}
-							<span id={'talk'}>{'Talk'}</span>
-						</div>
-						<SwitchTheme/>
-					</nav>
-					<main>
-						<Outlet/>
-					</main>
-				</div>}
+			{/*{connect &&*/}
+			{/*	}*/}
+			<div className={page.entire}>
+				<nav>
+					<img src={logo} className={page.logo} alt="logo"/>
+					<div className={page.link} onClick={handleRedirect}>
+						{/* 生活动态 */}
+						<span id={'moments'}>{'Moments'}</span>
+						{/* 美图, 相册等图片展示 */}
+						<span id={'gallery'}>{'Gallery'}</span>
+						{/* 技术博客 */}
+						<span id={'knowledge'}>{'Knowledge'}</span>
+						{/* 归档 */}
+						<span id={'archive'}>{'Archive'}</span>
+						{/* 项目 */}
+						<span id={'projects'}>{'Projects'}</span>
+						{/* 个人简介等 */}
+						<span id={'about'}>{'About'}</span>
+						{/* 访客留言 */}
+						<span id={'talk'}>{'Talk'}</span>
+					</div>
+					<SwitchTheme/>
+				</nav>
+				<main>
+					<Outlet/>
+				</main>
+			</div>
 		</>
 	);
 };
