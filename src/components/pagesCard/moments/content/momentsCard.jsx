@@ -14,13 +14,12 @@ const MomentsCard = ({liked}) => {
 	const [ivs, setIvs] = useState([]);
 
 	// 文字截断
-	const contentForRender = content.split('\r\n');
-	console.log(content)
+	const contentForRender = content.split(/\r\n|\r|\n/);
 	const [overflow, setOverflow] = useState(false);
 	const [overflowSite, setOverflowSite] = useState(-1);
 	const [maxRenderedPLines, setPlines] = useState(0);
 	useEffect(() => {
-		const maxDisplayChars = 300;
+		const maxDisplayChars = 500;
 		let renderedCharsBeforeOverflow = 0;
 		let overflow = false;
 		let overflowSite = -1;
@@ -42,10 +41,10 @@ const MomentsCard = ({liked}) => {
 	}, [contentForRender]);
 	const texts = [];
 	for (let i = 0; i < contentForRender.length; i++) {
-		if (overflow){
+		if (overflow && i>=maxRenderedPLines-1){
 			if (overflowSite!==-1){
-				texts.push(<p className={card.caLink} key={`${_id}_content_${i}`}>{`${contentForRender[i].slice(0, overflowSite)}...`}</p>);
-			texts.push(<p className={card.caLink} key={`${_id}_content_${i+1}`}>{'view more'}</p>);
+				texts.push(<p className={card.caLink} key={`${_id}_content_${i}`}>{`${contentForRender[i].slice(0, overflowSite)}`}</p>);
+			texts.push(<p className={card.caLink} key={`${_id}_content_${i+1}`}>{'...view more'}</p>);
 			break;
 			}
 			texts.push(<p className={card.caLink} key={`${_id}_content_${i}`}>{'view more'}</p>);
@@ -99,3 +98,4 @@ const MomentsCard = ({liked}) => {
 };
 
 export default MomentsCard;
+

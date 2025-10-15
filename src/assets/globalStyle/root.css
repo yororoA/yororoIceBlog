@@ -12,7 +12,7 @@
     /*--mainNav-height: 80vh;*/
 
     --entire-bgc: rgba(227, 226, 226, 0.6);
-    /*--entire-bgc: black;*/
+    /*--entire-bgc: rgba(18,19,22,1);*/
     /*--nav-bgc: rgba(255, 255, 255, .7);*/
     --nav-bgc: rgba(227,228,229,.6);
     --backdrop-filter: blur(8rem);

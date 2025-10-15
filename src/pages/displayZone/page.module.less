@@ -29,6 +29,7 @@
     padding: 0 10rem;
     box-sizing: border-box;
     border: var(--nm-input-border);
+    backdrop-filter: contrast(90%);
 
     img.logo {
       height: var(--logo-height);
@@ -56,6 +57,9 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
         border-radius: calc(var(--logo-height) / 2);
+
+        //color: color-contrast(background-color vs black, white);
+        //mix-blend-mode: difference;
 
         &:hover {
           background-color: rgba(0, 0, 0, 0.02);
