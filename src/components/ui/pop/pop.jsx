@@ -6,7 +6,7 @@ import pop from './pop.module.less';
 const portal1 = document.getElementById('portalSite');
 const portal2 = document.getElementById('littlePopPortal');
 
-const Pop = ({children, isLittle}) => {
+const Pop = ({children, isLittle, onClose}) => {
 	useEffect(() => {
 		const html = document.querySelector('html');
 		html.style.setProperty('--overflow', 'hidden');
@@ -17,7 +17,7 @@ const Pop = ({children, isLittle}) => {
 
 
 	return createPortal((
-		<div className={pop.entire}>
+		<div className={pop.entire} onClick={onClose}>
 			<div className={pop.item}>
 				{children}
 			</div>

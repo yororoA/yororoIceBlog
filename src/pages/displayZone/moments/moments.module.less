@@ -4,9 +4,31 @@
   .item {
     width: 100%;
     border-radius: var(--moments-headshot-borderRadius);
-    box-shadow: 0 0 3rem rgba(0, 0, 0, .5);
+    box-shadow: 0 0 3rem rgba(0, 0, 0, .12);
     overflow: hidden;
-    //display: flex;
     margin-bottom: calc(var(--moments-zone-gap) * 2);
+    transition: transform .22s var(--transition-type), box-shadow .22s var(--transition-type), background-color .22s var(--transition-type);
+
+    &:hover {
+      transform: translateY(-4rem);
+      box-shadow: 0 8rem 24rem rgba(0, 0, 0, 0.08);
+      background-color: rgba(255, 255, 255, 0.92);
+      cursor: pointer;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+      &:hover {
+        transform: none;
+        box-shadow: 0 0 3rem rgba(0, 0, 0, .08);
+      }
+    }
+
+    @media (hover: none) {
+      &:hover {
+        transform: none;
+        box-shadow: 0 0 3rem rgba(0, 0, 0, .08);
+      }
+    }
   }
 }

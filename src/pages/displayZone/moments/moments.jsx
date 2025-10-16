@@ -1,6 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MomentsCard from "../../../components/pagesCard/moments/content/momentsCard";
-import MomentsComments from "../../../components/pagesCard/moments/comment/momentsComments";
 import moments from './moments.module.less';
 import MomentIdContext from "./momentIdContext";
 import CommonBtn from "../../../components/btn/commonBtn/commonBtn";
@@ -17,8 +16,7 @@ const MomentItem = ({data, liked}) => {
 	return (
 		<MomentIdContext value={data}>
 			<div className={moments.item}>
-				<MomentsCard liked={liked}/>
-				{/*<MomentsComments sCMH={setCommentHeight}/>*/}
+				<MomentsCard liked={liked} preview={true}/>
 			</div>
 		</MomentIdContext>
 	)

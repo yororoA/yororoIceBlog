@@ -59,26 +59,28 @@ const DisplayZone = () => {
 			{/*{connect &&*/}
 			{/*	}*/}
 			<div className={page.entire}>
-				<nav>
-					<img src={logo} className={page.logo} alt="logo"/>
-					<div className={page.link} onClick={handleRedirect}>
-						{/* 生活动态 */}
-						<span id={'moments'}>{'Moments'}</span>
-						{/* 美图, 相册等图片展示 */}
-						<span id={'gallery'}>{'Gallery'}</span>
-						{/* 技术博客 */}
-						<span id={'knowledge'}>{'Knowledge'}</span>
-						{/* 归档 */}
-						<span id={'archive'}>{'Archive'}</span>
-						{/* 项目 */}
-						<span id={'projects'}>{'Projects'}</span>
-						{/* 个人简介等 */}
-						<span id={'about'}>{'About'}</span>
-						{/* 访客留言 */}
-						<span id={'talk'}>{'Talk'}</span>
-					</div>
-					<SwitchTheme/>
-				</nav>
+				<div className={page.navBox}>
+					<nav>
+						<img src={logo} className={page.logo} alt="logo"/>
+						<div className={page.link} onClick={handleRedirect}>
+							{/* 生活动态 */}
+							<span id={'moments'}>{'Moments'}</span>
+							{/* 美图, 相册等图片展示 */}
+							<span id={'gallery'}>{'Gallery'}</span>
+							{/* 技术博客 */}
+							<span id={'knowledge'}>{'Knowledge'}</span>
+							{/* 归档 */}
+							<span id={'archive'}>{'Archive'}</span>
+							{/* 项目 */}
+							<span id={'projects'}>{'Projects'}</span>
+							{/* 个人简介等 */}
+							<span id={'about'}>{'About'}</span>
+							{/* 访客留言 */}
+							<span id={'talk'}>{'Talk'}</span>
+						</div>
+						<SwitchTheme/>
+					</nav>
+				</div>
 				<main>
 					<Outlet/>
 				</main>

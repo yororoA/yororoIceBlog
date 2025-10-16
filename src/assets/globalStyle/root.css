@@ -39,7 +39,7 @@
     --moments-live-radius: 2rem;
     --moments-card-content_footer-SeperatorLine: 1rem rgba(227, 226, 225, .8) solid;
     --moments-card_comment-SeperatorLine: 1rem rgba(0, 0, 0, 0.8) dotted;
-    --transition-type: .2s ease-in-out;
+    --transition-type: .1s ease-in-out;
 
     --backdrop: rgba(225, 225, 225, .5);
 

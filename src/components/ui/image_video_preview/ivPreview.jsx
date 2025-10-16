@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import preview from './ivPreview.module.less';
 
 
@@ -8,10 +8,16 @@ import preview from './ivPreview.module.less';
 * - description: 同一次传递的文件必须为相同的类型, image/video
 * @prefix: 任意不与其他`IvPreview`组件重复的string,用于绑定key */
 const IvPreview = ({items, prefix}) => {
+	const viewIv = useCallback((e)=>{
+		e.stopPropagation();
+		console.log('iv');
+	},[items]);
+
+
 	return (
 		<>
 			{items.map((item, index) =>
-				<div className={preview.iv} key={prefix + index}>
+				<div className={preview.iv} key={prefix + index} onClick={viewIv}>
 					{
 						item[1] === 'image' ? <img src={item[0]} alt="" id={`${index}`}/> :
 							<video src={item[0]} id={`${index}`}/>

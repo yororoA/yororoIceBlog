@@ -6,7 +6,7 @@ import CommonBtn from "../../../btn/commonBtn/commonBtn";
 import {addComment} from "../../../../utils/addComment";
 import {getComments} from "../../../../utils/getComments";
 
-const MomentsComments = ({sCMH}) => {
+const MomentsComments = () => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
 	const item = useContext(MomentIdContext);
 	const {_id} = item;
@@ -51,28 +51,8 @@ const MomentsComments = ({sCMH}) => {
 		}
 	}, [content, _id]);
 
-	const CMHref = useRef();
-	useEffect(() => {
-		if (!CMHref.current) return;
-		const el = CMHref.current;
-		const measure = () => sCMH(parseFloat(window.getComputedStyle(el).minHeight) || 0);
-		// 初次测量
-		measure();
-		// 监听尺寸变化
-		const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
-		if (ro) ro.observe(el);
-		// 回退：窗口尺寸变化时测量
-		const onResize = () => measure();
-		window.addEventListener('resize', onResize);
-		return () => {
-			if (ro) ro.disconnect();
-			window.removeEventListener('resize', onResize);
-		};
-	}, [sCMH]);
-
-
 	return (
-		<div className={card.entire} ref={CMHref}>
+		<div className={card.entire}>
 			<div className={card.main}>
 				<h3>{'Comments'}</h3>
 				<section className={card.body}>
