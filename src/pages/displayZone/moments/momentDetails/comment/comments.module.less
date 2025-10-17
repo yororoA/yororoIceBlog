@@ -5,13 +5,17 @@
 
   //width: 50%;
   //min-height: 145rem;
-  height: 100%;
-  overflow: auto;
 
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar{
-    display: none;
+  @media (min-width: 900px) {
+    overflow: auto;
+    /* 隐藏桌面端评论区滚动条，保留滚动功能 */
+    .main {
+      scrollbar-width: none;        /* Firefox */
+      -ms-overflow-style: none;     /* IE/Edge */
+    }
+    .main::-webkit-scrollbar {      /* Chrome/Safari */
+      display: none;
+    }
   }
 
   box-sizing: border-box;
@@ -51,6 +55,12 @@
     transition: var(--transition-type);
     border-top: var(--moments-card-content_footer-SeperatorLine);
 
+    @media(max-width: 900px){
+      position: sticky;
+      bottom: 0;
+      backdrop-filter: blur(10000rem);
+    }
+
 
     input {
       flex: 1;
@@ -73,7 +83,7 @@
         background-color: rgba(226, 226, 226, 0.8);
       }
 
-      &~label {
+      & ~ label {
         display: none;
       }
     }
@@ -88,6 +98,7 @@
       align-items: center;
 
       /* 兼容现有类名（拼写保持不变） */
+
       &.btnInacitive {
         /* 未激活：隐藏 */
         display: none;

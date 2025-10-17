@@ -23,5 +23,11 @@
   @media (max-width: 900px){
     grid-template-columns: 1fr;
     &::before{ display: none; }
+    scrollbar-width: none;
+    &::-webkit-scrollbar{
+      display: none;
+    }
+
+    overflow: scroll;
   }
 }
