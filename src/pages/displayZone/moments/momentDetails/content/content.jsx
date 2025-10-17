@@ -9,9 +9,9 @@ import card from './content.module.less';
 
 // {uid,username, comments, content, title, createdAt, _id, likes, filenames}
 const Content = () => {
-	const {momentItem, liked, filesInfos} = useContext(MomentDetailsCtx);
+	const {momentItem, like, filesInfos, setLike, setLikeNumbers, likeNumbers} = useContext(MomentDetailsCtx);
 
-	const {uid, username, content, title, createdAt, _id, likes} = momentItem;
+	const {uid, username, content, title, createdAt, _id} = momentItem;
 	const contentForRender = content.split(/\r\n|\n|\r/);
 
 	// img / video
@@ -22,8 +22,6 @@ const Content = () => {
 																											key={`${_id}_content_${index}`}>{item}</p>));
 
 	// 点赞
-	const [like, setLike] = useState(liked); // 是否点赞
-	const [likeNumbers, setLikeNumbers] = useState(likes); // 点赞数量
 	const onFeedBackChange = useCallback(async e => {
 		const checked = e.target.checked;
 		setLike(checked);

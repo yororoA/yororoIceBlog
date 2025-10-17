@@ -102,13 +102,13 @@ const MomentsCard = ({liked, preview}) => {
 						</div>
 					</div>
 				</div>
-				<div className={card.footer}>
+				<div className={card.footer} onClick={e=>e.stopPropagation()}>
 					<Like onChange={onFeedBackChange} checked={like} likes={likeNumbers} _id={_id}/>
 				</div>
 			</div>
 			{showDetails &&
 				<Pop isLittle={false} onClose={() => setShowDetails(false)}>
-					<MomentDetailsCtx value={{momentItem, filesInfos: ivs, liked}}>
+					<MomentDetailsCtx value={{momentItem, filesInfos: ivs, like, setLike, setLikeNumbers, likeNumbers}}>
 						<MomentDetails/>
 					</MomentDetailsCtx>
 				</Pop>
