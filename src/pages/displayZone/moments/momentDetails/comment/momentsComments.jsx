@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import card from './comments.module.less';
 import CommentCard from "./commentCard";
 import CommonBtn from "../../../../../components/btn/commonBtn/commonBtn";
@@ -8,7 +8,7 @@ import {MomentDetailsCtx} from "../../../../../components/pagesCard/moments/cont
 
 const MomentsComments = () => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
-	const {momentItem} = useContext(MomentDetailsCtx);
+	const {momentItem, setCommentToDt} = useContext(MomentDetailsCtx);
 	const {_id} = momentItem;
 	const [comments,setComments] = useState(momentItem.comments);
 	console.log(comments)
@@ -47,9 +47,11 @@ const MomentsComments = () => {
 		if (resp.message === 'ok') {
 			setHasContent(false);
 			setContent('');
-			setComments(prev => [...prev, resp.data._id]);
+			const new_id = resp.data._id;
+			setComments(prev => [...prev, new_id]);
+			setCommentToDt(new_id);
 		}
-	}, [content, _id]);
+	}, [_id, content, setCommentToDt]);
 
 	return (
 		<div className={card.entire} onClick={e=>e.stopPropagation()}>

@@ -11,10 +11,17 @@ import {getLikesList} from "../../../utils/getLikesList";
 
 
 const MomentItem = ({data, liked}) => {
-
+	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
+	const [dt, setDt] = useState(data);
+	const setCommentToDt = (newComment_id) => {
+		setDt(prev => {
+			prev.comments = [...prev.comments, newComment_id];
+			return prev;
+		});
+	}
 
 	return (
-		<MomentIdContext value={data}>
+		<MomentIdContext value={{momentItem: dt, setCommentToDt}}>
 			<div className={moments.item}>
 				<MomentsCard liked={liked} preview={true}/>
 			</div>

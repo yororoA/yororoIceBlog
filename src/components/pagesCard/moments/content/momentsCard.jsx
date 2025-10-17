@@ -14,7 +14,7 @@ export const MomentDetailsCtx = createContext({});
 
 const MomentsCard = ({liked, preview}) => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
-	const momentItem = useContext(MomentIdContext);
+	const {momentItem, setCommentToDt} = useContext(MomentIdContext);
 	const {uid, username, content, title, createdAt, _id, likes, filenames} = momentItem;
 	const [ivs, setIvs] = useState([]);
 
@@ -108,7 +108,7 @@ const MomentsCard = ({liked, preview}) => {
 			</div>
 			{showDetails &&
 				<Pop isLittle={false} onClose={() => setShowDetails(false)}>
-					<MomentDetailsCtx value={{momentItem, filesInfos: ivs, like, setLike, setLikeNumbers, likeNumbers}}>
+					<MomentDetailsCtx value={{momentItem, filesInfos: ivs, like, setLike, setLikeNumbers, likeNumbers, setCommentToDt}}>
 						<MomentDetails/>
 					</MomentDetailsCtx>
 				</Pop>
