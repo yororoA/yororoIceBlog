@@ -8,17 +8,25 @@ import Pop from "../../../components/ui/pop/pop";
 import NewMoment from "../../../components/ui/pop/newMoment/newMoment";
 import {getMoments} from "../../../utils/getMoments";
 import {getLikesList} from "../../../utils/getLikesList";
+import {useSelector} from "react-redux";
 
 
 const MomentItem = ({data, liked}) => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
 	const [dt, setDt] = useState(data);
 	const setCommentToDt = (newComment_id) => {
-		setDt(prev => {
-			prev.comments = [...prev.comments, newComment_id];
-			return prev;
-		});
+		setDt(prev => ({
+			...prev,
+			comments: [...prev.comments, newComment_id]
+		}));
 	}
+	const newCommentFromSSE = useSelector(state => state.commentNew.infos);
+	useEffect(() => {
+		if (newCommentFromSSE.momentId === data._id) {
+			setCommentToDt(newCommentFromSSE._id);
+			console.log('new comment?')
+		}
+	}, [data._id, newCommentFromSSE]);
 
 	return (
 		<MomentIdContext value={{momentItem: dt, setCommentToDt}}>

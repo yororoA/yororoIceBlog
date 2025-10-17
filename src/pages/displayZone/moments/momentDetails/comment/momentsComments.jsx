@@ -10,7 +10,7 @@ const MomentsComments = () => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
 	const {momentItem, setCommentToDt} = useContext(MomentDetailsCtx);
 	const {_id} = momentItem;
-	const [comments,setComments] = useState(momentItem.comments);
+	const comments = momentItem.comments;
 	console.log(comments)
 
 	// get comments by commentId(from the comments Array of ctx)
@@ -48,7 +48,6 @@ const MomentsComments = () => {
 			setHasContent(false);
 			setContent('');
 			const new_id = resp.data._id;
-			setComments(prev => [...prev, new_id]);
 			setCommentToDt(new_id);
 		}
 	}, [_id, content, setCommentToDt]);
