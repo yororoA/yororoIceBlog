@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
 import testImg from '../../../../assets/images/test.jpg';
 import card from './card.module.less';
 import Like from "../../../ui/feedback/like";
@@ -8,6 +8,9 @@ import {getFiles} from "../../../../utils/getFiles";
 import {sendMomentLike} from "../../../../utils/sendMomentLike";
 import Pop from "../../../ui/pop/pop";
 import MomentDetails from "../../../../pages/displayZone/moments/momentDetails/momentDetails";
+
+// context of moment details
+export const MomentDetailsCtx = createContext({});
 
 const MomentsCard = ({liked, preview}) => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
@@ -104,8 +107,10 @@ const MomentsCard = ({liked, preview}) => {
 				</div>
 			</div>
 			{showDetails &&
-				<Pop isLittle={false} onClose={()=>setShowDetails(false)}>
-					<MomentDetails/>
+				<Pop isLittle={false} onClose={() => setShowDetails(false)}>
+					<MomentDetailsCtx value={{momentItem, filesInfos: ivs, liked}}>
+						<MomentDetails/>
+					</MomentDetailsCtx>
 				</Pop>
 			}
 		</>
@@ -113,4 +118,5 @@ const MomentsCard = ({liked, preview}) => {
 };
 
 export default MomentsCard;
+
 

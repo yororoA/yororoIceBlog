@@ -3,8 +3,17 @@
   --footer-height: 26rem;
   /* 增高底栏以匹配更高的输入与按钮 */
 
-  width: 50%;
-  min-height: 145rem;
+  //width: 50%;
+  //min-height: 145rem;
+  height: 100%;
+  overflow: auto;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar{
+    display: none;
+  }
+
   box-sizing: border-box;
   display: grid;
   grid-template-rows: 1fr var(--footer-height);
@@ -36,7 +45,7 @@
     align-items: center;
     justify-content: space-between;
     gap: calc(var(--moments-zone-gap) * .75);
-    background-color: rgba(255, 255, 255, .8);
+    //background-color: rgba(255, 255, 255, .8);
     padding: calc(var(--moments-zone-gap) * .5) calc(var(--moments-zone-gap) * 1);
     color: rgba(125, 125, 125, 0.9);
     transition: var(--transition-type);

@@ -1,7 +1,7 @@
 import React from 'react';
-import testImg from '../../../../assets/images/test.jpg';
+import testImg from '../../../../../assets/images/test.jpg';
 import comment from './comment.module.less';
-import IvPreview from "../../../ui/image_video_preview/ivPreview";
+import IvPreview from "../../../../../components/ui/image_video_preview/ivPreview";
 
 
 

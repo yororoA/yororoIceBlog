@@ -1,17 +1,17 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import card from './comments.module.less';
-import MomentIdContext from "../../../../pages/displayZone/moments/momentIdContext";
 import CommentCard from "./commentCard";
-import CommonBtn from "../../../btn/commonBtn/commonBtn";
-import {addComment} from "../../../../utils/addComment";
-import {getComments} from "../../../../utils/getComments";
+import CommonBtn from "../../../../../components/btn/commonBtn/commonBtn";
+import {addComment} from "../../../../../utils/addComment";
+import {getComments} from "../../../../../utils/getComments";
+import {MomentDetailsCtx} from "../../../../../components/pagesCard/moments/content/momentsCard";
 
 const MomentsComments = () => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
-	const item = useContext(MomentIdContext);
-	const {_id} = item;
-	const [comments,setComments] = useState(item.comments);
-
+	const {momentItem} = useContext(MomentDetailsCtx);
+	const {_id} = momentItem;
+	const [comments,setComments] = useState(momentItem.comments);
+	console.log(comments)
 
 	// get comments by commentId(from the comments Array of ctx)
 	const [elements, setElements] = useState([]);
@@ -52,7 +52,7 @@ const MomentsComments = () => {
 	}, [content, _id]);
 
 	return (
-		<div className={card.entire}>
+		<div className={card.entire} onClick={e=>e.stopPropagation()}>
 			<div className={card.main}>
 				<h3>{'Comments'}</h3>
 				<section className={card.body}>

@@ -1,0 +1,27 @@
+.entire{
+  width: 80vw;
+  height: 80vh;
+
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+
+  /* 中间分割线（使用与卡片内一致的分隔线风格） */
+  &::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-0.5px);
+    width: 0;
+    border-left: var(--moments-card-content_footer-SeperatorLine);
+    pointer-events: none;
+  }
+
+  /* 小屏切换为单列时，不显示分割线（如需要可按断点调整）*/
+  @media (max-width: 900px){
+    grid-template-columns: 1fr;
+    &::before{ display: none; }
+  }
+}
