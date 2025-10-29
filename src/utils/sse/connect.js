@@ -31,8 +31,13 @@ export async function connectSSE(dispatch) {
 
 		while (true) {
 			const {value, done} = await reader.read();
-			if (done) break;
+			if (done) {
+				console.log('done')
+				break;
+			}
 			buffer += decoder.decode(value, {stream: true});
+
+			console.log(buffer);
 
 			// 按 SSE 规范按双换行分帧
 			let idx;

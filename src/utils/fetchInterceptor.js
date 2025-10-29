@@ -30,7 +30,7 @@ window.fetch = async function (input, init) {
 		if (!resp.ok) {
 			// 可根据状态码定向处理（此处保留原逻辑）
 			const data = await resp.json();
-			if (data.message.includes('无效 token')) {
+			if (data.hasOwnProperty('tokenError')) {
 				localStorage.removeItem('token');
 				localStorage.removeItem('uid');
 				// console.log(data);
