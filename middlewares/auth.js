@@ -21,13 +21,13 @@ module.exports = async function authMiddleware(req, res, next) {
 
     const token = getTokenFromRequest(req);
     if (!token) {
-      return res.status(401).json({ message: '未提供 token' });
+      return res.status(401).json({ message: '未提供 token' , tokenError: true});
     }
 
     await connectMongo();
     const user = await User.findOne({ token }).lean();
     if (!user) {
-      return res.status(401).json({ message: `无效 token: ${token}` });
+      return res.status(401).json({ message: `无效 token: ${token}` , tokenError: true});
     }
 
     const now = new Date();
@@ -53,7 +53,7 @@ module.exports = async function authMiddleware(req, res, next) {
     }
 
     // 完全过期
-    return res.status(401).json({ message: 'token 已过期，请重新登录' });
+    return res.status(401).json({ message: 'token 已过期，请重新登录' , tokenError: true});
   } catch (err) {
     console.error('auth middleware error', err);
     return res.status(500).json({ message: '鉴权失败' });

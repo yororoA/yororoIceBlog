@@ -309,7 +309,7 @@ router.post('/comment/like', async (req, res) => {
     const newHasLiked = likeBool ? true : (inc === -1 ? false : hasLiked);
     // SSE: 推送评论点赞更新
     try {
-      broadcast('comment-like', { type: 'comment.like', data: { commentId, likes: updated ? updated.likes : null } });
+      broadcast('comment-like', { type: 'comment.like', data: { commentId, likes: updated ? updated.likes : null , uid} });
     } catch (_) {}
     return res.json({ message: 'ok', data: { commentId, likes: updated ? updated.likes : null, hasLiked: newHasLiked } });
   } catch (err) {
@@ -368,7 +368,7 @@ router.post('/like', async (req, res) => {
     const newHasLiked = likeBool ? true : (inc === -1 ? false : hasLiked);
     // SSE: 推送 moment 点赞更新
     try {
-      broadcast('moment-like', { type: 'moment.like', data: { momentId, likes: updated ? updated.likes : null } });
+      broadcast('moment-like', { type: 'moment.like', data: { momentId, likes: updated ? updated.likes : null ,uid} });
     } catch (_) {}
     return res.json({ message: 'ok', data: { momentId, likes: updated ? updated.likes : null, hasLiked: newHasLiked } });
   } catch (err) {
