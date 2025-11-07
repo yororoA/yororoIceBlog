@@ -3,7 +3,7 @@ import testImg from '../../../../assets/images/test.jpg';
 import card from './card.module.less';
 import Like from "../../../ui/feedback/like";
 import IvPreview from "../../../ui/image_video_preview/ivPreview";
-import MomentIdContext from "../../../../pages/displayZone/moments/momentIdContext";
+import MomentIdContext from "../../../../pages/displayZone/moments/context/momentIdContext";
 import {getFiles} from "../../../../utils/getFiles";
 import {sendMomentLike} from "../../../../utils/sendMomentLike";
 import Pop from "../../../ui/pop/pop";

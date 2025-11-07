@@ -1,8 +1,16 @@
 import React from 'react';
 import like from './like.module.less';
 
+
+/*
+* @props:
+* `_id`,
+* `type`
+* `feedback`
+* `onChange`
+* `checked`*/
 const Like = (props) => {
-	const id = `${props._id}_moment_like`;
+	const id = `${props._id}_${(props.type === 'moment') || (props.type === null) || (props.type === undefined) ? 'moment' : 'comment'}_like`;
 
 	return (
 		<div className={like.feedback}>
