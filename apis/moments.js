@@ -216,7 +216,7 @@ router.post('/comment/post', async (req, res) => {
   try {
     await connectMongo();
     const uid = req.headers && (req.headers['uid'] || req.headers['Uid'] || req.headers['UID']);
-    const { momentId, comment } = req.body || {};
+    const { momentId, comment, belong } = req.body || {};
     if (!uid || !momentId || !comment) {
       return res.status(400).json({ message: '缺少必要字段' });
     }
@@ -224,7 +224,9 @@ router.post('/comment/post', async (req, res) => {
     const userDoc = await User.findOne({ uid }, { username: 1 }).lean();
     if (!userDoc) return res.status(404).json({ message: '用户不存在' });
     // 创建评论
-    const newComment = await Comment.create({ content: comment, uid, username: userDoc.username, momentId });
+    const createPayload = { content: comment, uid, username: userDoc.username, momentId };
+    if (typeof belong === 'string' && belong.length) createPayload.belong = belong;
+    const newComment = await Comment.create(createPayload);
     // 更新 moment 的 comments 数组
     await Moment.updateOne({ _id: momentId }, { $addToSet: { comments: newComment._id } });
     // 更新 user 的 comments 数组
@@ -233,14 +235,15 @@ router.post('/comment/post', async (req, res) => {
     try {
       broadcast('comment', {
         type: 'comment.new',
-        data: {
-          _id: String(newComment._id),
-          momentId: String(momentId),
-          uid,
-          username: userDoc.username,
-          content: comment,
-          createdAt: newComment.createdAt,
-        }
+          data: {
+            _id: String(newComment._id),
+            momentId: String(momentId),
+            uid,
+            username: userDoc.username,
+            content: comment,
+            createdAt: newComment.createdAt,
+            belong: newComment.belong || null,
+          }
       });
     } catch (_) {}
     return res.json({ message: 'ok', data: newComment });
@@ -317,6 +320,27 @@ router.post('/comment/like', async (req, res) => {
     return res.status(500).json({ message: '服务器错误' });
   }
 });
+
+// GET /api/moments/comments/liked
+// 从请求头 uid 读取用户，返回其 likeMoments（仅返回该字段，转为字符串数组）
+router.get('/comments/liked', async (req, res) => {
+  try {
+    await connectMongo();
+
+    const uid = req.headers && (req.headers['uid'] || req.headers['Uid'] || req.headers['UID']);
+    if (!uid) return res.status(400).json({ message: '缺少 uid' });
+
+    const user = await User.findOne({ uid }, { likeComments: 1, _id: 0 }).lean();
+    if (!user) return res.status(404).json({ message: '用户不存在' });
+
+    const liked = Array.isArray(user.likeComments) ? user.likeComments.map(id => String(id)) : [];
+    return res.json({ message: 'ok', data: liked });
+  } catch (err) {
+    console.error('GET /moments/comments/liked error', err);
+    return res.status(500).json({ message: '服务器错误' });
+  }
+});
+
 // Body: { momentId: string, like: boolean | 'true' | 'false' }
 // 逻辑：
 //  - like=true：若用户未点赞，则给 moment.likes +1，且将 momentId 加入用户 likeMoments

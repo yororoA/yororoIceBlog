@@ -5,6 +5,8 @@ const CommentSchema = new mongoose.Schema({
   uid: { type: String, required: true, index: true },
   username: { type: String, required: true },
   momentId: { type: mongoose.Schema.Types.ObjectId, required: true, index: true },
+  // 可选：该评论归属的额外字符串信息（例如回复对象 id、来源等）
+  belong: { type: String, default: null },
   createdAt: { type: Date, default: Date.now },
   likes: { type: Number, default: 0, min: 0 },
 }, { collection: 'comments' });
