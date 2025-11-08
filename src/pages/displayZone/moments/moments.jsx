@@ -29,27 +29,11 @@ const MomentItem = ({data, liked}) => {
 	}, [data._id, newCommentFromSSE]);
 
 
-	const [likedComments, setLikedComments] = useState([]);
-	useEffect(() => {
-		const DELAY = 600000;
-
-		const commentsLikedFetchInterval = setInterval(async () => {
-			const commentsLiked = await getLikesList('comments');
-			setLikedComments(commentsLiked);
-		}, DELAY);
-
-		return () => {
-			clearInterval(commentsLikedFetchInterval);
-		}
-	}, []);
-
 	return (
 		<MomentIdContext value={{momentItem: dt, setCommentToDt}}>
-			<CommentsLikedContext value={{likedComments}}>
-				<div className={moments.item}>
-					<MomentsCard liked={liked} preview={true}/>
-				</div>
-			</CommentsLikedContext>
+			<div className={moments.item}>
+				<MomentsCard liked={liked} preview={true}/>
+			</div>
 		</MomentIdContext>
 	)
 }
@@ -59,7 +43,8 @@ const Moments = () => {
 	// 根据是否在编辑新moment控制moments获取以及编辑区域显示
 	const [editing, setEditing] = useState(false);
 
-
+	// 获取moments相关信息
+	const [elements, setElements] = useState('no moments yet' || []);
 	useEffect(() => {
 		async function f() {
 			const data = await getMoments();
@@ -73,7 +58,23 @@ const Moments = () => {
 		if (!editing) f();
 	}, [editing]);
 
-	const [elements, setElements] = useState('no moments yet' || []);
+	// 获取用户已点赞评论信息
+	const [likedComments, setLikedComments] = useState([]);
+	useEffect(() => {
+		const f = async () => {
+			const commentsLiked = await getLikesList('moments/comments');
+			console.log(commentsLiked)
+			setLikedComments(commentsLiked);
+		}
+
+		f();
+		const DELAY = 600000;
+		const commentsLikedFetchInterval = setInterval(f, DELAY);
+
+		return () => {
+			clearInterval(commentsLikedFetchInterval);
+		}
+	}, []);
 
 
 	return (
@@ -87,7 +88,9 @@ const Moments = () => {
 					<NewMoment onClose={() => setEditing(false)}/>
 				</Pop>}
 			<div className={moments.entire}>
-				{elements}
+				<CommentsLikedContext value={{likedComments}}>
+					{elements}
+				</CommentsLikedContext>
 			</div>
 		</>
 	);

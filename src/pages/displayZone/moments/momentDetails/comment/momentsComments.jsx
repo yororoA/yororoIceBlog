@@ -11,7 +11,6 @@ const MomentsComments = () => {
 	const {momentItem, setCommentToDt} = useContext(MomentDetailsCtx);
 	const {_id} = momentItem;
 	const comments = momentItem.comments;
-	console.log(comments)
 
 	// get comments by commentId(from the comments Array of ctx)
 	const [elements, setElements] = useState([]);
