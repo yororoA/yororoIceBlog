@@ -14,7 +14,7 @@ import CloseButton from '../../close/CloseButton';
 
 const LittlePop = ({
 										 title,
-										 width = 420,
+										 width = 500,
 										 children,
 										 footer,
 									 }) => {

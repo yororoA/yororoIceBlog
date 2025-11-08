@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {use, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import card from './comments.module.less';
 import CommentCard from "./commentCard";
 import CommonBtn from "../../../../../components/btn/commonBtn/commonBtn";
@@ -26,13 +26,12 @@ const MomentsComments = () => {
 
 
 				// todo 评论嵌套
-				
+
 			}
 		}
 
 		if (comments.length !== 0) f();
 	}, [comments]);
-
 
 	// check value to control sendBtn style
 	const [hasContent, setHasContent] = useState(false);
@@ -56,7 +55,7 @@ const MomentsComments = () => {
 	}, [_id, content, setCommentToDt]);
 
 	return (
-		<div className={card.entire} onClick={e=>e.stopPropagation()}>
+		<div className={card.entire} onClick={e => e.stopPropagation()}>
 			<div className={card.main}>
 				<h3>{'Comments'}</h3>
 				<section className={card.body}>

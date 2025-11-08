@@ -29,6 +29,7 @@
 
     --commonBtn-fontWeight: 600;
     --addCommentBtn-bgc: rgba(56, 143, 227, .8);
+    --comment-feedback-width: 16rem;
 
 
     --moments-headshot-borderRadius: 5rem;
