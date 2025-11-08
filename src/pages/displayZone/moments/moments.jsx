@@ -60,6 +60,10 @@ const Moments = () => {
 
 	// 获取用户已点赞评论信息
 	const [likedComments, setLikedComments] = useState([]);
+	const commentLikedChange = (state = true, commentId) => {
+		if (state) setLikedComments(prevState => [...prevState, commentId]);
+		else setLikedComments(prevState => prevState.filter(item => item !== commentId));
+	}
 	useEffect(() => {
 		const f = async () => {
 			const commentsLiked = await getLikesList('moments/comments');
@@ -88,7 +92,7 @@ const Moments = () => {
 					<NewMoment onClose={() => setEditing(false)}/>
 				</Pop>}
 			<div className={moments.entire}>
-				<CommentsLikedContext value={{likedComments}}>
+				<CommentsLikedContext value={{likedComments, commentLikedChange}}>
 					{elements}
 				</CommentsLikedContext>
 			</div>

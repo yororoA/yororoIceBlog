@@ -6,9 +6,9 @@ import like from './like.module.less';
 * @props:
 * `_id`,
 * `type`
-* `feedback`
 * `onChange`
-* `checked`*/
+* `checked`
+* `likes`*/
 const Like = (props) => {
 	const id = `${props._id}_${(props.type === 'moment') || (props.type === null) || (props.type === undefined) ? 'moment' : 'comment'}_like`;
 

@@ -23,6 +23,10 @@ const MomentsComments = () => {
 					<CommentCard infos={item} key={Math.floor(Math.random() * 1e10)}/>
 				));
 				setElements(elements);
+
+
+				// todo 评论嵌套
+				
 			}
 		}
 
