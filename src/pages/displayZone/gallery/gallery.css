@@ -2,10 +2,11 @@
   width: 100%;
   box-sizing: border-box;
   /* 无图时的占位 */
+  /* 触底加载哨兵，仅用于 IntersectionObserver */
 }
 .gallery-page__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160rem, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: var(--moments-zone-gap);
   padding: calc(var(--logo-height) * 0.2) 0;
   align-items: start;
@@ -26,6 +27,18 @@
 .gallery-page__empty {
   padding: calc(var(--logo-height) * 2) 0;
   text-align: center;
+  font-size: var(--p-fontsize);
+  color: var(--moments-meta-text-color);
+}
+.gallery-page__sentinel {
+  grid-column: 1 / -1;
+  height: 1px;
+  visibility: hidden;
+  pointer-events: none;
+}
+.gallery-page__loading {
+  text-align: center;
+  padding: var(--logo-height) 0;
   font-size: var(--p-fontsize);
   color: var(--moments-meta-text-color);
 }

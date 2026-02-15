@@ -8,40 +8,35 @@ div.iv {
   /* 让容器保持正方形比例，用于裁剪内部媒体 */
   aspect-ratio: 1 / 1;
   border-radius: var(--moments-live-radius);
-
-  label {
-    display: block;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    background-color: var(--backdrop);
-    top: 0;
-    cursor: pointer;
-    transition: .2s ease-in-out;
-
-    &:hover {
-      opacity: 1;
-    }
-
-    svg {
-      --w: 30%;
-
-      width: var(--w);
-      margin: calc((100% - var(--w)) / 2);
-    }
-  }
-
-  img,
-  video {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover; /* 填充并裁剪为正方形 */
-    object-position: center;
-  }
 }
-
+div.iv label {
+  display: block;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: var(--backdrop);
+  top: 0;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+div.iv label:hover {
+  opacity: 1;
+}
+div.iv label svg {
+  --w: 30%;
+  width: var(--w);
+  margin: calc((100% - var(--w)) / 2);
+}
+div.iv img,
+div.iv video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  /* 填充并裁剪为正方形 */
+  object-position: center;
+}
 /* 放大预览遮罩 */
 .enlargedWrap {
   position: fixed;
@@ -53,7 +48,6 @@ div.iv {
   background-color: var(--backdrop, rgba(0, 0, 0, 0.85));
   cursor: zoom-out;
 }
-
 .enlargedContent {
   position: relative;
   width: 90vw;
@@ -69,7 +63,6 @@ div.iv {
   padding-bottom: 72px;
   box-sizing: border-box;
 }
-
 /* 主图与左右箭头同一行，占满上方空间 */
 .mediaRow {
   display: flex;
@@ -81,7 +74,6 @@ div.iv {
   min-height: 0;
   width: 100%;
 }
-
 /* 主图切换淡入 */
 @keyframes mediaFadeIn {
   from {
@@ -91,7 +83,6 @@ div.iv {
     opacity: 1;
   }
 }
-
 /* 主图显示区域：固定宽高比 16:9，与常见横图一致，尺寸固定不随图片变化 */
 .mediaWrap {
   display: flex;
@@ -103,25 +94,22 @@ div.iv {
   min-width: 280px;
   min-height: 158px;
   max-height: calc(70vw / 16 * 9);
-
   /* 完整展示图片，且宽或高至少一边铺满显示框（等比缩放，不裁切） */
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-    animation: mediaFadeIn 0.25s ease-out;
-  }
-
-  video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-    animation: mediaFadeIn 0.25s ease-out;
-  }
 }
-
+.mediaWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  animation: mediaFadeIn 0.25s ease-out;
+}
+.mediaWrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  animation: mediaFadeIn 0.25s ease-out;
+}
 /* 放大时图片底部的上传者信息（如 gallery 使用） */
 .uploaderBar {
   position: absolute;
@@ -132,7 +120,6 @@ div.iv {
   text-align: center;
   pointer-events: none;
 }
-
 .uploaderLabel {
   display: inline-block;
   padding: 4px 12px;
@@ -141,7 +128,6 @@ div.iv {
   color: rgba(255, 255, 255, 0.95);
   font-size: 14px;
 }
-
 /* 小图预览条固定在底部，左右各 50% 留白使小图整体在正中，可横向滚动由 JS 将当前项居中 */
 .thumbStrip {
   position: absolute;
@@ -163,12 +149,10 @@ div.iv {
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   scroll-behavior: smooth;
   scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
-
+.thumbStrip::-webkit-scrollbar {
+  display: none;
+}
 .thumb,
 .thumbActive {
   flex-shrink: 0;
@@ -181,32 +165,29 @@ div.iv {
   cursor: pointer;
   background: rgba(255, 255, 255, 0.08);
   transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s;
-
-  img,
-  video {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-  }
 }
-
+.thumb img,
+.thumbActive img,
+.thumb video,
+.thumbActive video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
 /* 未选中：降低对比，弱化 */
 .thumb {
   opacity: 0.5;
-
-  &:hover {
-    opacity: 0.85;
-  }
 }
-
+.thumb:hover {
+  opacity: 0.85;
+}
 /* 当前选中：高对比、白框与光晕 */
 .thumbActive {
   opacity: 1;
   border-color: #fff;
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4), 0 0 12px rgba(255, 255, 255, 0.25);
 }
-
 .closeBtn {
   position: absolute;
   top: 16px;
@@ -219,28 +200,24 @@ div.iv {
   background: rgba(0, 0, 0, 0.5);
   cursor: pointer;
   transition: background 0.2s;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 20px;
-    height: 2px;
-    background: #fff;
-    transform: translate(-50%, -50%) rotate(45deg);
-  }
-
-  &::after {
-    transform: translate(-50%, -50%) rotate(-45deg);
-  }
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.75);
-  }
 }
-
+.closeBtn::before,
+.closeBtn::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 20px;
+  height: 2px;
+  background: #fff;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.closeBtn::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.closeBtn:hover {
+  background: rgba(0, 0, 0, 0.75);
+}
 /* 箭头在图片两侧（mediaRow 内 flex 子项） */
 .navBtn {
   position: relative;
@@ -252,36 +229,31 @@ div.iv {
   background: rgba(0, 0, 0, 0.5);
   cursor: pointer;
   transition: background 0.2s;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 14px;
-    height: 14px;
-    border-left: 2px solid #fff;
-    border-bottom: 2px solid #fff;
-    /* 左箭头再顺时针旋转 90° */
-    transform: translate(calc(-50% + 3px), -50%) rotate(-45deg) rotate(90deg);
-  }
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.75);
-  }
 }
-
+.navBtn::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  /* 左箭头再顺时针旋转 90° */
+  transform: translate(calc(-50% + 3px), -50%) rotate(-45deg) rotate(90deg);
+}
+.navBtn:hover {
+  background: rgba(0, 0, 0, 0.75);
+}
 .navPrev {
   margin-right: 8px;
 }
-
 .navNext {
   margin-left: 8px;
-
-  &::before {
-    border-left: none;
-    border-right: 2px solid #fff;
-    /* 右箭头再逆时针旋转 90° */
-    transform: translate(calc(-50% - 3px), -50%) rotate(45deg) rotate(-90deg);
-  }
+}
+.navNext::before {
+  border-left: none;
+  border-right: 2px solid #fff;
+  /* 右箭头再逆时针旋转 90° */
+  transform: translate(calc(-50% - 3px), -50%) rotate(45deg) rotate(-90deg);
 }

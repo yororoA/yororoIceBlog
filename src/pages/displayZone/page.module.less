@@ -17,64 +17,62 @@
   align-items: center;
 
   .navBox {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     width: 100%;
-    backdrop-filter: contrast(90%);
-
+    background: var(--nav-bgc);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    backdrop-filter: blur(12px) saturate(1.2);
 
     nav {
-      //position: sticky;
-      top: 0;
-      //width: max-content;
-      width: 80%;
-      height: var(--logo-height);
       display: flex;
-      //flex-direction: column;
-      justify-content: space-between;
       align-items: center;
-      padding: 0 10rem;
+      justify-content: space-between;
+      gap: 12px;
+      width: 90%;
+      max-width: 1200px;
+      min-height: var(--logo-height);
       margin: 0 auto;
+      padding: 8px 16px;
       box-sizing: border-box;
       border: var(--nm-input-border);
 
       img.logo {
         height: var(--logo-height);
+        flex-shrink: 0;
       }
 
       div.link {
-        box-sizing: border-box;
         display: flex;
-        //flex-direction: column;
-        //justify-content: space-between;
         align-items: center;
+        justify-content: center;
+        gap: 4px;
+        flex: 1;
+        min-width: 0;
+        flex-wrap: wrap;
 
         & span {
+          flex-shrink: 0;
           text-align: center;
           margin: var(--nav-link-margin);
           border: var(--nm-input-border);
-          //width: 100%;
           padding: var(--nav-link-padding);
-          transition: background-color var(--transition-type), transform var(--transition-type), box-shadow var(--transition-type);
-          background-clip: padding-box;
-          /* 鼠标可点击指针 */
-          cursor: pointer;
-
-          -webkit-box-sizing: border-box;
-          -moz-box-sizing: border-box;
-          box-sizing: border-box;
           border-radius: calc(var(--logo-height) / 2);
-
-          //color: color-contrast(background-color vs black, white);
-          //mix-blend-mode: difference;
+          box-sizing: border-box;
+          background-clip: padding-box;
+          cursor: pointer;
+          transition: background-color var(--transition-type), box-shadow var(--transition-type);
 
           &:hover {
             background-color: rgba(0, 0, 0, 0.02);
             box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.02);
           }
         }
-
       }
 
       .linkLogout {
+        flex-shrink: 0;
         box-sizing: border-box;
         text-align: center;
         margin: var(--nav-link-margin);
@@ -83,6 +81,7 @@
         border-radius: calc(var(--logo-height) / 2);
         cursor: pointer;
         transition: background-color var(--transition-type), box-shadow var(--transition-type);
+
         &:hover {
           background-color: rgba(0, 0, 0, 0.02);
           box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.02);

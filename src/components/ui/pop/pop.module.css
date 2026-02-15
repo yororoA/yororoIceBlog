@@ -1,4 +1,4 @@
-.entire{
+.entire {
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -9,10 +9,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
-  .item{
-    border-radius: var(--moments-headshot-borderRadius);
-    background-color: var(--pop-bgc);
-    overflow: hidden;
-  }
+}
+.entire .item {
+  border-radius: var(--moments-headshot-borderRadius);
+  background-color: var(--pop-bgc);
+  overflow: hidden;
 }

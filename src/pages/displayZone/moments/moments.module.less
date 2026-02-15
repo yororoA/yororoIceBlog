@@ -1,3 +1,23 @@
+/* 新 moment 提示横幅：点击加载 */
+.newBanner {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--moments-zone-gap);
+  padding: calc(var(--logo-height) * 0.25) calc(var(--logo-height) * 0.5);
+  border: var(--nm-input-border);
+  border-radius: var(--btn-border-radius-normal);
+  background: var(--nm-iv-label-hover-bgc);
+  color: var(--text-color);
+  font-size: var(--p-fontsize);
+  cursor: pointer;
+  transition: background-color var(--transition-type), box-shadow var(--transition-type);
+
+  &:hover {
+    background: var(--nm-iv-label-color);
+    box-shadow: 0 2rem 8rem rgba(0, 0, 0, 0.08);
+  }
+}
+
 .entire {
   width: 100%;
 

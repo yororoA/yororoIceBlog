@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import logo from '../../assets/images/logo.png'
 import SwitchTheme from "../../components/switchTheme/switchTheme";
 import page from './page.module.less';
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { connectSSE, disconnectSSE } from "../../utils/sse/connect";
 import { useDispatch } from "react-redux";
-import { updatedCommentSlice, updatedMomentLikesSlice, updatedMomentSlice } from "../../store/slices";
+import { updatedCommentSlice, updatedMomentLikesSlice } from "../../store/slices";
 import StatusBoardStack from '../../components/ui/pop/status/statusBoardStack';
 import { SuccessBoardContext } from '../../components/ui/pop/status/successBoardContext';
 import Pop from '../../components/ui/pop/pop';
@@ -13,17 +13,21 @@ import Announcement from '../../components/ui/announcement/announcement';
 import { homeAnnouncementMarkdown } from '../../config/announcementMarkdown';
 import { GalleryContext } from './gallery/context/galleryContext';
 import { MomentsListContext } from './moments/context/momentsListContext';
+import { ScrollContainerContext } from './scrollContainerContext';
 import { getUid, logout } from '../../utils/auth';
 
 const DisplayZone = () => {
 	const uid = getUid();
-	// gallery 的 ivs 放在 DisplayZone，切换路由时不会卸载，回来时图片仍在
+	// gallery 的 ivs、hasMore 放在 DisplayZone，切换路由时不会卸载，回来时图片仍在且不会重复请求
 	const [galleryIvs, setGalleryIvs] = useState([]);
+	const [galleryHasMore, setGalleryHasMore] = useState(true);
 	// moments 列表、已点赞 id、各 moment 的文件缓存放在 DisplayZone，避免切换路由后重复加载
 	const [momentsData, setMomentsData] = useState([]);
 	const [likedMoments, setLikedMoments] = useState([]);
 	const [momentsFilesCache, setMomentsFilesCache] = useState({});
 	const [deletingIds, setDeletingIds] = useState([]);
+	// 累计收到的 moment.new 的 _id（及完整数据），moment.delete 时从其中移除；点击加载后按顺序写入列表并清空
+	const [pendingNewMoments, setPendingNewMoments] = useState([]);
 	const [successList, setSuccessList] = useState([]);
 	const [failedList, setFailedList] = useState([]);
 	const [showConnectedBoard, setShowConnectedBoard] = useState(true);
@@ -41,6 +45,7 @@ const DisplayZone = () => {
 	}, []);
 	const navigate = useNavigate();
 	const location = useLocation();
+	const scrollContainerRef = useRef(null);
 
 	// 若有 mid 查询参数，则跳到 moments 页并用现有逻辑展示对应 moment
 	useEffect(() => {
@@ -102,24 +107,53 @@ const DisplayZone = () => {
 		};
 	}, []);
 
-	// store新状态派发器 + moment.delete 时走删除过渡
+	// 将 SSE 的 moment 规范成与 getMoments 一致的结构
+	const normalizeMoment = useCallback((d) => {
+		if (!d || !d._id) return null;
+		const { uid, username, comments, content, title, createdAt, _id, likes, filenames, updatedAt } = d;
+		return {
+			uid, username, title, content, _id,
+			likes: likes ?? [],
+			comments: comments ?? [],
+			createdAt: createdAt ? new Date(createdAt) : new Date(),
+			updatedAt: updatedAt ? new Date(updatedAt) : new Date(),
+			filenames: filenames === undefined ? [] : (Array.isArray(filenames) ? filenames : Object.keys(filenames)),
+		};
+	}, []);
+
+	// 点击「加载」：按 moment.new 先后顺序插入列表并清空 pending
+	const loadPendingNewMoments = useCallback(() => {
+		if (pendingNewMoments.length === 0) return;
+		setMomentsData(prev => [...pendingNewMoments, ...prev]);
+		setPendingNewMoments([]);
+	}, [pendingNewMoments]);
+
+	// store新状态派发器 + moment.new 计入 pending，moment.delete 从 pending 移除并走删除过渡
 	const dispatch = useDispatch();
 	const dispatchFn = useCallback((payload) => {
-		const { momentNew } = updatedMomentSlice.actions;
 		const { commentNew } = updatedCommentSlice.actions;
 		const { momentLikesUpdated } = updatedMomentLikesSlice.actions;
 		const { type, data } = payload;
-		// moment.delete：先标记删除中（淡出），动画结束后再移除
+		// moment.delete：从 pending 中移除该 _id；若已在列表中则标记删除中
 		if (type === 'moment.delete' && data?._id) {
+			setPendingNewMoments(prev => prev.filter(m => m._id !== data._id));
 			markMomentDeleting(data._id);
+			return;
+		}
+		// moment.new：当前用户发的直接插入列表，其他人的计入 pending
+		if (type === 'moment.new' && data?._id) {
+			const norm = normalizeMoment(data);
+			if (!norm) return;
+			if (data.uid === uid) {
+				setMomentsData(prev => [norm, ...prev]);
+			} else {
+				setPendingNewMoments(prev => [...prev, norm]);
+			}
 			return;
 		}
 		if (data.uid === uid) return;
 		console.log(data, '\n', typeof data);
 		switch (type) {
-			case 'moment.new':
-				dispatch(momentNew(data));
-				break;
 			case 'comment.new':
 				dispatch(commentNew(data));
 				break;
@@ -129,7 +163,7 @@ const DisplayZone = () => {
 			default:
 				break;
 		}
-	}, [dispatch, uid, markMomentDeleting]);
+	}, [dispatch, uid, markMomentDeleting, normalizeMoment]);
 	// sse连接
 	const [connect, setConnect] = useState(false);
 	useEffect(() => {
@@ -161,7 +195,7 @@ const DisplayZone = () => {
 					onRemoveFailed={removeFailed}
 				/>
 			)}
-			<div className={page.entire}>
+			<div className={page.entire} ref={scrollContainerRef}>
 				<div className={page.navBox}>
 					<nav>
 						<img src={logo} className={page.logo} alt="logo" />
@@ -182,11 +216,13 @@ const DisplayZone = () => {
 					</nav>
 				</div>
 				<main>
-					<GalleryContext.Provider value={[galleryIvs, setGalleryIvs]}>
-						<MomentsListContext.Provider value={[momentsData, setMomentsData, likedMoments, setLikedMoments, momentsFilesCache, setMomentsFilesCache, deletingIds, markMomentDeleting]}>
-							<Outlet />
-						</MomentsListContext.Provider>
-					</GalleryContext.Provider>
+					<ScrollContainerContext.Provider value={scrollContainerRef}>
+						<GalleryContext.Provider value={[galleryIvs, setGalleryIvs, galleryHasMore, setGalleryHasMore]}>
+							<MomentsListContext.Provider value={[momentsData, setMomentsData, likedMoments, setLikedMoments, momentsFilesCache, setMomentsFilesCache, deletingIds, markMomentDeleting, pendingNewMoments, loadPendingNewMoments]}>
+								<Outlet />
+							</MomentsListContext.Provider>
+						</GalleryContext.Provider>
+					</ScrollContainerContext.Provider>
 				</main>
 			</div>
 		</SuccessBoardContext.Provider>

@@ -43,7 +43,8 @@ const MomentItem = ({data, liked, openDetailsOnMount, onCloseDetails, onOpenDeta
 
 
 const Moments = () => {
-	const [momentsData, setMomentsData, likedMoments, setLikedMoments, , , deletingIds = []] = useContext(MomentsListContext);
+	const [momentsData, setMomentsData, likedMoments, setLikedMoments, , , deletingIds = [], , pendingNewMoments = [], loadPendingNewMoments] = useContext(MomentsListContext);
+	const pendingCount = pendingNewMoments.length;
 	const [editing, setEditing] = useState(false);
 
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -136,6 +137,11 @@ const Moments = () => {
 				<span>{'Moments'}</span>
 				{!isGuest() && <CommonBtn className={addContent.new} text={'New Moment'} onClick={() => setEditing(true)}/>}
 			</section>
+			{pendingCount > 0 && (
+				<button type="button" className={moments.newBanner} onClick={loadPendingNewMoments}>
+					存在 {pendingCount} 条新 moment，点击加载
+				</button>
+			)}
 			{editing &&
 				<Pop isLittle={false}>
 					<NewMoment onClose={handleCloseNewMoment}/>

@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import IvPreview from "../../image_video_preview/ivPreview";
 import card from './newMomentPop.module.less';
 import CommonBtn from "../../../btn/commonBtn/commonBtn";
@@ -7,20 +7,33 @@ import acknowledge from '../../acknowledge.module.less';
 import ToDraft from "../littlePop/toDraft/toDraft";
 import { SuccessBoardContext } from "../status/successBoardContext";
 
+const uidPrefix = () => localStorage.getItem('uid') || 'nm_iv';
 
-// 选择的图片/视频预览图
-const NmIvPreview = ({images, videos}) => {
-	const items = [];
-	images.forEach(item => {
-		const url = URL.createObjectURL(item);
-		items.push([url, 'image']);
-	});
-	videos.forEach(item => {
-		const url = URL.createObjectURL(item);
-		items.push([url, 'video']);
-	});
-	return <IvPreview items={items} prefix={localStorage.getItem('uid')}/>;
-};
+// 选择的图片/视频预览图：仅当 images/videos 变化时重建 URL，避免每次输入都重算导致卡顿
+const NmIvPreview = React.memo(({images, videos}) => {
+	const urlRef = useRef([]);
+	const items = useMemo(() => {
+		urlRef.current.forEach(u => URL.revokeObjectURL(u));
+		urlRef.current = [];
+		const list = [];
+		images.forEach(file => {
+			const url = URL.createObjectURL(file);
+			urlRef.current.push(url);
+			list.push([url, 'image']);
+		});
+		videos.forEach(file => {
+			const url = URL.createObjectURL(file);
+			urlRef.current.push(url);
+			list.push([url, 'video']);
+		});
+		return list;
+	}, [images, videos]);
+	useEffect(() => () => {
+		urlRef.current.forEach(u => URL.revokeObjectURL(u));
+		urlRef.current = [];
+	}, []);
+	return <IvPreview items={items} prefix={uidPrefix()}/>;
+});
 
 
 // 编辑界面
