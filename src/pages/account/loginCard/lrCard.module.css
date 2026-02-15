@@ -1,0 +1,140 @@
+section.lr {
+  width: 100%;
+  overflow-y: auto;
+}
+section.lr form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+section.lr form section {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  font-size: var(--h4-fontsize);
+  line-height: var(--h4-fontsize);
+  margin: 5rem 0;
+  --i_btn-height: 25rem;
+}
+section.lr form section label {
+  margin: 3rem 0;
+}
+section.lr form section.acknowledge {
+  flex-direction: row;
+  align-items: center;
+}
+section.lr form section.acknowledge span {
+  text-decoration: underline;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.6);
+}
+section.lr form section.acknowledge span:hover {
+  color: var(--registerBtn-ableColor);
+}
+section.lr form section input {
+  width: 100%;
+  height: var(--i_btn-height);
+  font-size: var(--h4-fontsize);
+  box-sizing: border-box;
+  border-color: rgba(76, 81, 89, 0.3);
+  border-style: solid;
+  border-width: 1.2rem;
+  border-radius: 5rem;
+  padding: 0 5rem;
+  transition: 0.1s;
+}
+section.lr form section input[type=checkbox] {
+  width: var(--h4-fontsize);
+  font-size: 1em;
+  height: 1em;
+  margin-right: 5rem;
+  cursor: pointer;
+}
+section.lr form section input:hover {
+  border-color: rgba(38, 145, 239, 0.5);
+  box-shadow: 0 0 5rem 2.5rem rgba(38, 145, 239, 0.3);
+}
+section.lr form section input:focus {
+  outline-color: #2691ef;
+}
+section.lr form section div.verify {
+  width: 100%;
+  display: flex;
+}
+section.lr form section div.verify input.verification {
+  width: 75%;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+section.lr form section div.verify input.verification + span {
+  width: 25%;
+  height: var(--i_btn-height);
+  box-sizing: border-box;
+  border-color: rgba(76, 81, 89, 0.3);
+  border-style: solid;
+  border-width: 1.2rem;
+  border-top-right-radius: 5rem;
+  border-bottom-right-radius: 5rem;
+  border-left: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(76, 81, 89, 0);
+  transition: all 0.1s;
+}
+section.lr form section div.verify input.verification + span.able {
+  cursor: pointer;
+  color: #000000;
+}
+section.lr form section div.verify input.verification + span.able:hover {
+  background-color: rgba(76, 81, 89, 0.3);
+}
+section.lr form section div.verify input.verification + span.unable {
+  color: rgba(0, 0, 0, 0.2);
+}
+section.lr form button {
+  width: 70%;
+  height: var(--i_btn-height);
+  font-size: var(--h4-fontsize);
+  border-color: gray;
+  border-style: solid;
+  outline: none;
+  border-radius: var(--btn-border-radius-normal);
+  color: #fff;
+  transition: 0.1s;
+}
+section.lr form button.login {
+  background-color: var(--loginBtn-unableColor);
+  pointer-events: none;
+}
+section.lr form button.login.completed {
+  background-color: var(--loginBtn-ableColor);
+  pointer-events: auto;
+  cursor: pointer;
+}
+section.lr form button.login.completed:hover {
+  border-radius: var(--btn-border-radius-hover);
+}
+section.lr form button.register {
+  background-color: var(--registerBtn-unableColor);
+  pointer-events: none;
+}
+section.lr form button.register.completed {
+  background-color: var(--registerBtn-ableColor);
+  cursor: pointer;
+  pointer-events: auto;
+}
+section.lr form button.register.completed:hover {
+  border-radius: var(--btn-border-radius-hover);
+}
+section.lr form button.guest {
+  background-color: rgba(76, 81, 89, 0.25);
+  color: rgba(15, 23, 42, 0.9);
+  cursor: pointer;
+  pointer-events: auto;
+}
+section.lr form button.guest:hover {
+  border-radius: var(--btn-border-radius-hover);
+  background-color: rgba(76, 81, 89, 0.4);
+}

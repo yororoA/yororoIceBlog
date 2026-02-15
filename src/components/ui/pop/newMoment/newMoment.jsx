@@ -1,10 +1,11 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import IvPreview from "../../image_video_preview/ivPreview";
 import card from './newMomentPop.module.less';
 import CommonBtn from "../../../btn/commonBtn/commonBtn";
 import CloseButton from "../../../ui/close/CloseButton";
 import acknowledge from '../../acknowledge.module.less';
 import ToDraft from "../littlePop/toDraft/toDraft";
+import { SuccessBoardContext } from "../status/successBoardContext";
 
 
 // 选择的图片/视频预览图
@@ -24,6 +25,7 @@ const NmIvPreview = ({images, videos}) => {
 
 // 编辑界面
 const NewMoment = ({onClose}) => {
+	const { showSuccess } = useContext(SuccessBoardContext);
 	const [images, setImages] = useState([]);
 	const [videos, setVideos] = useState([]);
 	const addFile = e => {
@@ -97,6 +99,9 @@ const NewMoment = ({onClose}) => {
 
 			const data = await resp.json();
 
+			if (resp.ok && published.current) {
+				showSuccess('Published');
+			}
 			if (!resp.ok) {
 				console.log('upload failed\n', data);
 			}

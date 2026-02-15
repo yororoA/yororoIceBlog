@@ -12,6 +12,12 @@
   justify-content: space-between;
   cursor: pointer;
 
+  transition:
+    background-color var(--transition-type),
+    border-color var(--transition-type),
+    box-shadow var(--transition-type),
+    color var(--transition-type);
+
   .content {
     display: grid;
     gap: var(--moments-zone-gap);
@@ -30,6 +36,10 @@
       flex-direction: column;
       gap: var(--moments-zone-gap);
 
+      .date {
+        font-size: var(--moments-meta-fontsize);
+        color: var(--moments-meta-text-color);
+      }
 
       .text {
         max-width: 100%;
@@ -56,6 +66,29 @@
     padding-top: calc(var(--moments-zone-gap) * 1.5);
     display: flex;
     justify-content: space-between;
+    align-items: center;
     border-top: var(--moments-card-content_footer-SeperatorLine);
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: var(--moments-zone-gap);
+    }
+
+    .actionBtn {
+      padding: 2rem 6rem;
+      font-size: var(--moments-meta-fontsize);
+      color: var(--moments-meta-text-color);
+      background: transparent;
+      border: var(--nm-input-border);
+      border-radius: var(--btn-border-radius-normal);
+      cursor: pointer;
+      transition: color var(--transition-type), background-color var(--transition-type);
+
+      &:hover {
+        color: var(--text-color);
+        background-color: rgba(0, 0, 0, 0.04);
+      }
+    }
   }
 }

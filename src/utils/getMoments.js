@@ -5,14 +5,16 @@ export async function getMoments() {
 	});
 	// console.log(await resp.json())
 	const data = await resp.json();
+	
 	if (resp.ok) {
-		// const {uid,username, comments, content, title, createdAt, _id, likes, filenames}
+		// const {uid,username, comments, content, title, createdAt, _id, likes, filenames, updatedAt}
 		const rd = [];
 		for (const datum of data.data) {
-			const {uid, username, comments, content, title, createdAt, _id, likes, filenames} = datum;
+			const {uid, username, comments, content, title, createdAt, _id, likes, filenames, updatedAt} = datum;
 			rd.push({
 				uid, username, title, content, _id, likes, comments,
 				createdAt: new Date(createdAt),
+				updatedAt: new Date(updatedAt),
 				filenames: filenames===undefined?[]:Object.keys(filenames)
 			});
 		}

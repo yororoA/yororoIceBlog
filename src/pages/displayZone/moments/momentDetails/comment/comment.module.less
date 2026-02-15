@@ -8,6 +8,11 @@
   border-bottom: var(--moments-card-content_footer-SeperatorLine);
   box-sizing: border-box;
 
+  transition:
+    background-color var(--transition-type),
+    border-color var(--transition-type),
+    color var(--transition-type);
+
   img.headshot {
     max-width: 100%;
     border-radius: var(--moments-headshot-borderRadius);
@@ -22,6 +27,17 @@
       display: flex;
       flex-direction: column;
       gap: var(--moments-zone-gap);
+
+      .meta {
+        display: flex;
+        align-items: baseline;
+        gap: 4rem;
+
+        .date {
+          font-size: var(--moments-meta-fontsize);
+          color: var(--moments-meta-text-color);
+        }
+      }
 
       p.text {
         overflow-wrap: break-word;

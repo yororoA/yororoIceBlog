@@ -83,7 +83,7 @@ function handleEvent(eventName, payload, dispatch) {
 			// payload: { message: 'connected' }
 			break;
 		case 'moment':
-			// payload: { type: 'moment.new', data: { _id, title, content, uid, createdAt } }
+			// payload: { type: 'moment.new'|'moment.delete', data: ... }
 			dispatch(payload);
 			break;
 		case 'comment':

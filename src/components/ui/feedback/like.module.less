@@ -43,4 +43,14 @@
       }
     }
   }
+
+  &.disabled {
+    pointer-events: none;
+    label svg {
+      cursor: default;
+      &:hover {
+        transform: none;
+      }
+    }
+  }
 }

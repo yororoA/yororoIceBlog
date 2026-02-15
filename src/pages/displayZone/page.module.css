@@ -1,0 +1,84 @@
+.entire {
+  margin: 0 auto;
+  width: 100vw;
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow: auto;
+  scrollbar-width: none;
+  font-size: var(--h4-fontsize);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.entire::-webkit-scrollbar {
+  display: none;
+}
+.entire .navBox {
+  width: 100%;
+  backdrop-filter: contrast(90%);
+}
+.entire .navBox nav {
+  top: 0;
+  width: 80%;
+  height: var(--logo-height);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10rem;
+  margin: 0 auto;
+  box-sizing: border-box;
+  border: var(--nm-input-border);
+}
+.entire .navBox nav img.logo {
+  height: var(--logo-height);
+}
+.entire .navBox nav div.link {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+.entire .navBox nav div.link span {
+  text-align: center;
+  margin: var(--nav-link-margin);
+  border: var(--nm-input-border);
+  padding: var(--nav-link-padding);
+  transition: background-color var(--transition-type), transform var(--transition-type), box-shadow var(--transition-type);
+  background-clip: padding-box;
+  /* 鼠标可点击指针 */
+  cursor: pointer;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border-radius: calc(var(--logo-height) / 2);
+}
+.entire .navBox nav div.link span:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.02);
+}
+.entire .navBox nav .linkLogout {
+  box-sizing: border-box;
+  text-align: center;
+  margin: var(--nav-link-margin);
+  border: var(--nm-input-border);
+  padding: var(--nav-link-padding);
+  border-radius: calc(var(--logo-height) / 2);
+  cursor: pointer;
+  transition: background-color var(--transition-type), box-shadow var(--transition-type);
+}
+.entire .navBox nav .linkLogout:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.02);
+}
+.entire main {
+  width: 60%;
+}
+.entire main section[id='header'] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(var(--logo-height) * 0.2) 0;
+}
+.entire main section[id='header'] span {
+  font-size: calc(var(--h2-fontsize) * 1.5);
+  font-weight: var(--commonBtn-fontWeight);
+}

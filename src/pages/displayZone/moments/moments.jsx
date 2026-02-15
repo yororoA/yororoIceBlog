@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
+import { useSearchParams } from "react-router-dom";
 import MomentsCard from "../../../components/pagesCard/moments/content/momentsCard";
 import moments from './moments.module.less';
 import MomentIdContext from "./context/momentIdContext";
+import { MomentsListContext } from "./context/momentsListContext";
 import CommonBtn from "../../../components/btn/commonBtn/commonBtn";
 import addContent from "../../../components/btn/addContent.module.less";
 import Pop from "../../../components/ui/pop/pop";
@@ -10,11 +12,13 @@ import {getMoments} from "../../../utils/getMoments";
 import {getLikesList} from "../../../utils/getLikesList";
 import {useSelector} from "react-redux";
 import {CommentsLikedContext} from "./context/commentsLikedContext";
+import { isGuest } from "../../../utils/auth";
 
 
-const MomentItem = ({data, liked}) => {
-	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
+const MomentItem = ({data, liked, openDetailsOnMount, onCloseDetails, onOpenDetails, isDeleting}) => {
+	// {uid,username, comments, content, title, createdAt, _id, likes, filenames, updatedAt}
 	const [dt, setDt] = useState(data);
+	// new comment updated
 	const setCommentToDt = (newComment_id) => {
 		setDt(prev => ({
 			...prev,
@@ -28,11 +32,10 @@ const MomentItem = ({data, liked}) => {
 		}
 	}, [data._id, newCommentFromSSE]);
 
-
 	return (
 		<MomentIdContext value={{momentItem: dt, setCommentToDt}}>
-			<div className={moments.item}>
-				<MomentsCard liked={liked} preview={true}/>
+			<div className={`${moments.item}${isDeleting ? ` ${moments.itemDeleting}` : ''}`}>
+				<MomentsCard liked={liked} preview={true} openDetailsOnMount={openDetailsOnMount} onCloseDetails={onCloseDetails} onOpenDetails={onOpenDetails}/>
 			</div>
 		</MomentIdContext>
 	)
@@ -40,23 +43,69 @@ const MomentItem = ({data, liked}) => {
 
 
 const Moments = () => {
-	// 根据是否在编辑新moment控制moments获取以及编辑区域显示
+	const [momentsData, setMomentsData, likedMoments, setLikedMoments, , , deletingIds = []] = useContext(MomentsListContext);
 	const [editing, setEditing] = useState(false);
 
-	// 获取moments相关信息
-	const [elements, setElements] = useState('no moments yet' || []);
-	useEffect(() => {
-		async function f() {
-			const data = await getMoments();
-			const likedMoments = await getLikesList(); // 已点赞列表
-			setElements(data.map(item => (
-				<MomentItem data={item} liked={likedMoments.includes(item._id)} key={item._id}/>
-			)));
-		}
+	const [searchParams, setSearchParams] = useSearchParams();
+	const midFromQuery = searchParams.get('mid');
 
-		// 未处在编辑状态时获取moments列表
-		if (!editing) f();
-	}, [editing]);
+	// 关闭详情时去掉 URL 中的 mid，恢复为 /town/moments（用 ref 避免 effect 依赖导致列表重拉）
+	const clearMidFromUrl = useCallback(() => {
+		if (!searchParams.get('mid')) return;
+		const next = new URLSearchParams(searchParams);
+		next.delete('mid');
+		setSearchParams(next, { replace: true });
+	}, [searchParams, setSearchParams]);
+	const clearMidFromUrlRef = useRef(clearMidFromUrl);
+	clearMidFromUrlRef.current = clearMidFromUrl;
+	const onCloseDetails = useCallback(() => clearMidFromUrlRef.current?.(), []);
+
+	// 点击展示详情时在地址上拼接 mid（用 ref 避免 effect 依赖）
+	const setMidInUrl = useCallback((id) => {
+		const next = new URLSearchParams(searchParams);
+		next.set('mid', id);
+		setSearchParams(next, { replace: true });
+	}, [searchParams, setSearchParams]);
+	const setMidInUrlRef = useRef(setMidInUrl);
+	setMidInUrlRef.current = setMidInUrl;
+	const onOpenDetails = useCallback((id) => setMidInUrlRef.current?.(id), []);
+
+	// 首次无数据时拉取并写入 context；与 gallery 一致，避免切换路由重复加载
+	const fetchMoments = useCallback(async () => {
+		const data = await getMoments();
+		const liked = await getLikesList();
+		setMomentsData(data);
+		setLikedMoments(liked);
+	}, [setMomentsData, setLikedMoments]);
+	useEffect(() => {
+		if (momentsData.length === 0 && !editing) fetchMoments();
+	}, [editing, momentsData.length, fetchMoments]);
+
+	// 由 context 中的 momentsData / likedMoments 渲染列表
+	const [elements, setElements] = useState([]);
+	useEffect(() => {
+		if (momentsData.length === 0) {
+			setElements([]);
+			return;
+		}
+		setElements(momentsData.map(item => (
+			<MomentItem
+				data={item}
+				liked={likedMoments.includes(item._id)}
+				key={item._id}
+				openDetailsOnMount={midFromQuery === item._id}
+				onCloseDetails={onCloseDetails}
+				onOpenDetails={onOpenDetails}
+				isDeleting={deletingIds.includes(item._id)}
+			/>
+		)));
+	}, [momentsData, likedMoments, midFromQuery, onCloseDetails, onOpenDetails, deletingIds]);
+
+	// 发布新 moment 关闭弹层后刷新列表并更新 context
+	const handleCloseNewMoment = useCallback(() => {
+		setEditing(false);
+		fetchMoments();
+	}, [fetchMoments]);
 
 	// 获取用户已点赞评论信息
 	const [likedComments, setLikedComments] = useState([]);
@@ -85,15 +134,15 @@ const Moments = () => {
 		<>
 			<section id={'header'}>
 				<span>{'Moments'}</span>
-				<CommonBtn className={addContent.new} text={'New Moment'} onClick={() => setEditing(true)}/>
+				{!isGuest() && <CommonBtn className={addContent.new} text={'New Moment'} onClick={() => setEditing(true)}/>}
 			</section>
 			{editing &&
 				<Pop isLittle={false}>
-					<NewMoment onClose={() => setEditing(false)}/>
+					<NewMoment onClose={handleCloseNewMoment}/>
 				</Pop>}
 			<div className={moments.entire}>
 				<CommentsLikedContext value={{likedComments, commentLikedChange}}>
-					{elements}
+					{elements.length > 0 ? elements : 'no moments yet'}
 				</CommentsLikedContext>
 			</div>
 		</>

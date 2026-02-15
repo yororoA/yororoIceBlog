@@ -3,10 +3,10 @@ import Content from "./content/content";
 import MomentsComments from "./comment/momentsComments";
 import mdc from './md.module.less';
 
-const MomentDetails = () => {
+const MomentDetails = ({ headshotType }) => {
 	return (
 		<div className={mdc.entire}>
-			<Content/>
+			<Content headshotType={headshotType} />
 			<MomentsComments/>
 		</div>
 	);

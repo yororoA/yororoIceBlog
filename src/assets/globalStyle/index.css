@@ -11,6 +11,10 @@ html {
     overflow-x: hidden;
     overflow-y: var(--overflow);
     background-color: var(--entire-bgc);
+    color: var(--text-color);
+    transition:
+        background-color var(--transition-type),
+        color var(--transition-type);
 }
 
 #portalSite,
@@ -20,23 +24,37 @@ html {
     right: 0;
 }
 
+#statusBoardPortal{
+    position: absolute;
+    top: var(--logo-height);
+    right: 0;
+    margin: 0 3rem;
+    padding: 0 3rem;
+    width: var(--statusPortal-width);
+    overflow: hidden;
+}
+
 h1{
     font-size: var(--h1-fontsize);
+    color: var(--heading-color);
 }
 
 h2{
     font-size: var(--h2-fontsize);
     line-height: var(--h2-fontsize);
+    color: var(--heading-color);
 }
 
 h3{
     font-size: var(--h3-fontsize);
     line-height: var(--h3-fontsize);
+    color: var(--heading-color);
 }
 
 h4{
     font-size: var(--h4-fontsize);
     line-height: var(--h4-fontsize);
+    color: var(--heading-color);
 }
 
 p{

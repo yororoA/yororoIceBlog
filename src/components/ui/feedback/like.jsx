@@ -8,13 +8,15 @@ import like from './like.module.less';
 * `type`
 * `onChange`
 * `checked`
-* `likes`*/
+* `likes`
+* `disabled` 为 true 时仅展示点赞数，不可点击 */
 const Like = (props) => {
 	const id = `${props._id}_${(props.type === 'moment') || (props.type === null) || (props.type === undefined) ? 'moment' : 'comment'}_like`;
+	const disabled = !!props.disabled;
 
 	return (
-		<div className={like.feedback}>
-			<input type={"checkbox"} id={id} onChange={props.onChange} checked={props.checked}/>
+		<div className={`${like.feedback} ${disabled ? like.disabled : ''}`}>
+			<input type={"checkbox"} id={id} onChange={props.onChange} checked={props.checked} disabled={disabled}/>
 			<label htmlFor={id}>
 				<svg
 					viewBox="0 0 27 27"

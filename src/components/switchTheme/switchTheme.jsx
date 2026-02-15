@@ -1,10 +1,15 @@
-import React, {useCallback,useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import sT from './switch.module.less';
 
 
 // 切换主题深浅色
 const SwitchTheme = () => {
 	const [mode, setMode] = useState(localStorage.getItem('themeMode') || 'light');
+
+	// 将当前模式同步到 html[data-theme]，以便使用 CSS 变量覆盖实现主题
+	useEffect(() => {
+		document.documentElement.setAttribute('data-theme', mode);
+	}, [mode]);
 
 	// 将主题的更改存储到localstorage
 	const handleSwitch = useCallback(e => {

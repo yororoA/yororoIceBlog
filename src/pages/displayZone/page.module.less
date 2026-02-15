@@ -73,6 +73,21 @@
         }
 
       }
+
+      .linkLogout {
+        box-sizing: border-box;
+        text-align: center;
+        margin: var(--nav-link-margin);
+        border: var(--nm-input-border);
+        padding: var(--nav-link-padding);
+        border-radius: calc(var(--logo-height) / 2);
+        cursor: pointer;
+        transition: background-color var(--transition-type), box-shadow var(--transition-type);
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.02);
+          box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.02);
+        }
+      }
     }
   }
 

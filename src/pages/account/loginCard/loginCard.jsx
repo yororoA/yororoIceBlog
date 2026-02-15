@@ -3,30 +3,23 @@ import entireCard from './entireLoginCard.module.less';
 import lr from './lrCard.module.less';
 import {useNavigate} from "react-router-dom";
 import { submitLogin } from '../../../utils/submitLogin';
+import { guestLogin } from '../../../utils/guestLogin';
 
 const LoginCard = () => {
 	// navigate to register
 	const navigate = useNavigate();
 
-	// check completion
-	const keys = ['username', 'password', 'checkbox'].sort();
+	// 仅用用户名、密码控制登录按钮是否可点，Remember me 不参与
+	const keys = ['username', 'password'].sort();
 	const [info, setInfo] = useState({});
 	const [completed, setCompleted] = useState(false);
 	const checkCompletion = useCallback(e => {
-		let newInfo;
-		// check completion of the target now
-		if (e.target.id === 'checkbox') {
-			if (e.target.checked === true) newInfo = {...info, [e.target.id]: true};
-			else newInfo = {...info, [e.target.id]: false};
-		} else newInfo = {...info, [e.target.id]: e.target.value.length !== 0};
+		if (e.target.id === 'checkbox') return; // 勾选变化不触发 completed 重算
+		const newInfo = {...info, [e.target.id]: e.target.value.length !== 0};
 		setInfo(newInfo);
-		// check all needs included
 		const infoKeys = Object.keys(newInfo).sort();
-		if (Object.values(newInfo).every(value => value === true)
-			&& infoKeys.length === keys.length && infoKeys.every((k, i) => k === keys[i])) {
-			console.log(true);
-			setCompleted(true);
-		} else setCompleted(false);
+		const done = infoKeys.length === keys.length && infoKeys.every((k, i) => k === keys[i]) && Object.values(newInfo).every(Boolean);
+		setCompleted(!!done);
 	}, [keys, info]);
 
 	// disable space input
@@ -47,12 +40,40 @@ const LoginCard = () => {
 			console.log('Login response:', result);
 			if (result?.ok && result?.data) {
 				const { token, uid } = result.data;
-				if (token) localStorage.setItem('token', token);
-				if (uid) localStorage.setItem('uid', `${uid}`);
+				localStorage.removeItem('guest_token');
+				localStorage.removeItem('guest_uid');
+				const rememberMe = form.elements?.checkbox?.checked === true;
+				if (token) {
+					if (rememberMe) {
+						localStorage.setItem('token', token);
+						sessionStorage.removeItem('token');
+					} else {
+						sessionStorage.setItem('token', token);
+						localStorage.removeItem('token');
+					}
+				}
+				if (uid) {
+					if (rememberMe) {
+						localStorage.setItem('uid', `${uid}`);
+						sessionStorage.removeItem('uid');
+					} else {
+						sessionStorage.setItem('uid', `${uid}`);
+						localStorage.removeItem('uid');
+					}
+				}
 				navigate('/town/moments');
 			}
 		} catch (err) {
 			console.error('Login request failed:', err);
+		}
+	};
+
+	const handleGuestLogin = async () => {
+		try {
+			await guestLogin();
+			navigate('/town/moments');
+		} catch (err) {
+			console.error('Guest login failed:', err);
 		}
 	};
 
@@ -83,6 +104,9 @@ const LoginCard = () => {
 					<section>
 						<button className={`${lr.login} ${completed && lr.completed}`} type={"submit"}>{'Login'}</button>
 					</section>
+					<section>
+						<button type="button" className={lr.guest} onClick={handleGuestLogin}>{'Continue as guest'}</button>
+					</section>
 				</form>
 			</section>
 		</div>
@@ -90,5 +114,3 @@ const LoginCard = () => {
 };
 
 export default LoginCard;
-
-

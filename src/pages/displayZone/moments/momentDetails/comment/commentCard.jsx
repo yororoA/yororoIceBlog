@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import testImg from '../../../../../assets/images/test.jpg';
 import comment from './comment.module.less';
 import IvPreview from "../../../../../components/ui/image_video_preview/ivPreview";
@@ -6,19 +6,54 @@ import Like from "../../../../../components/ui/feedback/like";
 import {CommentsLikedContext} from "../../context/commentsLikedContext";
 import LittlePop from "../../../../../components/ui/pop/littlePop/littlePop";
 import CommentBelong from "../../../../../components/ui/pop/littlePop/commentBelong/commentBelong";
-
+import {sendCommentLike} from "../../../../../utils/sendCommentLike";
+import {formatDateTime} from "../../../../../utils/formatDateTime";
+import { SuccessBoardContext } from "../../../../../components/ui/pop/status/successBoardContext";
+import { isGuest } from "../../../../../utils/auth";
+import adminImg from '../../../../../assets/images/admin.png';
+import binesImg from '../../../../../assets/images/bines.png';
 
 const CommentCard = ({infos}) => {
 	// {content, createdAt, likes, momentId, uid, username, _id}
 	const {content, createdAt, uid, username, likes, _id} = infos;
+	const admin = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
+	const bines = 'u_mlkpl8fl_52a3d8c2068b281a';
+	const headshotType = admin.includes(uid) ? adminImg : bines === uid ? binesImg : testImg;
 	const key = `${uid}_comment_${createdAt}`
-	// todo 评论点赞处理
+	// 评论点赞处理
 	const {likedComments, commentLikedChange} = useContext(CommentsLikedContext);
-	const [liked, setLiked] = useState(likedComments.includes(_id));
-	const onChange = (e) => {
+	const { showSuccess } = useContext(SuccessBoardContext);
+	const isLiked = likedComments.includes(_id);
+	const [likeCount, setLikeCount] = useState(likes);
+
+	const onChange = async (e) => {
 		const checked = e.target.checked;
-		setLiked(checked);
+		const prevLiked = isLiked;
+		const prevCount = likeCount;
+
+		// 先更新本地上下文，保证交互流畅
 		commentLikedChange(checked, _id);
+
+		try {
+			const result = await sendCommentLike(_id, checked);
+			if (result.ok && result.data && result.data.data) {
+				const {likes: serverLikes, hasLiked} = result.data.data;
+				if (typeof serverLikes === 'number') setLikeCount(serverLikes);
+				// 以服务端 hasLiked 为准同步上下文
+				if (typeof hasLiked === 'boolean') {
+					commentLikedChange(hasLiked, _id);
+				}
+				if (checked) showSuccess('Liked');
+			} else {
+				// 请求失败：回滚本地状态
+				commentLikedChange(prevLiked, _id);
+				setLikeCount(prevCount);
+			}
+		} catch (err) {
+			console.error('发送评论点赞失败:', err);
+			commentLikedChange(prevLiked, _id);
+			setLikeCount(prevCount);
+		}
 	}
 
 	// todo 评论回复
@@ -27,18 +62,23 @@ const CommentCard = ({infos}) => {
 	const endReply = () => setOR(false);
 
 	// todo 评论点赞, 评论嵌套
+
+	const createdTimeForDisplay = formatDateTime(createdAt);
 	return (
 		<div className={comment.item} id={key} key={key}>
-			<img src={testImg} alt="" className={comment.headshot}/>
+			<img src={headshotType} alt="headshot" className={comment.headshot}/>
 			<div className={comment.content}>
 				<div className={comment.left}>
-					<h4>
-						<em>{username}</em>
-					</h4>
+					<div className={comment.meta}>
+						<h4>
+							<em>{username}</em>
+						</h4>
+						{createdTimeForDisplay && <span className={comment.date}>{createdTimeForDisplay}</span>}
+					</div>
 					<p className={comment.text}>{content}</p>
 				</div>
 				<div className={comment.right}>
-					<Like type={'comment'} _id={_id} likes={likes} onChange={onChange} checked={liked}/>
+					<Like type={'comment'} _id={_id} likes={likeCount} onChange={onChange} checked={isLiked} disabled={isGuest()}/>
 					<p className={comment.reply} onClick={() => setOR(true)}>{'reply'}</p>
 				</div>
 				{/*<div className={comment.imgPre}>*/}

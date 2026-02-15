@@ -5,6 +5,10 @@
     --h4-fontsize: 10rem;
     --p-fontsize: 8rem;
 
+    /* 全局文本颜色（浅色模式默认） */
+    --text-color: rgba(15, 23, 42, 0.95);
+    --heading-color: rgba(15, 23, 42, 1);
+
     --switchCommon-margin: 5rem 0;
     --nav-link-margin: 3rem 0;
     --nav-link-padding: 8rem;
@@ -40,7 +44,10 @@
     --moments-live-radius: 2rem;
     --moments-card-content_footer-SeperatorLine: 1rem rgba(227, 226, 225, .8) solid;
     --moments-card_comment-SeperatorLine: 1rem rgba(0, 0, 0, 0.8) dotted;
-    --transition-type: .1s ease-in-out;
+    /* moments 元信息（时间等）的字号/颜色，略小于常规段落文字 */
+    --moments-meta-fontsize: 6rem; /* 对比 p 字体 8rem 略小 */
+    --moments-meta-text-color: rgba(125,125,125,.7);
+    --transition-type: .3s ease-in-out;
 
     --backdrop: rgba(225, 225, 225, .5);
 
@@ -88,4 +95,35 @@
     --ack-shadow: 0 1rem 2rem rgba(0,0,0,.04);
     --ack-disabled-opacity: .6;
     --ack-focus-ring-size: 3rem;        /* 焦点环粗细 */
+
+    /* 状态提示板（Success/Failed Board）相关变量 */
+    --statusPortal-width: 15vw;
+    --statusBoard-fontsize: 6rem;              /* 提示文案字号，略小于常规段落 */
+    --statusBoard-icon-fontsize: 7rem;         /* 图标字号 */
+    --statusBoard-anim-duration: .4s;         /* 进出场动画时长 */
+}
+
+/* 深色模式变量：通过 html[data-theme="dark"] 激活 */
+:root[data-theme='dark'] {
+    /* 背景与容器 */
+    --entire-bgc: rgba(18, 19, 22, 1);
+    --nav-bgc: rgba(31, 32, 36, 0.9);
+    --pop-bgc: rgba(31, 32, 36, 0.94);
+    --backdrop-bgc: rgba(0, 0, 0, 0.7);
+    --backdrop: rgba(0, 0, 0, 0.6);
+
+    /* 文本颜色（深色背景上的前景色） */
+    --text-color: rgba(243, 244, 246, 0.95);
+    --heading-color: rgba(248, 250, 252, 1);
+    --moments-meta-text-color: rgba(209, 213, 219, 0.8);
+
+    /* moments 卡片 */
+    --moments-card-bgc: rgba(24, 25, 28, 1);
+    --moments-card-content_footer-SeperatorLine: 1rem rgba(60, 60, 60, .9) solid;
+    --moments-card_comment-SeperatorLine: 1rem rgba(250, 250, 250, 0.35) dotted;
+
+    /* newMoment / 上传预览等 */
+    --nm-iv-bgc: rgba(255, 255, 255, 0.03);
+    --nm-iv-label-color: rgba(229, 231, 235, .8);
+    --nm-iv-label-hover-bgc: rgba(148, 163, 184, .22);
 }

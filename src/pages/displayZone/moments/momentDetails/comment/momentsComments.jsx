@@ -5,10 +5,13 @@ import CommonBtn from "../../../../../components/btn/commonBtn/commonBtn";
 import {addComment} from "../../../../../utils/addComment";
 import {getComments} from "../../../../../utils/getComments";
 import {MomentDetailsCtx} from "../../../../../components/pagesCard/moments/content/momentsCard";
+import { SuccessBoardContext } from "../../../../../components/ui/pop/status/successBoardContext";
+import { isGuest } from "../../../../../utils/auth";
 
 const MomentsComments = () => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames}
 	const {momentItem, setCommentToDt} = useContext(MomentDetailsCtx);
+	const { showSuccess } = useContext(SuccessBoardContext);
 	const {_id} = momentItem;
 	const comments = momentItem.comments;
 
@@ -51,8 +54,9 @@ const MomentsComments = () => {
 			setContent('');
 			const new_id = resp.data._id;
 			setCommentToDt(new_id);
+			showSuccess('Commented');
 		}
-	}, [_id, content, setCommentToDt]);
+	}, [_id, content, setCommentToDt, showSuccess]);
 
 	return (
 		<div className={card.entire} onClick={e => e.stopPropagation()}>
@@ -62,12 +66,14 @@ const MomentsComments = () => {
 					{comments.length === 0 ? <h4>{'this moment has no comments yet...'}</h4> : elements}
 				</section>
 			</div>
-			<div className={card.cAll}>
-				<input type="textarea" id={'livComment'} placeholder={'Click to leave ur comment'} onChange={handleComment}
-							 value={content}/>
-				<label htmlFor="livComment"></label>
-				<CommonBtn text={'Send'} onClick={handleSend} className={`${hasContent ? card.btnActive : card.btnInacitive}`}/>
-			</div>
+			{!isGuest() && (
+				<div className={card.cAll}>
+					<input type="textarea" id={'livComment'} placeholder={'Click to leave ur comment'} onChange={handleComment}
+								 value={content}/>
+					<label htmlFor="livComment"></label>
+					<CommonBtn text={'Send'} onClick={handleSend} className={`${hasContent ? card.btnActive : card.btnInacitive}`}/>
+				</div>
+			)}
 		</div>
 	);
 };

@@ -1,0 +1,98 @@
+.successBoard,
+.failedBoard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6rem;
+  margin: 3rem 0;
+  padding: 4rem 5rem;
+  border-radius: 6rem;
+  font-size: var(--statusBoard-fontsize);
+  line-height: 1.6;
+}
+.enter {
+  animation: statusBoard-enter var(--statusBoard-anim-duration) var(--transition-type) both;
+}
+.exit {
+  animation: statusBoard-exit var(--statusBoard-anim-duration) var(--transition-type) forwards;
+}
+.successBoard {
+  border: 1px solid #a7f3d0;
+  background: #ecfdf3;
+  color: #064e3b;
+  box-shadow: 0 1rem 2rem rgba(15, 118, 110, 0.12);
+}
+.failedBoard {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #7f1d1d;
+  box-shadow: 0 1rem 2rem rgba(185, 28, 28, 0.12);
+}
+.iconWrapper {
+  flex: 0 0 auto;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.successBoard .iconWrapper {
+  background: #bbf7d0;
+}
+.failedBoard .iconWrapper {
+  background: #fecaca;
+}
+.icon {
+  font-size: var(--statusBoard-icon-fontsize);
+  font-weight: 700;
+}
+.successBoard .icon {
+  color: #047857;
+}
+.failedBoard .icon {
+  color: #b91c1c;
+}
+.content {
+  flex: 1 1 auto;
+}
+.message {
+  margin: 0;
+}
+@keyframes statusBoard-enter {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes statusBoard-exit {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+/* 多个状态板堆叠时的容器：下移一个导航栏高度，从上到下排列 */
+.boardStack {
+  position: fixed;
+  top: var(--logo-height);
+  right: 0;
+  width: var(--statusPortal-width);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 12rem 0 0 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+.boardStack > * {
+  pointer-events: auto;
+}
