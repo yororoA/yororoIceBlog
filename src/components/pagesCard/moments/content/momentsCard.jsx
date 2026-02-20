@@ -77,13 +77,13 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 	}
 
 
-	// 获取 moment 对应文件：先读 context 缓存，无则请求并写入缓存；游客模式不请求
+	// 获取 moment 对应文件：先读 context 缓存，无则请求并写入缓存
 	useEffect(() => {
 		if (cachedIvs !== undefined) {
 			setIvs(cachedIvs);
 			return;
 		}
-		if (filenames.length === 0 || isGuest()) return;
+		if (filenames.length === 0) return;
 		async function f() {
 			const result = await getFiles(filenames, 'moments');
 			const list = result || [];

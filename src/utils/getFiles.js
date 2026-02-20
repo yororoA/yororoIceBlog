@@ -4,16 +4,12 @@ import {base64toObjectUrl} from "./base64toObjectUrl";
 * @filenames: 文件名数组(array of filename)
 * @from: 请求来源,如`moments`(source of request, such as `moments`)*/
 export async function getFiles(filenames, from) {
-	const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/files`;
+	const params = new URLSearchParams();
+	params.set('from', from);
+	params.set('filenames', filenames.join(','));
+	const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/files?${params.toString()}`;
 	const resp = await fetch(api, {
-		method:"POST",
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body:JSON.stringify({
-			filenames: filenames,
-			from: from
-		})
+		method: 'GET',
 	});
 	if (resp.ok){
 		const files = await resp.json();
