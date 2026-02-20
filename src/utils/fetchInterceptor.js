@@ -53,8 +53,8 @@ window.fetch = async function (input, init) {
 				}
 			}
 		}
-		if (resp.headers['X-Refreshed-Token '] !== undefined) {
-			const refreshed = resp.headers['X-Refreshed-Token '];
+		if (resp.headers['X-Refreshed-Token'] !== undefined) {
+			const refreshed = resp.headers['X-Refreshed-Token'];
 			if (localStorage.getItem('token')) localStorage.setItem('token', refreshed);
 			if (sessionStorage.getItem('token')) sessionStorage.setItem('token', refreshed);
 		}
