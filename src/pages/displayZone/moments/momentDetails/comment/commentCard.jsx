@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
-import testImg from '../../../../../assets/images/test.jpg';
 import comment from './comment.module.less';
+import {getAvatarColor} from '../../../../../utils/avatarColor';
 import IvPreview from "../../../../../components/ui/image_video_preview/ivPreview";
 import Like from "../../../../../components/ui/feedback/like";
 import {CommentsLikedContext} from "../../context/commentsLikedContext";
@@ -18,7 +18,7 @@ const CommentCard = ({infos}) => {
 	const {content, createdAt, uid, username, likes, _id} = infos;
 	const admin = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 	const bines = 'u_mlkpl8fl_52a3d8c2068b281a';
-	const headshotType = admin.includes(uid) ? adminImg : bines === uid ? binesImg : testImg;
+	const headshotType = admin.includes(uid) ? adminImg : bines === uid ? binesImg : null;
 	const key = `${uid}_comment_${createdAt}`
 	// 评论点赞处理
 	const {likedComments, commentLikedChange} = useContext(CommentsLikedContext);
@@ -66,7 +66,13 @@ const CommentCard = ({infos}) => {
 	const createdTimeForDisplay = formatDateTime(createdAt);
 	return (
 		<div className={comment.item} id={key} key={key}>
-			<img src={headshotType} alt="headshot" className={comment.headshot}/>
+			{headshotType ? (
+				<img src={headshotType} alt="headshot" className={comment.headshot}/>
+			) : (
+				<div className={comment.avatarInitial} style={{backgroundColor: getAvatarColor(uid)}}>
+					{username ? username.charAt(0).toUpperCase() : '?'}
+				</div>
+			)}
 			<div className={comment.content}>
 				<div className={comment.left}>
 					<div className={comment.meta}>

@@ -9,6 +9,9 @@ const Register = lazy(() => import('./pages/account/loginCard/registerCard'));
 const DisplayZone = lazy(() => import('./pages/displayZone/displayZone'));
 const Moments = lazy(() => import('./pages/displayZone/moments/moments'));
 const GalleryEntire = lazy(() => import('./pages/displayZone/gallery/context/galleryContext'));
+const Knowledge = lazy(() => import('./pages/displayZone/knowledge/knowledge'));
+const Archive = lazy(() => import('./pages/displayZone/archive/archive'));
+const About = lazy(() => import('./pages/displayZone/about/about'));
 
 // 创建一个在Router内部的组件来处理导航逻辑
 function AppContent() {
@@ -31,6 +34,9 @@ function AppContent() {
 				<Route path='/town' element={<DisplayZone />}>
 					<Route path='moments' element={<Moments />} />
 					<Route path='gallery' element={<GalleryEntire />} />
+					<Route path='knowledge' element={<Knowledge />} />
+					<Route path='archive' element={<Archive />} />
+					<Route path='about' element={<About />} />
 				</Route>
 
 

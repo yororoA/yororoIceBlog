@@ -18,7 +18,7 @@ const Pop = ({children, isLittle, onClose}) => {
 
 	return createPortal((
 		<div className={pop.entire} onClick={onClose}>
-			<div className={pop.item}>
+			<div className={pop.item} onClick={e => e.stopPropagation()}>
 				{children}
 			</div>
 		</div>

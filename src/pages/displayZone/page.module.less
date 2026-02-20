@@ -29,14 +29,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 16px;
       width: 90%;
       max-width: 1200px;
       min-height: var(--logo-height);
       margin: 0 auto;
-      padding: 8px 16px;
+      padding: 6px 16px;
       box-sizing: border-box;
-      border: var(--nm-input-border);
 
       img.logo {
         height: var(--logo-height);
@@ -47,7 +46,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 4px;
+        gap: 6px;
         flex: 1;
         min-width: 0;
         flex-wrap: wrap;
@@ -55,36 +54,48 @@
         & span {
           flex-shrink: 0;
           text-align: center;
-          margin: var(--nav-link-margin);
-          border: var(--nm-input-border);
-          padding: var(--nav-link-padding);
-          border-radius: calc(var(--logo-height) / 2);
+          padding: 6px 14px;
+          border-radius: 6px;
           box-sizing: border-box;
-          background-clip: padding-box;
           cursor: pointer;
-          transition: background-color var(--transition-type), box-shadow var(--transition-type);
+          color: var(--text-color-secondary);
+          font-weight: 500;
+          transition: color var(--transition-type), background-color var(--transition-type);
 
           &:hover {
-            background-color: rgba(0, 0, 0, 0.02);
-            box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.02);
+            color: var(--text-color);
+            background-color: rgba(0, 0, 0, 0.04);
           }
         }
+      }
+
+      .activeLink {
+        color: var(--accent-color) !important;
+        background-color: var(--accent-color-light) !important;
+        font-weight: 600 !important;
+      }
+
+      .navRight {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
       }
 
       .linkLogout {
         flex-shrink: 0;
         box-sizing: border-box;
         text-align: center;
-        margin: var(--nav-link-margin);
-        border: var(--nm-input-border);
-        padding: var(--nav-link-padding);
-        border-radius: calc(var(--logo-height) / 2);
+        padding: 4px 12px;
+        border-radius: 6px;
         cursor: pointer;
-        transition: background-color var(--transition-type), box-shadow var(--transition-type);
+        color: var(--text-color-secondary);
+        font-size: var(--h5-fontsize);
+        transition: color var(--transition-type), background-color var(--transition-type);
 
         &:hover {
-          background-color: rgba(0, 0, 0, 0.02);
-          box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.02);
+          color: var(--text-color);
+          background-color: rgba(0, 0, 0, 0.04);
         }
       }
     }

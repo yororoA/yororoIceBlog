@@ -6,6 +6,7 @@ import {deleteMoment} from "../../../../../utils/deleteMoment";
 import {MomentDetailsCtx} from "../../../../../components/pagesCard/moments/content/momentsCard";
 import { SuccessBoardContext } from "../../../../../components/ui/pop/status/successBoardContext";
 import { getUid, isGuest } from "../../../../../utils/auth";
+import {getAvatarColor} from '../../../../../utils/avatarColor';
 import card from './content.module.less';
 
 
@@ -56,7 +57,13 @@ const Content = ({ headshotType }) => {
 		<div className={card.entire} onClick={e=>e.stopPropagation()}>
 			<div className={card.content}>
 				{/* alt=username */}
-				<img src={headshotType} alt="headshot" className={card.headshot} id={uid}/>
+				{headshotType ? (
+					<img src={headshotType} alt="headshot" className={card.headshot} id={uid}/>
+				) : (
+					<div className={card.avatarInitial} id={uid} style={{backgroundColor: getAvatarColor(uid)}}>
+						{username ? username.charAt(0).toUpperCase() : '?'}
+					</div>
+				)}
 				<div className={card.body}>
 					<h4>{username}</h4>
 					<u><h4>{title}</h4></u>

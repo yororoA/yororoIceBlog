@@ -4,6 +4,10 @@ import IvPreview from '../../../components/ui/image_video_preview/ivPreview';
 import { base64toObjectUrl } from '../../../utils/base64toObjectUrl';
 import { GalleryContext } from './context/galleryContext';
 import { ScrollContainerContext } from '../scrollContainerContext';
+import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
+import { isGuest, getUid } from '../../../utils/auth';
+import CommonBtn from '../../../components/btn/commonBtn/commonBtn';
+import addContent from '../../../components/btn/addContent.module.less';
 import './gallery.less';
 
 const mergeFilesWithUsername = (data) =>
@@ -21,9 +25,16 @@ const mergeFilesWithUsername = (data) =>
 const Gallery = () => {
   const [ivs, setIvs, hasMore, setHasMore] = useContext(GalleryContext);
   const scrollContainerRef = useContext(ScrollContainerContext);
+  const { showSuccess, showFailed } = useContext(SuccessBoardContext);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const loadMoreRef = useRef(null);
   const initialDoneRef = useRef(false);
+  const fileInputRef = useRef(null);
+
+  const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
+  const currentUid = getUid();
+  const canUpload = !isGuest() && ADMIN_UIDS.includes(currentUid);
 
   const appendGallery = useCallback(async () => {
     if (loading || !hasMore) return;
@@ -78,10 +89,61 @@ const Gallery = () => {
     return () => observer.disconnect();
   }, [hasMore, loading, appendGallery, scrollContainerRef, prs.length]);
 
+  // 上传文件
+  const handleUpload = useCallback(async (e) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+      }
+
+      const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/gallery/post`;
+      const resp = await fetch(api, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!resp.ok) {
+        const errBody = await resp.json().catch(() => ({}));
+        throw new Error(errBody.message || '上传失败');
+      }
+
+      showSuccess(`${files.length} 张图片上传成功`);
+      // 重置 gallery 状态并重新加载
+      setIvs([]);
+      setHasMore(true);
+      initialDoneRef.current = false;
+    } catch (err) {
+      showFailed(err.message || '上传失败');
+    } finally {
+      setUploading(false);
+      // 清空 input 以便再次选择相同文件
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }, [showSuccess, showFailed, setIvs, setHasMore]);
+
   return (
     <div className="gallery-page">
       <section id="header">
         <span>Gallery</span>
+        {canUpload && (
+          <div className={addContent.container} onClick={() => fileInputRef.current?.click()}>
+            <CommonBtn className={addContent.new} text={uploading ? 'Uploading...' : 'Upload'} />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,video/*"
+              multiple
+              style={{ display: 'none' }}
+              onChange={handleUpload}
+              disabled={uploading}
+            />
+          </div>
+        )}
       </section>
       <section id="gallery" className="gallery-page__grid">
         {prs.length > 0 ? (

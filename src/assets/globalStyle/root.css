@@ -3,11 +3,36 @@
     --h2-fontsize: 25rem;
     --h3-fontsize: 15rem;
     --h4-fontsize: 10rem;
+    --h5-fontsize: 8rem;
+    --h6-fontsize: 6rem;
     --p-fontsize: 8rem;
+
+    /* 主题色 */
+    --accent-color: rgba(0, 123, 255, 1);
+    --accent-color-hover: rgba(0, 100, 220, 1);
+    --accent-color-light: rgba(0, 123, 255, 0.1);
+    --accent-color-lighter: rgba(0, 123, 255, 0.08);
+    --accent-color-border: rgba(0, 123, 255, 0.5);
+    --accent-color-active: rgba(0, 123, 255, 0.2);
+    --accent-color-active-border: rgba(0, 123, 255, 0.8);
 
     /* 全局文本颜色（浅色模式默认） */
     --text-color: rgba(15, 23, 42, 0.95);
     --heading-color: rgba(15, 23, 42, 1);
+    --text-color-secondary: rgba(100, 116, 139, 0.85);
+
+    /* 卡片 / 输入框 / 代码块背景 */
+    --card-bgc: rgba(255, 255, 255, 0.7);
+    --input-bgc: rgba(245, 245, 245, 0.8);
+    --code-bgc: rgba(0, 0, 0, 0.06);
+    --tag-bgc: rgba(0, 0, 0, 0.05);
+
+    /* 卡片阴影 */
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+    /* 渐变装饰（about 头像占位） */
+    --gradient-accent: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(156, 39, 176, 0.8));
 
     --switchCommon-margin: 5rem 0;
     --nav-link-margin: 3rem 0;
@@ -115,7 +140,18 @@
     /* 文本颜色（深色背景上的前景色） */
     --text-color: rgba(243, 244, 246, 0.95);
     --heading-color: rgba(248, 250, 252, 1);
+    --text-color-secondary: rgba(209, 213, 219, 0.7);
     --moments-meta-text-color: rgba(209, 213, 219, 0.8);
+
+    /* 卡片 / 输入框 / 代码块背景（深色） */
+    --card-bgc: rgba(24, 25, 28, 1);
+    --input-bgc: rgba(38, 39, 43, 0.9);
+    --code-bgc: rgba(255, 255, 255, 0.06);
+    --tag-bgc: rgba(255, 255, 255, 0.06);
+
+    /* 阴影（深色） */
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    --card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.35);
 
     /* moments 卡片 */
     --moments-card-bgc: rgba(24, 25, 28, 1);

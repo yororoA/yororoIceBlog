@@ -200,19 +200,20 @@ const DisplayZone = () => {
 					<nav>
 						<img src={logo} className={page.logo} alt="logo" />
 						<div className={page.link} onClick={handleRedirect}>
-							{/* 生活动态 */}
-							<span id={'moments'}>{'Moments'}</span>
-							{/* 美图, 相册等图片展示 */}
-							<span id={'gallery'}>{'Gallery'}</span>
-							{/* 技术博客 */}
-							<span id={'knowledge'}>{'Knowledge'}</span>
-							{/* 归档 */}
-							<span id={'archive'}>{'Archive'}</span>
-							{/* 个人简介等 */}
-							<span id={'about'}>{'About'}</span>
+							{['moments', 'gallery', 'knowledge', 'archive', 'about'].map(name => (
+								<span
+									key={name}
+									id={name}
+									className={location.pathname.includes(name) ? page.activeLink : ''}
+								>
+									{name.charAt(0).toUpperCase() + name.slice(1)}
+								</span>
+							))}
 						</div>
-						<span className={page.linkLogout} onClick={handleLogout}>{'Log out'}</span>
-						<SwitchTheme />
+						<div className={page.navRight}>
+							<span className={page.linkLogout} onClick={handleLogout}>{'Log out'}</span>
+							<SwitchTheme />
+						</div>
 					</nav>
 				</div>
 				<main>

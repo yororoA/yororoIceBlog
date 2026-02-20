@@ -1,8 +1,8 @@
 import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
-import testImg from '../../../../assets/images/test.jpg';
 import adminImg from '../../../../assets/images/admin.png';
 import binesImg from '../../../../assets/images/bines.png';
 import card from './card.module.less';
+import {getAvatarColor} from '../../../../utils/avatarColor';
 import Like from "../../../ui/feedback/like";
 import IvPreview from "../../../ui/image_video_preview/ivPreview";
 import MomentIdContext from "../../../../pages/displayZone/moments/context/momentIdContext";
@@ -12,6 +12,7 @@ import { getUid, isGuest } from "../../../../utils/auth";
 import {getFiles} from "../../../../utils/getFiles";
 import {sendMomentLike} from "../../../../utils/sendMomentLike";
 import {deleteMoment} from "../../../../utils/deleteMoment";
+import {incrementMomentView} from "../../../../utils/incrementMomentView";
 import Pop from "../../../ui/pop/pop";
 import MomentDetails from "../../../../pages/displayZone/moments/momentDetails/momentDetails";
 import {formatDateTime} from "../../../../utils/formatDateTime";
@@ -27,9 +28,10 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 	const {uid, username, content, title, createdAt, updatedAt, _id, likes, filenames} = momentItem;
 	const admin = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 	const bines = 'u_mlkpl8fl_52a3d8c2068b281a';
-	const headshotType = admin.includes(uid) ? adminImg : bines === uid ? binesImg : testImg;
+	const headshotType = admin.includes(uid) ? adminImg : bines === uid ? binesImg : null;
 	const cachedIvs = momentsFilesCache[_id];
 	const [ivs, setIvs] = useState(() => cachedIvs ?? []);
+	const [viewCount, setViewCount] = useState(momentItem.views || 0);
 
 	// 文字截断  只有 preview=true (大页面预览)时启用
 	const contentForRender = content.split(/\r\n|\r|\n/);
@@ -98,6 +100,7 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 		const checked = e.target.checked;
 		setLike(checked);
 		setLikeNumbers(prev => checked ? prev + 1 : prev - 1);
+		setViewCount(prev => prev + 1);
 		await sendMomentLike(_id, checked);
 		if (checked) showSuccess('Liked');
 	}, [_id, showSuccess]);
@@ -122,6 +125,9 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 		e.stopPropagation();
 		const url = `${window.location.origin}/town/moments?mid=${_id}`;
 		navigator.clipboard.writeText(url).then(() => showSuccess('Link copied')).catch(() => {});
+		// 分享 → views +1
+		incrementMomentView(_id);
+		setViewCount(prev => prev + 1);
 	}, [_id, showSuccess]);
 
 	const removeFromListAndClose = useCallback(() => {
@@ -142,10 +148,16 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 
 	return (
 		<>
-			<div className={card.entire} onClick={preview ? () => { setShowDetails(true); onOpenDetails?.(_id); } : undefined}>
+			<div className={card.entire} onClick={preview ? () => { setShowDetails(true); onOpenDetails?.(_id); incrementMomentView(_id); setViewCount(prev => prev + 1); } : undefined}>
 				<div className={card.content}>
 					{/* alt=username */}
-					<img src={headshotType} alt="headshot" className={card.headshot} id={uid}/>
+					{headshotType ? (
+						<img src={headshotType} alt="headshot" className={card.headshot} id={uid}/>
+					) : (
+						<div className={card.avatarInitial} id={uid} style={{backgroundColor: getAvatarColor(uid)}}>
+							{username ? username.charAt(0).toUpperCase() : '?'}
+						</div>
+					)}
 					<div className={card.body}>
 						<h4>{username}</h4>
 						<u><h4>{title}</h4></u>
@@ -158,6 +170,7 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 				</div>
 				<div className={card.footer} onClick={e=>e.stopPropagation()}>
 					<Like onChange={onFeedBackChange} checked={like} likes={likeNumbers} _id={_id} disabled={isGuest()}/>
+					<span className={card.viewCount}>👁 {viewCount}</span>
 					<div className={card.actions}>
 						{canDelete && (
 							<button type="button" className={card.actionBtn} onClick={handleDelete}>{'删除'}</button>

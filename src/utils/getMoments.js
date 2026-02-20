@@ -10,9 +10,9 @@ export async function getMoments() {
 		// const {uid,username, comments, content, title, createdAt, _id, likes, filenames, updatedAt}
 		const rd = [];
 		for (const datum of data.data) {
-			const {uid, username, comments, content, title, createdAt, _id, likes, filenames, updatedAt} = datum;
+			const {uid, username, comments, content, title, createdAt, _id, likes, views, filenames, updatedAt} = datum;
 			rd.push({
-				uid, username, title, content, _id, likes, comments,
+				uid, username, title, content, _id, likes, views,  comments,
 				createdAt: new Date(createdAt),
 				updatedAt: new Date(updatedAt),
 				filenames: filenames===undefined?[]:Object.keys(filenames)

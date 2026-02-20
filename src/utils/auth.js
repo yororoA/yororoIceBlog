@@ -7,6 +7,9 @@ export function getUid() {
 /** 是否为游客模式（仅能浏览，不能发帖/点赞/评论/删除） */
 export function isGuest() {
 	if (typeof localStorage === 'undefined') return false;
+	// 如果有正式 token，即使残留了 guest_token 也不算游客
+	const hasRealToken = !!(localStorage.getItem('token') || sessionStorage.getItem('token'));
+	if (hasRealToken) return false;
 	return !!localStorage.getItem('guest_token');
 }
 

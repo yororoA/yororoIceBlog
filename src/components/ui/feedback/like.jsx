@@ -11,7 +11,7 @@ import like from './like.module.less';
 * `likes`
 * `disabled` 为 true 时仅展示点赞数，不可点击 */
 const Like = (props) => {
-	const id = `${props._id}_${(props.type === 'moment') || (props.type === null) || (props.type === undefined) ? 'moment' : 'comment'}_like`;
+	const id = `${props._id}_${props.type || 'moment'}_like`;
 	const disabled = !!props.disabled;
 
 	return (

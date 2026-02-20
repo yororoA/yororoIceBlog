@@ -58,9 +58,75 @@
     margin: 2rem 0;
   }
 
+  li {
+    margin: 1rem 0;
+  }
+
   a {
     color: var(--nm-accent);
     text-decoration: underline;
+  }
+
+  code {
+    background: var(--code-bgc);
+    padding: 1rem 3rem;
+    border-radius: 2rem;
+    font-size: 0.9em;
+    font-family: 'Consolas', 'Monaco', monospace;
+  }
+
+  pre {
+    background: var(--code-bgc);
+    padding: 6rem 8rem;
+    border-radius: 4rem;
+    overflow-x: auto;
+    margin: 4rem 0;
+
+    code {
+      background: none;
+      padding: 0;
+    }
+  }
+
+  blockquote {
+    border-left: 2rem solid var(--accent-color-border);
+    margin: 4rem 0;
+    padding: 2rem 6rem;
+    color: var(--text-color-secondary);
+    background: var(--accent-color-lighter);
+    border-radius: 0 4rem 4rem 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4rem 0;
+
+    th, td {
+      border: var(--nm-input-border);
+      padding: 3rem 5rem;
+      text-align: left;
+    }
+
+    th {
+      background: var(--tag-bgc);
+      font-weight: 600;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    border-radius: 4rem;
+  }
+
+  hr {
+    border: none;
+    border-top: var(--nm-input-border);
+    margin: 6rem 0;
+  }
+
+  input[type="checkbox"] {
+    margin-right: 3rem;
   }
 }
 
