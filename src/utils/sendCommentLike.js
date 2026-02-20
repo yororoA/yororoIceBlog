@@ -4,7 +4,7 @@
  * 返回：{ ok: boolean, data?: { commentId, likes, hasLiked } }
  */
 export async function sendCommentLike(commentId, like) {
-	const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/comment/like`;
+	const api = `${process.env.REACT_APP_SERVER_HOST}/api/moments/comment/like`;
 
 	try {
 		const resp = await fetch(api, {

@@ -33,7 +33,7 @@ const LoginCard = () => {
 		e.preventDefault();
 		try {
 			const form = e.currentTarget;
-			const action = form.action || 'http://localhost:9999/api/login';
+			const action = form.action || `${process.env.REACT_APP_SERVER_HOST}/api/login`;
 			const formData = new FormData(form);
 			const payload = Object.fromEntries(formData.entries());
 			const result = await submitLogin(payload, action);
@@ -85,7 +85,7 @@ const LoginCard = () => {
 				<h3 className={entireCard.lr} onClick={() => navigate('/account/register')}>{'Sign Up'}</h3>
 			</section>
 			<section className={lr.lr}>
-				<form onChange={checkCompletion} onKeyDown={disableSpace} onSubmit={handleLoginSubmit} action={'http://localhost:9999/api/login'} method={'POST'}>
+				<form onChange={checkCompletion} onKeyDown={disableSpace} onSubmit={handleLoginSubmit} action={`${process.env.REACT_APP_SERVER_HOST}/api/login`} method={'POST'}>
 					<section>
 						<label htmlFor="username">{'Username'}</label>
 						<input type="text" name="username" id="username"/>

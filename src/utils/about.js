@@ -1,5 +1,5 @@
 export async function getBlogInfo() {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/about`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/about`;
   const response = await fetch(api, { method: 'GET' });
   
   if (!response.ok) {
@@ -11,7 +11,7 @@ export async function getBlogInfo() {
 }
 
 export async function updateBlogInfo(blogData) {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/about`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/about`;
   const response = await fetch(api, {
     method: 'PUT',
     headers: {

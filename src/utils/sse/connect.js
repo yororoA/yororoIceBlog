@@ -4,7 +4,7 @@ let abortCtrl;
 export async function connectSSE(dispatch) {
 	if (abortCtrl !== undefined) disconnectSSE();
 
-	const url = `${process.env.REACT_APP_SERVER_HOST}:9999/api/sse/subscribe`;
+	const url = `${process.env.REACT_APP_SERVER_HOST}/api/sse/subscribe`;
 	abortCtrl = new AbortController();
 	try {
 		const res = await fetch(url, {

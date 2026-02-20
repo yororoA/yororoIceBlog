@@ -4,7 +4,7 @@
  * @param {boolean} like - 是否点赞
  */
 export async function sendArticleLike(_id, like) {
-	const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/knowledge/like`;
+	const api = `${process.env.REACT_APP_SERVER_HOST}/api/knowledge/like`;
 	const resp = await fetch(api, {
 		method: 'POST',
 		headers: {

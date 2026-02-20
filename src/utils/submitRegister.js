@@ -1,5 +1,5 @@
 // Submit registration payload as JSON to the given endpoint and return a structured response
-export async function submitRegister(data, actionUrl = 'http://localhost:9999/api/register') {
+export async function submitRegister(data, actionUrl = `${process.env.REACT_APP_SERVER_HOST}/api/register`) {
   const resp = await fetch(actionUrl, {
     method: 'POST',
     headers: {

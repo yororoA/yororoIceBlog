@@ -5,7 +5,7 @@
  * @returns {Promise<{ message: string, data?: { momentId, deleted } }>}
  */
 export async function deleteMoment(momentId, moment_uid) {
-	const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/delete`;
+	const api = `${process.env.REACT_APP_SERVER_HOST}/api/moments/delete`;
 	const resp = await fetch(api, {
 		method: 'DELETE',
 		headers: { 'Content-Type': 'application/json' },

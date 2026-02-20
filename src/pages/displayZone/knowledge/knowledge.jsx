@@ -119,14 +119,14 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
     try {
       const formData = new FormData();
       formData.append('image', file);
-      const resp = await fetch(`${process.env.REACT_APP_SERVER_HOST}:9999/api/knowledge/upload-image`, {
+      const resp = await fetch(`${process.env.REACT_APP_SERVER_HOST}/api/knowledge/upload-image`, {
         method: 'POST',
         body: formData
       });
       const result = await resp.json();
       if (!result.success) throw new Error(result.message || '上传失败');
 
-      const imageUrl = `${process.env.REACT_APP_SERVER_HOST}:9999${result.data.url}`;
+      const imageUrl = `${process.env.REACT_APP_SERVER_HOST}${result.data.url}`;
       const mdImage = `![${file.name}](${imageUrl})`;
 
       // 在光标位置插入

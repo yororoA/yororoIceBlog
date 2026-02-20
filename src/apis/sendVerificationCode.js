@@ -2,8 +2,7 @@
  * Send verification code to user's email via backend POST API.
  *
  * Env:
- * - REACT_APP_SERVER_HOST: backend host (with or without protocol). Example: http://localhost or http://127.0.0.1
- *   Port 9999 is appended by default as per project convention.
+ * - REACT_APP_SERVER_HOST: backend host (with protocol). Example: https://yororoiceblogbackend.onrender.com
  *
  * Usage:
  *   import { sendVerificationCode } from '@/apis/sendVerificationCode';
@@ -16,18 +15,7 @@
  * @returns {string}
  */
 function buildUrl(path) {
-	let base = process.env.REACT_APP_SERVER_HOST || 'http://localhost';
-	if (!/^https?:\/\//.test(base)) {
-		base = `http://${base}`;
-	}
-	try {
-		const u = new URL(base);
-		if (!u.port) u.port = '9999';
-		base = `${u.protocol}//${u.hostname}${u.port ? `:${u.port}` : ''}`;
-	} catch {
-		// fallback: append :9999 if no port present
-		if (!/:\d+$/.test(base)) base = `${base}:9999`;
-	}
+	const base = process.env.REACT_APP_SERVER_HOST || 'http://localhost';
 	return `${base}${path}`;
 }
 

@@ -101,7 +101,7 @@ const Gallery = () => {
         formData.append('files', files[i]);
       }
 
-      const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/gallery/post`;
+      const api = `${process.env.REACT_APP_SERVER_HOST}/api/gallery/post`;
       const resp = await fetch(api, {
         method: 'POST',
         body: formData

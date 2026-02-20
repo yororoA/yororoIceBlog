@@ -3,7 +3,7 @@
  * @param {string} momentId
  */
 export async function incrementMomentView(momentId) {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/view`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/moments/view`;
   try {
     await fetch(api, {
       method: 'POST',

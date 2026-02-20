@@ -7,7 +7,7 @@ export async function getKnowledgeArticles(params = {}) {
   queryParams.append('page', page);
   queryParams.append('limit', limit);
 
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/knowledge?${queryParams.toString()}`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/knowledge?${queryParams.toString()}`;
   const response = await fetch(api, { method: 'GET' });
   
   if (!response.ok) {
@@ -19,7 +19,7 @@ export async function getKnowledgeArticles(params = {}) {
 }
 
 export async function getArticleById(id) {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/knowledge/${id}`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/knowledge/${id}`;
   const response = await fetch(api, { method: 'GET' });
   
   if (!response.ok) {
@@ -31,7 +31,7 @@ export async function getArticleById(id) {
 }
 
 export async function createArticle(articleData) {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/knowledge`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/knowledge`;
   const response = await fetch(api, {
     method: 'POST',
     headers: {
@@ -49,7 +49,7 @@ export async function createArticle(articleData) {
 }
 
 export async function updateArticle(id, articleData) {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/knowledge/${id}`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/knowledge/${id}`;
   const response = await fetch(api, {
     method: 'PUT',
     headers: {
@@ -67,7 +67,7 @@ export async function updateArticle(id, articleData) {
 }
 
 export async function deleteArticle(id) {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/knowledge/${id}`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/knowledge/${id}`;
   const response = await fetch(api, { method: 'DELETE' });
   
   if (!response.ok) {
@@ -79,7 +79,7 @@ export async function deleteArticle(id) {
 }
 
 export async function getCategories() {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/knowledge/meta/categories`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/knowledge/meta/categories`;
   const response = await fetch(api, { method: 'GET' });
   
   if (!response.ok) {
@@ -91,7 +91,7 @@ export async function getCategories() {
 }
 
 export async function getArticleLikesList() {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/knowledge/liked`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/knowledge/liked`;
   const resp = await fetch(api, { method: 'GET' });
   if (!resp.ok) return [];
   const data = await resp.json();
@@ -99,7 +99,7 @@ export async function getArticleLikesList() {
 }
 
 export async function incrementArticleView(articleId) {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/knowledge/view`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/knowledge/view`;
   try {
     await fetch(api, {
       method: 'POST',

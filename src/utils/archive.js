@@ -7,7 +7,7 @@ export async function getArchiveData(params = {}) {
   queryParams.append('page', page);
   queryParams.append('limit', limit);
 
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/archive?${queryParams.toString()}`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/archive?${queryParams.toString()}`;
   const response = await fetch(api, { method: 'GET' });
   
   if (!response.ok) {
@@ -19,7 +19,7 @@ export async function getArchiveData(params = {}) {
 }
 
 export async function getArchiveStats() {
-  const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/archive/stats`;
+  const api = `${process.env.REACT_APP_SERVER_HOST}/api/archive/stats`;
   const response = await fetch(api, { method: 'GET' });
   
   if (!response.ok) {

@@ -3,18 +3,6 @@ import { isGuest } from './auth';
 
 let continueFrom = null;
 
-function ensurePort9999(base) {
-	let b = base || 'http://localhost';
-	if (!/^https?:\/\//.test(b)) b = `http://${b}`;
-	try {
-		const u = new URL(b);
-		if (!u.port) u.port = '9999';
-		return `${u.protocol}//${u.hostname}${u.port ? `:${u.port}` : ''}`;
-	} catch {
-		return /:\d+$/.test(b) ? b : `${b}:9999`;
-	}
-}
-
 /**
  * 获取 gallery 文件，需认证（拦截器会自动附加 Authorization + uid）
  * 只读取一次 response body，避免 "body stream already read"
@@ -22,7 +10,7 @@ function ensurePort9999(base) {
  * @param retrying 内部用，401 时重试一次
  */
 export async function loadGallery(loadNums = 20, retrying = false) {
-	const base = ensurePort9999(process.env.REACT_APP_SERVER_HOST);
+	const base = process.env.REACT_APP_SERVER_HOST;
 	const params = new URLSearchParams();
 	if (continueFrom) params.append('continueFrom', continueFrom);
 	if (loadNums !== 20) params.append('loadNums', String(loadNums));

@@ -1,5 +1,5 @@
 export async function getMoments() {
-	const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/get?isEditing=false`;
+	const api = `${process.env.REACT_APP_SERVER_HOST}/api/moments/get?isEditing=false`;
 	const resp = await fetch(api, {
 		method: 'GET',
 	});

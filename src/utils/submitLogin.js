@@ -1,17 +1,4 @@
 // Submit login payload as JSON to the given endpoint and return a structured response
-function ensurePort9999(base) {
-	let b = base || 'http://localhost';
-	if (!/^https?:\/\//.test(b)) b = `http://${b}`;
-	try {
-		const u = new URL(b);
-		if (!u.port) u.port = '9999';
-		return `${u.protocol}//${u.hostname}${u.port ? `:${u.port}` : ''}`;
-	} catch {
-		// Fallback: if parsing fails, append :9999 when not present
-		return /:\d+$/.test(b) ? b : `${b}:9999`;
-	}
-}
-
 export async function submitLogin(data, actionUrl) {
 	const { username, password } = data ?? {};
 	if (!username || !password) {
@@ -19,7 +6,7 @@ export async function submitLogin(data, actionUrl) {
 	}
 
 		const resolvedUrl = actionUrl
-			|| `${ensurePort9999(process.env.REACT_APP_SERVER_HOST)}/api/login`;
+			|| `${process.env.REACT_APP_SERVER_HOST}/api/login`;
 
 	const resp = await fetch(resolvedUrl, {
 		method: 'POST',

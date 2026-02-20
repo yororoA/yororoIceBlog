@@ -65,7 +65,7 @@ const NewMoment = ({onClose}) => {
 
 	// 草稿/发布post
 	const published = useRef(false);
-	const addApi = useRef(`${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/post`);
+	const addApi = useRef(`${process.env.REACT_APP_SERVER_HOST}/api/moments/post`);
 	const handleSubmitMoment = async (e) => {
 		console.log('confirm')
 		e.preventDefault();
@@ -148,7 +148,7 @@ const NewMoment = ({onClose}) => {
 	// 恢复草稿弹窗
 	const [viewRestore, setViewRestore] = useState(false);
 	// 获取草稿
-	const draftApi = useRef(`${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/get?isEditing=true`);
+	const draftApi = useRef(`${process.env.REACT_APP_SERVER_HOST}/api/moments/get?isEditing=true`);
 	useEffect(() => {
 		// 获取草稿内容
 		async function f() {

@@ -4,7 +4,7 @@
 * - momentId
 * - comment*/
 export async function addComment(payload) {
-	const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/comment/post`;
+	const api = `${process.env.REACT_APP_SERVER_HOST}/api/moments/comment/post`;
 	const {username, momentId, comment} = payload;
 	const resp = await fetch(api, {
 		method: "POST",

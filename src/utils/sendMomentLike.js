@@ -2,7 +2,7 @@
 * @id: 点赞moment的_id
 * @like: 布尔值,是否点赞 */
 export async function sendMomentLike(_id,like){
-	const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/like`;
+	const api = `${process.env.REACT_APP_SERVER_HOST}/api/moments/like`;
 	const resp = await fetch(api, {
 		method:"POST",
 		headers: {

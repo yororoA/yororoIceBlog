@@ -79,7 +79,7 @@ const RegisterCard = () => {
 		e.preventDefault();
 		try {
 			const form = e.currentTarget;
-			const action = form.action || 'http://localhost:9999/api/register';
+			const action = form.action || `${process.env.REACT_APP_SERVER_HOST}/api/register`;
 			const formData = new FormData(form);
 			const payload = Object.fromEntries(formData.entries());
 			const result = await submitRegister(payload, action);
@@ -105,7 +105,7 @@ const RegisterCard = () => {
 			</section>
 			<section className={lr.lr}>
 				<form onChange={checkCompletion} onKeyDown={disableSpace} onSubmit={handleRegisterSubmit}
-							action={'http://localhost:9999/api/register'}
+							action={`${process.env.REACT_APP_SERVER_HOST}/api/register`}
 							method={'POST'}>
 					<section>
 						<label htmlFor="username">{'Username'}</label>

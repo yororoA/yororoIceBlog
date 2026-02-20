@@ -7,7 +7,7 @@ export async function getFiles(filenames, from) {
 	const params = new URLSearchParams();
 	params.set('from', from);
 	params.set('filenames', filenames.join(','));
-	const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/files?${params.toString()}`;
+	const api = `${process.env.REACT_APP_SERVER_HOST}/api/moments/files?${params.toString()}`;
 	const resp = await fetch(api, {
 		method: 'GET',
 	});

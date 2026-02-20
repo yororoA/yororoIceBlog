@@ -1,4 +1,4 @@
-const API = `${process.env.REACT_APP_SERVER_HOST}:9999/api/guestbook`;
+const API = `${process.env.REACT_APP_SERVER_HOST}/api/guestbook`;
 
 export async function getGuestbookComments() {
   const resp = await fetch(API);

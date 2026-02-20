@@ -1,7 +1,7 @@
 /*@commentIDs: array of comment_id
 * @return: err:message; ok:{message, data}*/
 export async function getComments(commentIds) {
-	const api = `${process.env.REACT_APP_SERVER_HOST}:9999/api/moments/comment/get`;
+	const api = `${process.env.REACT_APP_SERVER_HOST}/api/moments/comment/get`;
 	const resp = await fetch(api, {
 		method: "POST",
 		headers:{
