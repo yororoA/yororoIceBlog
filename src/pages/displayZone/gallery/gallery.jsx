@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { loadGallery } from '../../../utils/loadGallery';
+import { loadGallery, resetGalleryCursor } from '../../../utils/loadGallery';
 import IvPreview from '../../../components/ui/image_video_preview/ivPreview';
 import { GalleryContext } from './context/galleryContext';
 import { ScrollContainerContext } from '../scrollContainerContext';
@@ -30,25 +30,33 @@ const Gallery = () => {
   const loadMoreRef = useRef(null);
   const initialDoneRef = useRef(false);
   const fileInputRef = useRef(null);
+  const loadingRef = useRef(false);
 
   const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
   const currentUid = getUid();
   const canUpload = !isGuest() && ADMIN_UIDS.includes(currentUid);
 
   const appendGallery = useCallback(async () => {
-    if (loading || !hasMore) return;
+    if (loadingRef.current || !hasMore) return;
+    loadingRef.current = true;
     setLoading(true);
     try {
       const data = await loadGallery();
       const newFiles = mergeFilesWithUsername(data);
-      if (newFiles.length === 0) setHasMore(false);
-      else setIvs((prev) => [...prev, ...newFiles]);
+      if (newFiles.length === 0 || data.hasMore === false) {
+        // 后端告知没有更多数据，或本次返回为空
+        if (newFiles.length > 0) setIvs((prev) => [...prev, ...newFiles]);
+        setHasMore(false);
+      } else {
+        setIvs((prev) => [...prev, ...newFiles]);
+      }
     } catch (e) {
       console.error('图库加载失败:', e.message);
     } finally {
+      loadingRef.current = false;
       setLoading(false);
     }
-  }, [loading, hasMore, setIvs, setHasMore]);
+  }, [hasMore, setIvs, setHasMore]);
 
   useEffect(() => {
     if (ivs.length > 0) {
@@ -114,6 +122,7 @@ const Gallery = () => {
 
       showSuccess(`${files.length} 张图片上传成功`);
       // 重置 gallery 状态并重新加载
+      resetGalleryCursor();
       setIvs([]);
       setHasMore(true);
       initialDoneRef.current = false;

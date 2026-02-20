@@ -3,6 +3,11 @@ import { isGuest } from './auth';
 
 let continueFrom = null;
 
+/** 重置分页游标（在重新加载 gallery 时调用） */
+export function resetGalleryCursor() {
+	continueFrom = null;
+}
+
 /**
  * 获取 gallery 文件，需认证（拦截器会自动附加 Authorization + uid）
  * 只读取一次 response body，避免 "body stream already read"
