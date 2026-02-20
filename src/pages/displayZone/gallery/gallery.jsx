@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { loadGallery } from '../../../utils/loadGallery';
 import IvPreview from '../../../components/ui/image_video_preview/ivPreview';
-import { base64toObjectUrl } from '../../../utils/base64toObjectUrl';
 import { GalleryContext } from './context/galleryContext';
 import { ScrollContainerContext } from '../scrollContainerContext';
 import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
@@ -63,11 +62,12 @@ const Gallery = () => {
 
   const [prs, setPrs] = useState([]);
   useEffect(() => {
-    const ivUrls = base64toObjectUrl(ivs);
+    // 后端现在返回 Cloudinary URL（url 字段），不再需要 base64 转换
     setPrs(
-      ivUrls.map((urlItem, i) => {
-        const u = ivs[i]?.username;
-        return [urlItem.url, 'image', u != null && u !== '' ? String(u).trim() : undefined];
+      ivs.map((item, i) => {
+        const u = item?.username;
+        const url = item?.url || '';
+        return [url, 'image', u != null && u !== '' ? String(u).trim() : undefined];
       })
     );
   }, [ivs]);

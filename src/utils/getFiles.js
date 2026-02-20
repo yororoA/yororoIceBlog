@@ -13,6 +13,16 @@ export async function getFiles(filenames, from) {
 	});
 	if (resp.ok){
 		const files = await resp.json();
-		return base64toObjectUrl(files.data);
+		const items = files.data || [];
+		// 如果后端返回的是 Cloudinary URL（含 url 字段），直接使用
+		if (items.length > 0 && items[0].url) {
+			return items.map(item => ({
+				url: item.url,
+				filename: item.filename,
+				revoke: () => {}, // Cloudinary URL 无需 revoke
+			}));
+		}
+		// 兼容旧版 base64 格式
+		return base64toObjectUrl(items);
 	}
 }

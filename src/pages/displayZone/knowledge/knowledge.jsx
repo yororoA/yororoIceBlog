@@ -126,7 +126,8 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
       const result = await resp.json();
       if (!result.success) throw new Error(result.message || '上传失败');
 
-      const imageUrl = `${process.env.REACT_APP_SERVER_HOST}${result.data.url}`;
+      // Cloudinary 返回完整 URL，直接使用
+      const imageUrl = result.data.url;
       const mdImage = `![${file.name}](${imageUrl})`;
 
       // 在光标位置插入
