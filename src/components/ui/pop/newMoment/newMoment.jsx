@@ -109,7 +109,7 @@ const NewMoment = ({onClose}) => {
 				credentials: "include"
 			});
 
-			const data = await resp.json();
+			await resp.json();
 
 			if (resp.ok && published.current) {
 				showSuccess('Published');

@@ -15,7 +15,8 @@ const Content = ({ headshotType }) => {
 	const {momentItem, like, filesInfos, setLike, setLikeNumbers, likeNumbers, onMomentDeleted} = useContext(MomentDetailsCtx);
 	const { showSuccess, showFailed } = useContext(SuccessBoardContext);
 
-	const {uid, username, content, title, createdAt, _id} = momentItem;
+	// const {uid, username, content, title, createdAt, _id} = momentItem;
+	const {uid, username, content, title, _id} = momentItem;
 	const admin = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 	const currentUid = getUid();
 	const canDelete = !isGuest() && (currentUid === uid || admin.includes(currentUid));
@@ -35,7 +36,7 @@ const Content = ({ headshotType }) => {
 		setLikeNumbers(prev => checked ? prev + 1 : prev - 1);
 		await sendMomentLike(_id, checked);
 		if (checked) showSuccess('Liked');
-	}, [_id, showSuccess]);
+	}, [_id, showSuccess, setLike, setLikeNumbers]);
 
 	const handleShare = useCallback((e) => {
 		e.stopPropagation();

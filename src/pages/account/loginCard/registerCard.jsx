@@ -92,7 +92,7 @@ const RegisterCard = () => {
 		} catch (err) {
 			console.error('Register request failed:', err);
 		}
-	}, []);
+	}, [navigate]);
 
 
 	return (

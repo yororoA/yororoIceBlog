@@ -1,17 +1,8 @@
-import React, {useState} from 'react';
 import CloseButton from "../../../close/CloseButton";
 import LittlePop from "../littlePop";
 import styles from './styles.module.less';
 
-const CommentBelong = ({belongUser, belongMSG, belongId, onEnd}) => {
-	const handleClose = () => {
-
-	}
-	const [viewPop, setVP] = useState(false);
-	const [content, setCT] = useState('');
-	const handleInput = () => {
-
-	}
+const CommentBelong = ({belongUser, belongMSG, onEnd}) => {
 
 	return (
 		<LittlePop>
@@ -26,8 +17,7 @@ const CommentBelong = ({belongUser, belongMSG, belongId, onEnd}) => {
 					<i>{belongMSG}</i>
 				</p>
 
-				<input type="textarea" id={'replyInput'} required={true} placeholder={'reply...'} onChange={handleInput}
-							 value={content} className={styles.input}/>
+				<input type="textarea" id={'replyInput'} required={true} placeholder={'reply...'} className={styles.input}/>
 				<label htmlFor="replyInput"></label>
 
 				<button type={"submit"} className={styles.btn}>{'reply'}</button>

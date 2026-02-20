@@ -1,4 +1,4 @@
-import React, {use, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import card from './comments.module.less';
 import CommentCard from "./commentCard";
 import CommonBtn from "../../../../../components/btn/commonBtn/commonBtn";

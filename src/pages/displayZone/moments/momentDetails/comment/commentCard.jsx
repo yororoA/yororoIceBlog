@@ -1,10 +1,10 @@
 import React, {useContext, useState} from 'react';
 import comment from './comment.module.less';
 import {getAvatarColor} from '../../../../../utils/avatarColor';
-import IvPreview from "../../../../../components/ui/image_video_preview/ivPreview";
+// import IvPreview from "../../../../../components/ui/image_video_preview/ivPreview";
 import Like from "../../../../../components/ui/feedback/like";
 import {CommentsLikedContext} from "../../context/commentsLikedContext";
-import LittlePop from "../../../../../components/ui/pop/littlePop/littlePop";
+// import LittlePop from "../../../../../components/ui/pop/littlePop/littlePop";
 import CommentBelong from "../../../../../components/ui/pop/littlePop/commentBelong/commentBelong";
 import {sendCommentLike} from "../../../../../utils/sendCommentLike";
 import {formatDateTime} from "../../../../../utils/formatDateTime";

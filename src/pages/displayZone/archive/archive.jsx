@@ -3,7 +3,8 @@ import archive from './archive.module.less';
 import { getArchiveData, getArchiveStats } from '../../../utils/archive';
 
 const ArchiveItem = ({ item }) => {
-  const { type, title, content, createdAt, username } = item;
+  // also content had
+  const { type, title, createdAt, username } = item;
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
