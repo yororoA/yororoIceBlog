@@ -2,7 +2,7 @@
  * Send verification code to user's email via backend POST API.
  *
  * Env:
- * - REACT_APP_SERVER_HOST: backend host (with protocol). Example: https://yororoiceblogbackend.onrender.com
+ * - REACT_APP_SERVER_HOST: backend host (with protocol). Example: https://yoror***der.com
  *
  * Usage:
  *   import { sendVerificationCode } from '@/apis/sendVerificationCode';

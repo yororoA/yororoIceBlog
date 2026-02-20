@@ -9,7 +9,8 @@ export async function guestLogin() {
 	});
 	const result = await response.json();
 	if (result.message === 'ok') {
-		const { token, uid, expiresAt } = result.data;
+		// also expiresAt
+		const { token, uid } = result.data;
 		localStorage.removeItem('token');
 		localStorage.removeItem('uid');
 		localStorage.setItem('guest_token', token);
