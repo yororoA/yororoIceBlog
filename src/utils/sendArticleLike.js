@@ -16,5 +16,4 @@ export async function sendArticleLike(_id, like) {
 		console.error(`${like === false && '取消'}`, '文章点赞失败');
 		return;
 	}
-	console.log(`${like === false && '取消'}`, '文章点赞成功');
 }

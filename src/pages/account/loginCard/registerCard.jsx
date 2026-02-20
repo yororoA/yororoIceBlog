@@ -83,7 +83,6 @@ const RegisterCard = () => {
 			const formData = new FormData(form);
 			const payload = Object.fromEntries(formData.entries());
 			const result = await submitRegister(payload, action);
-			console.log(result);
 			if (result.ok) {
 				const {token, uid} = result.data;
 				localStorage.setItem('token', token);
@@ -128,12 +127,9 @@ const RegisterCard = () => {
 							<input type="text" name='verificationCode' id='verification' className={lr.verification}/>
 							<span className={lr.able} style={!enableCode ? disableCodeStyle : undefined}
 										onClick={async () => {
-											console.log('abcd');
 											const resp = await sendVerificationCode(email);
 											if (resp.status === 200) {
 												timeCountdown();
-											} else {
-												console.log(`${resp.message}: ${resp.status}`);
 											}
 										}}>{countdown === 0 ? 'Send Code' : `${countdown}s`}</span>
 						</div>

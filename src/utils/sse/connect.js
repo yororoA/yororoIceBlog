@@ -32,12 +32,9 @@ export async function connectSSE(dispatch) {
 		while (true) {
 			const {value, done} = await reader.read();
 			if (done) {
-				console.log('done')
 				break;
 			}
 			buffer += decoder.decode(value, {stream: true});
-
-			console.log(buffer);
 
 			// 按 SSE 规范按双换行分帧
 			let idx;
@@ -77,7 +74,6 @@ export async function connectSSE(dispatch) {
 }
 
 function handleEvent(eventName, payload, dispatch) {
-	console.log(payload);
 	switch (eventName) {
 		case 'hello':
 			// payload: { message: 'connected' }

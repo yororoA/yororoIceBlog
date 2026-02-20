@@ -16,9 +16,6 @@ export async function submitLogin(data, actionUrl) {
 		body: JSON.stringify({ username, password }),
 	});
 
-	console.log(resp)
-
-
 	const rawText = await resp.text();
 	let parsed;
 	try {

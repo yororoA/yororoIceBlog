@@ -152,7 +152,6 @@ const DisplayZone = () => {
 			return;
 		}
 		if (data.uid === uid) return;
-		console.log(data, '\n', typeof data);
 		switch (type) {
 			case 'comment.new':
 				dispatch(commentNew(data));

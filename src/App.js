@@ -20,7 +20,6 @@ function AppContent() {
 	useEffect(() => {
 		// redirect to account page if no token exist
 		const pathname = window.location.pathname.split('/').filter(item => item !== '').at(-1);
-		// console.log(pathname)
 		const hasToken = localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken');
 		if (!hasToken && pathname !== 'login' && pathname !== 'register') {
 			navigate('/account');

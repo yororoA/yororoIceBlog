@@ -3,7 +3,6 @@ export async function getMoments() {
 	const resp = await fetch(api, {
 		method: 'GET',
 	});
-	// console.log(await resp.json())
 	const data = await resp.json();
 	
 	if (resp.ok) {

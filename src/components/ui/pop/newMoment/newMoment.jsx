@@ -67,7 +67,6 @@ const NewMoment = ({onClose}) => {
 	const published = useRef(false);
 	const addApi = useRef(`${process.env.REACT_APP_SERVER_HOST}/api/moments/post`);
 	const handleSubmitMoment = async (e) => {
-		console.log('confirm')
 		e.preventDefault();
 		const formElements = formRef.current;
 		// const files = Array.from(formElements.files.files);
@@ -116,7 +115,6 @@ const NewMoment = ({onClose}) => {
 				showSuccess('Published');
 			}
 			if (!resp.ok) {
-				console.log('upload failed\n', data);
 			}
 		} catch (err) {
 			console.error(err);

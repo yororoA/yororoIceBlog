@@ -14,5 +14,4 @@ export async function sendMomentLike(_id,like){
 		console.error(`${like===false && '取消'}`,'点赞失败');
 		return;
 	}
-	console.log(`${like===false && '取消'}`,'点赞成功');
 }

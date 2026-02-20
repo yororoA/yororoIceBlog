@@ -37,7 +37,6 @@ const LoginCard = () => {
 			const formData = new FormData(form);
 			const payload = Object.fromEntries(formData.entries());
 			const result = await submitLogin(payload, action);
-			console.log('Login response:', result);
 			if (result?.ok && result?.data) {
 				const { token, uid } = result.data;
 				localStorage.removeItem('guest_token');

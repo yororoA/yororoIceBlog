@@ -117,7 +117,6 @@ const Moments = () => {
 	useEffect(() => {
 		const f = async () => {
 			const commentsLiked = await getLikesList('moments/comments');
-			console.log(commentsLiked)
 			setLikedComments(commentsLiked);
 		}
 
