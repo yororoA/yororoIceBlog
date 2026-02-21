@@ -29,42 +29,53 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 24px;
       width: 90%;
-      max-width: 1200px;
+      max-width: 1400px;
       min-height: var(--logo-height);
       margin: 0 auto;
-      padding: 6px 16px;
+      padding: 8px 20px;
       box-sizing: border-box;
 
       img.logo {
         height: var(--logo-height);
         flex-shrink: 0;
+        cursor: pointer;
+        transition: transform var(--transition-type);
+        
+        &:hover {
+          transform: scale(1.05);
+        }
       }
 
       div.link {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
+        gap: 4px;
         flex: 1;
         min-width: 0;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        max-width: 800px;
+        margin: 0 auto;
 
         & span {
           flex-shrink: 0;
           text-align: center;
-          padding: 6px 14px;
-          border-radius: 6px;
+          padding: 8px 16px;
+          border-radius: 8px;
           box-sizing: border-box;
           cursor: pointer;
           color: var(--text-color-secondary);
           font-weight: 500;
-          transition: color var(--transition-type), background-color var(--transition-type);
+          font-size: var(--h5-fontsize);
+          white-space: nowrap;
+          transition: all var(--transition-type);
 
           &:hover {
             color: var(--text-color);
-            background-color: rgba(0, 0, 0, 0.04);
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
           }
         }
       }
@@ -73,12 +84,13 @@
         color: var(--accent-color) !important;
         background-color: var(--accent-color-light) !important;
         font-weight: 600 !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .navRight {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 16px;
         flex-shrink: 0;
       }
 
@@ -86,16 +98,18 @@
         flex-shrink: 0;
         box-sizing: border-box;
         text-align: center;
-        padding: 4px 12px;
-        border-radius: 6px;
+        padding: 6px 16px;
+        border-radius: 8px;
         cursor: pointer;
         color: var(--text-color-secondary);
         font-size: var(--h5-fontsize);
-        transition: color var(--transition-type), background-color var(--transition-type);
+        font-weight: 500;
+        transition: all var(--transition-type);
 
         &:hover {
           color: var(--text-color);
-          background-color: rgba(0, 0, 0, 0.04);
+          background-color: rgba(0, 0, 0, 0.05);
+          transform: translateY(-1px);
         }
       }
     }
@@ -114,6 +128,70 @@
       span {
         font-size: calc(var(--h2-fontsize) * 1.5);
         font-weight: var(--commonBtn-fontWeight);
+      }
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 1024px) {
+  .navBox {
+    nav {
+      width: 95%;
+      padding: 6px 12px;
+      gap: 16px;
+
+      div.link {
+        gap: 2px;
+
+        & span {
+          padding: 6px 12px;
+          font-size: var(--h6-fontsize);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .navBox {
+    nav {
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 8px 12px;
+
+      img.logo {
+        height: calc(var(--logo-height) * 0.9);
+      }
+
+      div.link {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 4px;
+        overflow-x: auto;
+        padding: 4px 0;
+        scrollbar-width: thin;
+
+        &::-webkit-scrollbar {
+          height: 4px;
+        }
+
+        & span {
+          padding: 6px 10px;
+          font-size: var(--h6-fontsize);
+          white-space: nowrap;
+        }
+      }
+
+      .navRight {
+        order: 2;
+        gap: 8px;
+      }
+
+      .linkLogout {
+        padding: 4px 10px;
+        font-size: var(--h6-fontsize);
       }
     }
   }

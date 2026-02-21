@@ -31,9 +31,12 @@ const BLOG_INFO = {
 };
 
 // Friend links (static)
+// 支持两种格式：
+// 1. 纯文字链接: { name: 'Example Blog', url: 'https://example.com' }
+// 2. 带图片链接: { name: 'Example Blog', url: 'https://example.com', image: '/path/to/image.png' }
 const FRIEND_LINKS = [
   // { name: 'Example Blog', url: 'https://example.com' },
-  // { name: 'Tech Corner', url: 'https://example2.com' },
+  // { name: 'Tech Corner', url: 'https://example2.com', image: '/path/to/logo.png' },
 ];
 
 // Social links — GitHub only
@@ -75,19 +78,6 @@ const About = () => {
 
       {/* Left Sidebar — symmetric with status board on right */}
       <aside className={about.leftSidebar}>
-        {/* Friend Links */}
-        <div className={about.sidebarCard}>
-          <h4 className={about.sidebarTitle}>Friend Links</h4>
-          <p className={about.friendLinkTip}>To add your link, please email me and add this site to your blogroll first.</p>
-          <div className={about.friendLinks}>
-            {FRIEND_LINKS.map((link, idx) => (
-              <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className={about.friendLink}>
-                {link.name}
-              </a>
-            ))}
-          </div>
-        </div>
-
         {/* Guestbook */}
         <div className={about.sidebarCard}>
           <h4 className={about.sidebarTitle}>Guestbook</h4>
@@ -216,6 +206,41 @@ const About = () => {
               <span className={about.infoLabel}>Hosting:</span>
               <span className={about.infoValue}>{BLOG_INFO.hosting}</span>
             </div>
+          </div>
+        </div>
+
+        {/* Friend Links */}
+        <div className={about.friendLinksCard}>
+          <h3 className={about.cardTitle}>Friend Links</h3>
+          <p className={about.friendLinkTip}>To add your link, please email me and add this site to your blogroll first.</p>
+          <div className={about.friendLinks}>
+            {FRIEND_LINKS.length === 0 ? (
+              <p className={about.friendLinksEmpty}>No friend links yet</p>
+            ) : (
+              FRIEND_LINKS.map((link, idx) => (
+                <a 
+                  key={idx} 
+                  href={link.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className={link.image ? about.friendLinkWithImage : about.friendLink}
+                  title={link.name}
+                >
+                  {link.image && (
+                    <img 
+                      src={link.image} 
+                      alt={link.name} 
+                      className={about.friendLinkImage}
+                      onError={(e) => {
+                        // 如果图片加载失败，隐藏图片，只显示文字
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                  )}
+                  <span className={about.friendLinkName}>{link.name}</span>
+                </a>
+              ))
+            )}
           </div>
         </div>
 

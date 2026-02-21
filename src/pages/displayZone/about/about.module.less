@@ -5,7 +5,7 @@
   padding-bottom: 40px;
 }
 
-.profileCard, .statsCard, .bioCard, .skillsCard, .interestsCard, .infoCard {
+.profileCard, .statsCard, .bioCard, .skillsCard, .interestsCard, .infoCard, .friendLinksCard {
   border: var(--nm-input-border);
   border-radius: 12px;
   padding: 32px;
@@ -232,7 +232,7 @@
     gap: 16px;
   }
 
-  .profileCard, .statsCard, .bioCard, .skillsCard, .interestsCard, .infoCard {
+  .profileCard, .statsCard, .bioCard, .skillsCard, .interestsCard, .infoCard, .friendLinksCard {
     padding: 20px;
   }
 
@@ -316,36 +316,93 @@
   border-bottom: var(--nm-input-border);
 }
 
-// ── Friend Links ──
+// ── Friend Links (moved to bottom) ──
+.friendLinksCard {
+  margin-top: 8px;
+}
+
 .friendLinkTip {
-  font-size: var(--h6-fontsize);
+  font-size: var(--h5-fontsize);
   color: var(--text-color-secondary);
-  line-height: 1.5;
-  margin: 0 0 10px 0;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
   opacity: 0.8;
 }
 
 .friendLinks {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.friendLinksEmpty {
+  font-size: var(--h5-fontsize);
+  color: var(--text-color-secondary);
+  text-align: center;
+  padding: 20px 0;
+  margin: 0;
+  opacity: 0.7;
 }
 
 .friendLink {
-  display: block;
-  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
   font-size: var(--h5-fontsize);
   color: var(--accent-color);
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--input-bgc);
+  border: 1px solid var(--nm-input-border);
   transition: all var(--transition-type);
   word-break: break-word;
+  font-weight: 500;
 
   &:hover {
     background: var(--accent-color-light);
-    transform: translateX(4px);
+    border-color: var(--accent-color-border);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
+}
+
+.friendLinkWithImage {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  font-size: var(--h5-fontsize);
+  color: var(--accent-color);
+  text-decoration: none;
+  border-radius: 10px;
+  background: var(--input-bgc);
+  border: 1px solid var(--nm-input-border);
+  transition: all var(--transition-type);
+  font-weight: 500;
+
+  &:hover {
+    background: var(--accent-color-light);
+    border-color: var(--accent-color-border);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.friendLinkImage {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background: var(--input-bgc);
+  border: 1px solid var(--nm-input-border);
+}
+
+.friendLinkName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 
 // ── Guestbook ──
