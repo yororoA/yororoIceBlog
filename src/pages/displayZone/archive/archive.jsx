@@ -206,7 +206,7 @@ const Archive = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedType, archiveData.length, years.length, stats, setArchiveData, setYears, setStats]);
+  }, [selectedType, years, stats, setArchiveData, setYears, setStats]);
 
   useEffect(() => {
     // 只在首次加载或数据为空时请求

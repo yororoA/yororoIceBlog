@@ -166,7 +166,7 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
         ta.focus();
       }
     });
-  }, []);
+  }, [content.length]);
 
   const uploadImageAndInsert = useCallback(async (file, cursorStart, cursorEnd) => {
     if (!file || !file.type.startsWith('image/')) return;
@@ -370,7 +370,7 @@ const Knowledge = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, searchKeyword, articlesData.length, categories.length, likedArticles.length, setArticlesData, setCategories, setLikedArticles]);
+  }, [selectedCategory, searchKeyword, categories.length, likedArticles.length, setArticlesData, setCategories, setLikedArticles]);
 
   useEffect(() => {
     // 只在首次加载或数据为空时请求
@@ -487,7 +487,7 @@ const Knowledge = () => {
     } else {
       setLikedArticles(prev => prev.filter(id => id !== detailArticle._id));
     }
-  }, [detailArticle, showSuccess]);
+  }, [detailArticle, showSuccess, setArticlesData, setLikedArticles]);
 
   // 分享
   const handleShare = useCallback((e) => {
@@ -516,7 +516,7 @@ const Knowledge = () => {
     } catch (err) {
       showFailed(err.message || 'Delete failed');
     }
-  }, [detailArticle, onCloseDetails, showSuccess, showFailed]);
+  }, [detailArticle, onCloseDetails, showSuccess, showFailed, setArticlesData]);
 
   return (
     <>

@@ -37,7 +37,7 @@ function AppContent() {
 					<Route path='gallery' element={<GalleryEntire />} />
 					<Route path='knowledge' element={<Knowledge />} />
 					<Route path='archive' element={<Archive />} />
-					<Route path='about' element={<About />} />
+					<Route path='other' element={<About />} />
 				</Route>
 
 

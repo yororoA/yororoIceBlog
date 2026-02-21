@@ -26,6 +26,8 @@
     --input-bgc: rgba(245, 245, 245, 0.8);
     --code-bgc: rgba(0, 0, 0, 0.06);
     --tag-bgc: rgba(0, 0, 0, 0.05);
+    /* Links 条目图标区域背景，保证浅色图标可见 */
+    --link-icon-bgc: rgba(0, 0, 0, 0.12);
 
     /* 卡片阴影 */
     --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -148,6 +150,7 @@
     --input-bgc: rgba(38, 39, 43, 0.9);
     --code-bgc: rgba(255, 255, 255, 0.06);
     --tag-bgc: rgba(255, 255, 255, 0.06);
+    --link-icon-bgc: rgba(255, 255, 255, 0.1);
 
     /* 阴影（深色） */
     --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);

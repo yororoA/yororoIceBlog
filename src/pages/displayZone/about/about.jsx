@@ -25,13 +25,21 @@ const BLOG_INFO = {
 // 1. 纯文字链接: { name: 'Example Blog', url: 'https://example.com', category: 'friend' }
 // 2. 带图片链接: { name: 'Example Blog', url: 'https://example.com', image: '/path/to/image.png', category: 'friend' }
 // 3. 工具链接: { name: 'Tool Name', url: 'https://tool.com', category: 'tool' }
-// 4. 其他链接: { name: 'Other Link', url: 'https://other.com', category: 'other' }
-// category: 'friend' (Friend Links) 或 'tool' (Tool Links) 或 'other' (Other)，默认为 'friend'
+// 4. 开发相关: { name: 'Dev Link', url: 'https://dev.com', category: 'development' }
+// 5. 其他链接: { name: 'Other Link', url: 'https://other.com', category: 'other' }
+// category: 'friend' | 'tool' | 'development' | 'other'，默认为 'friend'
 const LINKS = [
   // { name: 'Example Blog', url: 'https://example.com', category: 'friend' },
   // { name: 'Tech Corner', url: 'https://example2.com', image: '/path/to/logo.png', category: 'friend' },
   // { name: 'Useful Tool', url: 'https://tool.com', category: 'tool' },
   // { name: 'Other Link', url: 'https://other.com', category: 'other' },
+  {name: 'Vocu Ai', url:'https://www.vocu.ai', image: 'https://www.vocu.ai/favicon.ico', category: 'other'},
+  {name: 'Vercel', url:'https://vercel.com', image: 'https://www.vercel.com/favicon.ico', category: 'development'},
+  {name: 'Render', url:'https://render.com', image: 'https://ts3.tc.mm.bing.net/th/id/ODF.rtcYxUnBRdAMKi7zNULYxw?w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2', category: 'development'},
+  {name:'Cloudinary', image:'https://res.cloudinary.com/prod/image/upload/w_32/console/favicon.png', url:'https://cloudinary.com', category: 'development'},
+  {name:'Upstash', image:'https://console.upstash.com/static/icons/favicon-32x32.png', url:'https://upstash.com', category: 'development'},
+  {name:'MongoDB', image:'https://www.mongodb.com/favicon.ico', url:'https://www.mongodb.com', category: 'development'},
+  {name:'Cloudflare', image:'https://dash.cloudflare.com/c411dbca6e493cdb.svg', url:'https://developers.cloudflare.com', category: 'development'},
 ];
 
 const About = () => {
@@ -42,7 +50,7 @@ const About = () => {
   const [submitting, setSubmitting] = useState(false);
   const [linksExpanded, setLinksExpanded] = useState(true);
   const [guestbookExpanded, setGuestbookExpanded] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'friend', 'tool', 'other'
+  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'friend', 'tool', 'development', 'other'
 
   useEffect(() => {
     getGuestbookComments().then(setComments).catch(() => {});
@@ -105,6 +113,12 @@ const About = () => {
                   Tool Links
                 </button>
                 <button
+                  className={`${about.categoryTab} ${selectedCategory === 'development' ? about.categoryTabActive : ''}`}
+                  onClick={() => setSelectedCategory('development')}
+                >
+                  Development
+                </button>
+                <button
                   className={`${about.categoryTab} ${selectedCategory === 'other' ? about.categoryTabActive : ''}`}
                   onClick={() => setSelectedCategory('other')}
                 >
@@ -120,6 +134,7 @@ const About = () => {
                         const category = link.category || 'friend';
                         if (selectedCategory === 'friend') return category === 'friend';
                         if (selectedCategory === 'tool') return category === 'tool';
+                        if (selectedCategory === 'development') return category === 'development';
                         if (selectedCategory === 'other') return category === 'other';
                         return false;
                       });

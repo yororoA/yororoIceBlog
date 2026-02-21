@@ -232,7 +232,7 @@ const DisplayZone = () => {
 							>
 								Home
 							</span>
-							{['moments', 'gallery', 'knowledge', 'archive', 'about'].map(name => (
+							{['moments', 'gallery', 'knowledge', 'archive', 'other'].map(name => (
 								<span
 									key={name}
 									id={name}
