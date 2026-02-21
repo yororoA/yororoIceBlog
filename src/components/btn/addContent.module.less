@@ -1,12 +1,17 @@
-button.new{
-  --rate-origin: .75;
+/* New Moment / New Article / Upload：次要操作，弱化视觉权重，不喧宾夺主 */
+button.new {
+  padding: calc(var(--h5-fontsize) * 0.9) calc(var(--h4-fontsize) * 1.2);
+  font-size: var(--h5-fontsize);
+  font-weight: 500;
+  color: var(--accent-color);
+  background-color: transparent;
+  border: 1px solid var(--accent-color-border);
+  border-radius: var(--btn-border-radius-normal);
+  transition: color var(--transition-type), background-color var(--transition-type), border-color var(--transition-type);
 
-  padding: calc(var(--h4-fontsize) * var(--rate-origin)) calc(var(--h3-fontsize) * var(--rate-origin));
-  font-weight: var(--commonBtn-fontWeight);
-  color: white;
-  background-color: var(--addCommentBtn-bgc);
-
-  &:hover{
-    background-color: var(--registerBtn-ableColor);
+  &:hover {
+    color: var(--accent-color-hover);
+    background-color: var(--accent-color-light);
+    border-color: var(--accent-color);
   }
 }
