@@ -8,13 +8,15 @@ export async function guestLogin() {
 		headers: { 'Content-Type': 'application/json' },
 	});
 	const result = await response.json();
-	if (result.message === 'ok') {
-		// also expiresAt
+	if (result.message === 'ok' && result.data) {
 		const { token, uid } = result.data;
+		if (!token || typeof token !== 'string' || !uid || typeof uid !== 'string') {
+			throw new Error('游客登录返回数据异常');
+		}
 		localStorage.removeItem('token');
 		localStorage.removeItem('uid');
-		localStorage.setItem('guest_token', token);
-		localStorage.setItem('guest_uid', uid);
+		localStorage.setItem('guest_token', token.trim());
+		localStorage.setItem('guest_uid', uid.trim());
 		return result.data;
 	}
 	throw new Error(result.message || 'Guest login failed');

@@ -161,7 +161,10 @@ const Gallery = () => {
             {hasMore && <div ref={loadMoreRef} className="gallery-page__sentinel" aria-hidden />}
           </>
         ) : loading ? (
-          <p className="gallery-page__empty">加载中…</p>
+          <div className="gallery-page__loading-wrap">
+            <span className="gallery-page__loading-dot" />
+            加载中…
+          </div>
         ) : (
           <p className="gallery-page__empty">暂无图片，稍后再来看看吧</p>
         )}

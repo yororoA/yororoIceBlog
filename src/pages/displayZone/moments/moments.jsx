@@ -46,6 +46,7 @@ const Moments = () => {
 	const [momentsData, setMomentsData, likedMoments, setLikedMoments, , , deletingIds = [], , pendingNewMoments = [], loadPendingNewMoments] = useContext(MomentsListContext);
 	const pendingCount = pendingNewMoments.length;
 	const [editing, setEditing] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	const midFromQuery = searchParams.get('mid');
@@ -73,19 +74,26 @@ const Moments = () => {
 
 	// 首次无数据时拉取并写入 context；与 gallery 一致，避免切换路由重复加载
 	const fetchMoments = useCallback(async () => {
-		const data = await getMoments();
-		const liked = await getLikesList();
-		setMomentsData(data);
-		setLikedMoments(liked);
+		setLoading(true);
+		try {
+			const data = await getMoments();
+			const liked = await getLikesList();
+			setMomentsData(data);
+			setLikedMoments(liked);
+		} finally {
+			setLoading(false);
+		}
 	}, [setMomentsData, setLikedMoments]);
 	useEffect(() => {
 		if (momentsData.length === 0 && !editing) fetchMoments();
 	}, [editing, momentsData.length, fetchMoments]);
 
 	// 直接根据数据渲染列表，midFromQuery 变化时只更新 props 不整表替换，避免关闭详情时卡片重挂载导致 Pop 关闭动画重播
-	const elements = momentsData.length === 0
-		? 'no moments yet'
-		: momentsData.map(item => (
+	const listContent = loading && momentsData.length === 0
+		? null
+		: momentsData.length === 0
+			? 'no moments yet'
+			: momentsData.map(item => (
 			<MomentItem
 				data={item}
 				liked={likedMoments.includes(item._id)}
@@ -96,6 +104,7 @@ const Moments = () => {
 				isDeleting={deletingIds.includes(item._id)}
 			/>
 		));
+	const elements = listContent;
 
 	// 发布新 moment 关闭弹层后刷新列表并更新 context
 	const handleCloseNewMoment = useCallback(() => {
@@ -147,9 +156,16 @@ const Moments = () => {
 					<NewMoment onClose={handleCloseNewMoment} registerCloseHandler={newMomentCloseRef}/>
 				</Pop>}
 			<div className={moments.entire}>
-				<CommentsLikedContext value={{likedComments, commentLikedChange}}>
-					{elements}
-				</CommentsLikedContext>
+				{loading && momentsData.length === 0 ? (
+					<div className={moments.loading}>
+						<span className={moments.loadingDot} />
+						Loading...
+					</div>
+				) : (
+					<CommentsLikedContext value={{likedComments, commentLikedChange}}>
+						{elements}
+					</CommentsLikedContext>
+				)}
 			</div>
 		</>
 	);

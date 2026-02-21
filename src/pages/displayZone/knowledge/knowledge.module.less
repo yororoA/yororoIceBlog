@@ -240,12 +240,24 @@
 }
 
 .loading {
-  animation: knowledge-pulse 1.2s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
 }
 
-@keyframes knowledge-pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
+.loadingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  animation: knowledge-loading-pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes knowledge-loading-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.1); }
 }
 
 // 新建文章表单样式

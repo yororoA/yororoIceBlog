@@ -41,6 +41,12 @@ const CATEGORY_LABELS = {
 };
 const CATEGORY_ORDER = ['friend', 'tool', 'development', 'other'];
 
+/** 生成随机字母串，用于游客未填名称时的默认用户名 */
+function randomLetterUsername(length = 8) {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  return Array.from({ length }, () => letters[Math.floor(Math.random() * letters.length)]).join('');
+}
+
 const About = () => {
   // ── Guestbook state ──
   const [comments, setComments] = useState([]);
@@ -59,8 +65,10 @@ const About = () => {
     if (!newComment.trim() || submitting) return;
     setSubmitting(true);
     try {
-      // 游客模式下，如果提供了name，则使用该name
-      const username = isGuest() && guestName.trim() ? guestName.trim() : undefined;
+      // 游客模式下：有填名称用名称，未填则用随机字母串
+      const username = isGuest()
+        ? (guestName.trim() || randomLetterUsername())
+        : undefined;
       const result = await postGuestbookComment(newComment.trim(), username);
       if (result.success && result.data) {
         setComments(prev => [result.data, ...prev]);
@@ -76,6 +84,9 @@ const About = () => {
 
   return (
     <>
+      <section id="header">
+        <span>Links & Guestbook</span>
+      </section>
       <div className={about.container}>
         {/* Links */}
         <div className={about.linksCard}>

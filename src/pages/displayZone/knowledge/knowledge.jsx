@@ -554,7 +554,10 @@ const Knowledge = () => {
 
       <div className={knowledge.articleList}>
         {loading ? (
-          <div className={knowledge.loading}>Loading...</div>
+          <div className={knowledge.loading}>
+            <span className={knowledge.loadingDot} />
+            Loading...
+          </div>
         ) : filteredArticles.length === 0 ? (
           <div className={knowledge.empty}>No articles yet</div>
         ) : (

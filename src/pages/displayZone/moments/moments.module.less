@@ -60,3 +60,26 @@
     transition: opacity 0.45s ease-out !important;
   }
 }
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  font-size: var(--h4-fontsize);
+  color: var(--text-color-secondary);
+}
+
+.loadingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  animation: moments-loading-pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes moments-loading-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
