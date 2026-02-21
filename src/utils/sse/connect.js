@@ -96,7 +96,13 @@ function handleEvent(eventName, payload, dispatch) {
 			break;
 		case 'token':
 			// payload: { type: 'token.refresh', data: { token, expiresAt, refreshUtil} }
-			localStorage.setItem('token', payload.data.token);
+			// 按当前登录类型更新对应 key，避免 guest 与正式账号混用
+			if (localStorage.getItem('guest_token')) {
+				localStorage.setItem('guest_token', payload.data.token);
+			} else {
+				localStorage.setItem('token', payload.data.token);
+				if (sessionStorage.getItem('token')) sessionStorage.setItem('token', payload.data.token);
+			}
 			break;
 		default:
 			// 其他事件

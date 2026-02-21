@@ -85,6 +85,8 @@ const RegisterCard = () => {
 			const result = await submitRegister(payload, action);
 			if (result.ok) {
 				const {token, uid} = result.data;
+				localStorage.removeItem('guest_token');
+				localStorage.removeItem('guest_uid');
 				localStorage.setItem('token', token);
 				localStorage.setItem('uid', uid);
 				navigate('/town');
