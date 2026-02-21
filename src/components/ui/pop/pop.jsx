@@ -19,15 +19,18 @@ const Pop = ({children, isLittle, onClose}) => {
 		}
 	}, []);
 
-	const handleClose = () => {
-		if (isClosing) return; // 防止重复触发
-		setIsClosing(true);
-	};
-
-	// 先只隐藏自身，再在下一轮通知父组件，避免父组件重渲染导致 Pop 内容重挂载、关闭动画重播
+	// 用户点击关闭时先通知父组件并传入 proceed；只有子组件调用 proceed() 后才执行关闭动画，从而支持“有未保存内容时先弹草稿确认”
 	const closedRef = useRef(false);
 	const onCloseRef = useRef(onClose);
 	onCloseRef.current = onClose;
+	const startClosingRef = useRef(() => setIsClosing(true));
+
+	const handleClose = () => {
+		if (isClosing) return;
+		const proceed = startClosingRef.current;
+		if (onCloseRef.current) onCloseRef.current(proceed);
+		else proceed();
+	};
 
 	// 仅用 timeout 驱动关闭，避免 animationend 被子元素冒泡或多次触发导致 doClose 被调两次、关闭动画重播
 	useEffect(() => {
@@ -43,7 +46,7 @@ const Pop = ({children, isLittle, onClose}) => {
 		return () => clearTimeout(timer);
 	}, [isClosing]);
 
-	// 在已渲染为 null 后再通知父组件关闭，避免父组件在动画未完全结束前重渲染导致关闭动画重播一次
+	// 动画结束后再通知父组件（如 setEditing(false)），此时无参调用表示“已关闭”
 	const onCloseCalledRef = useRef(false);
 	useEffect(() => {
 		if (!isVisible && !onCloseCalledRef.current) {

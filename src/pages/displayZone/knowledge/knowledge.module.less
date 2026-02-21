@@ -94,10 +94,13 @@
   padding: 0;
 }
 
+// 左图约 28% / 右文约 72%，并限制图片最大宽度，避免大屏下视觉偏大
 .cardCover {
-  flex-shrink: 0;
-  width: 96px;
-  height: 96px;
+  flex: 0 0 28%;
+  width: 28%;
+  max-width: 120px;
+  min-width: 0;
+  aspect-ratio: 1;
   background: var(--input-bgc);
   border-radius: 0;
   overflow: hidden;
@@ -111,12 +114,13 @@
 }
 
 .cardBody {
-  flex: 1;
+  flex: 1 1 72%;
   min-width: 0;
   padding: 10px 16px 10px 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 .cardTopWithCover .cardBody {
@@ -170,10 +174,11 @@
   border-radius: 6px;
 }
 
+// 摘要：浅灰以区分标题层级，并强制子元素（如 Markdown 渲染的 p）继承
 .content {
   font-size: var(--h5-fontsize);
   line-height: 1.4;
-  color: var(--text-color-secondary);
+  color: #6b7280;
   margin-bottom: 0;
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -187,9 +192,16 @@
 
   :global(p) {
     margin: 0 0 0.25em 0;
+    color: inherit;
     &:last-child {
       margin-bottom: 0;
     }
+  }
+
+  :global(p),
+  :global(span),
+  :global(li) {
+    color: inherit;
   }
 }
 

@@ -112,11 +112,16 @@ const Moments = () => {
 		fetchMoments();
 	}, [fetchMoments]);
 
-	// Pop 的关闭（X/遮罩）触发 NewMoment 的 handleCloseEdit（含草稿确认）
+	// Pop 的关闭：先请求子组件（可弹草稿确认）；无参调用表示动画结束，执行 setEditing(false)
 	const newMomentCloseRef = useRef(null);
-	const handlePopClose = useCallback(() => {
-		newMomentCloseRef.current?.();
-	}, []);
+	const handlePopClose = useCallback((proceed) => {
+		if (proceed === undefined || typeof proceed !== 'function') {
+			setEditing(false);
+			fetchMoments();
+			return;
+		}
+		newMomentCloseRef.current?.(proceed);
+	}, [fetchMoments]);
 
 	// 获取用户已点赞评论信息
 	const [likedComments, setLikedComments] = useState([]);

@@ -81,9 +81,10 @@ const DisplayZone = () => {
 		}
 	}, []);
 	
-	const handleCloseAnnouncement = useCallback(() => {
+	const handleCloseAnnouncement = useCallback((proceed) => {
 		setShowAnnouncement(false);
 		sessionStorage.setItem('welcomeAnnouncementSeen', '1');
+		if (typeof proceed === 'function') proceed();
 	}, []);
 	
 	// 手动打开公告（通过按钮）
@@ -233,7 +234,7 @@ const DisplayZone = () => {
 							>
 								Home
 							</span>
-							{['moments', 'gallery', 'knowledge', 'archive', 'other'].map(name => (
+							{['moments', 'gallery', 'articles', 'archive', 'other'].map(name => (
 								<span
 									key={name}
 									id={name}

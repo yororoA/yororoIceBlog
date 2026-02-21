@@ -448,12 +448,13 @@ const Knowledge = () => {
     setArticlesData(prev => prev.map(a => a._id === article._id ? { ...a, views: (a.views || 0) + 1 } : a));
   }, [onOpenDetails, setArticlesData]);
 
-  // 关闭详情
-  const handleCloseDetail = useCallback(() => {
-    isManuallyClosedRef.current = true; // 标记为手动关闭
-    autoOpenedKidRef.current = null; // 重置自动打开标记
-    setDetailArticle(null); // 关闭详情
-    onCloseDetails(); // 清除URL参数
+  // 关闭详情（Pop 的 onClose 会传入 proceed，需调用以执行关闭动画）
+  const handleCloseDetail = useCallback((proceed) => {
+    isManuallyClosedRef.current = true;
+    autoOpenedKidRef.current = null;
+    setDetailArticle(null);
+    onCloseDetails();
+    if (typeof proceed === 'function') proceed();
   }, [onCloseDetails]);
 
   // 点赞状态
@@ -493,7 +494,7 @@ const Knowledge = () => {
   const handleShare = useCallback((e) => {
     e.stopPropagation();
     if (!detailArticle) return;
-    const url = `${window.location.origin}/town/knowledge?kid=${detailArticle._id}`;
+    const url = `${window.location.origin}/town/articles?kid=${detailArticle._id}`;
     navigator.clipboard.writeText(url).then(() => showSuccess('Link copied')).catch(() => {});
     // 分享 → views +1
     incrementArticleView(detailArticle._id);
@@ -521,7 +522,7 @@ const Knowledge = () => {
   return (
     <>
       <section id="header">
-        <span>Knowledge</span>
+        <span>Articles</span>
         {isAdmin && (
           <div className={addContent.container} onClick={() => setShowNewForm(true)}>
             <CommonBtn className={addContent.new} text={'New Article'} />
@@ -588,7 +589,7 @@ const Knowledge = () => {
       )}
 
       {showNewForm && (
-        <Pop isLittle={false} onClose={() => setShowNewForm(false)}>
+        <Pop isLittle={false} onClose={(proceed) => { setShowNewForm(false); if (typeof proceed === 'function') proceed(); }}>
           <NewKnowledgeForm onClose={() => setShowNewForm(false)} onSubmit={handleSubmitArticle} />
         </Pop>
       )}

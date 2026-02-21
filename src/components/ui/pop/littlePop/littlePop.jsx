@@ -9,6 +9,7 @@ import styles from './littlePop.module.less';
 	- width?: number | string 宽度，默认 420
 	- children?: 内容区域
 	- footer?: ReactNode 自定义底部操作区
+	- onClose?: (proceed: () => void) => void 点击遮罩/关闭时调用，需调用 proceed() 才会关闭
 */
 
 const LittlePop = ({
@@ -16,10 +17,11 @@ const LittlePop = ({
 	width = 500,
 	children,
 	footer,
+	onClose,
 }) => {
 
 	return (
-		<Pop isLittle={true}>
+		<Pop isLittle={true} onClose={onClose}>
 			<div className={`${styles.panel} popItemRelative`} style={{ width }} role="dialog" aria-modal="true">
 
 				{(title || title === 0) && (

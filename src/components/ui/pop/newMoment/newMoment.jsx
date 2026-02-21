@@ -196,15 +196,20 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 		}
 	}
 
-	// 编辑界面点击关闭（Pop 的 X/遮罩或内部关闭）是否触发 toDraft 弹窗逻辑
+	// 编辑界面点击关闭（Pop 的 X/遮罩或内部关闭）：有内容则弹草稿确认，否则调用 proceed 让 Pop 执行关闭动画（父组件在动画结束后 setEditing(false)）
 	const formRef = useRef();
-	const handleCloseEdit = useCallback(() => {
+	const handleCloseEdit = useCallback((proceed) => {
+		if (!formRef.current) {
+			proceed?.();
+			return;
+		}
 		const fd = new FormData(formRef.current);
 		const fv = Object.fromEntries(fd.entries());
-		const haveValue = Object.entries(fv).filter(item => typeof item[1] === 'string').some(item => item[1].trim().length !== 0);
+		const formHasText = Object.entries(fv).filter(item => typeof item[1] === 'string').some(item => item[1].trim().length !== 0);
+		const haveValue = formHasText || images.length > 0 || videos.length > 0;
 		if (haveValue) setViewPop(true);
-		else onClose();
-	}, [onClose]);
+		else proceed?.();
+	}, [images.length, videos.length]);
 
 	useEffect(() => {
 		if (registerCloseHandler) registerCloseHandler.current = handleCloseEdit;
@@ -242,11 +247,12 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 			<form action="" className={card.entire} onChange={handleCheckRequired} onSubmit={handleSubmitMoment}
 						ref={formRef}>
 				<>
-					{/* 草稿保存弹窗 */}
+					{/* 草稿保存弹窗：点击遮罩/关闭未选择时收起弹窗，回到表单，可再次点大弹窗 X 重选 */}
 					{viewPop && <ToDraft
 						title={'close new moment edit'}
 						message={`whether to save edited content to draft(without saving pictures or videos)?`}
 						onDeny={onClose}
+						onDismiss={() => setViewPop(false)}
 						onConfirm={() => {
 						published.current = false;
 						// 即使存在空required字段也强制提交
@@ -256,6 +262,7 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 					{/* 草稿恢复弹窗	*/}
 					{viewRestore && <ToDraft
 						onDeny={() => setViewRestore(false)}
+						onDismiss={() => setViewRestore(false)}
 						onConfirm={()=>{
 							setTitle(previousDraft.title);
 							setContent(previousDraft.content);

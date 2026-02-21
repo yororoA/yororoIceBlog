@@ -35,7 +35,7 @@ function AppContent() {
 					<Route index element={<Home />} />
 					<Route path='moments' element={<Moments />} />
 					<Route path='gallery' element={<GalleryEntire />} />
-					<Route path='knowledge' element={<Knowledge />} />
+					<Route path='articles' element={<Knowledge />} />
 					<Route path='archive' element={<Archive />} />
 					<Route path='other' element={<About />} />
 				</Route>

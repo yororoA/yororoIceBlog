@@ -212,11 +212,12 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 				</div>
 			</div>
 			{showDetails &&
-				<Pop isLittle={false} onClose={() => { 
-					isManuallyClosedRef.current = true; // 标记为手动关闭
-					autoOpenedMidRef.current = null; // 重置自动打开标记
-					setShowDetails(false); // 关闭详情
-					onCloseDetails?.(); // 清除URL参数
+				<Pop isLittle={false} onClose={(proceed) => { 
+					isManuallyClosedRef.current = true;
+					autoOpenedMidRef.current = null;
+					setShowDetails(false);
+					onCloseDetails?.();
+					if (typeof proceed === 'function') proceed();
 				}}>
 					<MomentDetailsCtx value={{momentItem, filesInfos: ivs, like, setLike, setLikeNumbers, likeNumbers, setCommentToDt, onMomentDeleted: removeFromListAndClose}}>
 						<MomentDetails headshotType={headshotType} />

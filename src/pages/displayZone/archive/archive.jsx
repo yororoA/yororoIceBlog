@@ -39,7 +39,7 @@ const ArchiveItem = ({ item }) => {
     if (type === 'moment') {
       navigate(`/town/moments?mid=${_id}`);
     } else if (type === 'knowledge') {
-      navigate(`/town/knowledge?kid=${_id}`);
+      navigate(`/town/articles?kid=${_id}`);
     }
   };
 
