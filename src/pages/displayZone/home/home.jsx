@@ -25,9 +25,6 @@ const socialLinks = [
 const Home = () => {
 	return (
 		<>
-			<section id="header">
-				<span>Home</span>
-			</section>
 			<div className={homeStyles.container}>
 				{/* Profile Card */}
 				<div className={homeStyles.profileCard}>

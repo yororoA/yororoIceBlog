@@ -16,8 +16,26 @@ import { KnowledgeListContext } from './context/knowledgeListContext';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 
+// 若 markdown 第一个非空块为单独一行图片，则提取为封面 URL，并返回去掉该行后的内容（用于列表预览）
+function getFirstImageAsCover(markdown) {
+  if (!markdown || typeof markdown !== 'string') return { coverUrl: null, contentWithoutFirstImage: markdown || '' };
+  const trimmed = markdown.trim();
+  const lines = trimmed.split(/\r?\n/);
+  const firstNonEmptyIndex = lines.findIndex(l => l.trim() !== '');
+  if (firstNonEmptyIndex < 0) return { coverUrl: null, contentWithoutFirstImage: markdown };
+  const firstLine = lines[firstNonEmptyIndex].trim();
+  const imgMatch = firstLine.match(/^!\[[^\]]*\]\(([^)]+)\)$/);
+  if (!imgMatch) return { coverUrl: null, contentWithoutFirstImage: markdown };
+  const coverUrl = imgMatch[1].trim();
+  const newLines = [...lines.slice(0, firstNonEmptyIndex), ...lines.slice(firstNonEmptyIndex + 1)];
+  const contentWithoutFirstImage = newLines.join('\n').trim();
+  return { coverUrl, contentWithoutFirstImage };
+}
+
 const KnowledgeCard = ({ article, liked, onOpenDetail }) => {
   const { title, category, tags, content, createdAt, updatedAt, likes = 0, views = 0 } = article;
+  const { coverUrl, contentWithoutFirstImage } = getFirstImageAsCover(content || '');
+  const hasCover = Boolean(coverUrl);
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -26,19 +44,30 @@ const KnowledgeCard = ({ article, liked, onOpenDetail }) => {
 
   return (
     <div className={knowledge.card} onClick={() => onOpenDetail(article)}>
-      <div className={knowledge.cardHeader}>
-        <h3 className={knowledge.title}>{title}</h3>
-        <span className={knowledge.category}>{category || 'Uncategorized'}</span>
-      </div>
-      {tags && tags.length > 0 && (
-        <div className={knowledge.tags}>
-          {tags.map((tag, idx) => (
-            <span key={idx} className={knowledge.tag}>#{tag}</span>
-          ))}
+      <div className={`${knowledge.cardTop} ${hasCover ? knowledge.cardTopWithCover : ''}`}>
+        {hasCover && (
+          <div className={knowledge.cardCover}>
+            <img src={coverUrl} alt="" />
+          </div>
+        )}
+        <div className={knowledge.cardBody}>
+          <div className={knowledge.cardHeader}>
+            <h3 className={knowledge.title}>{title}</h3>
+            <span className={knowledge.category}>{category || 'Uncategorized'}</span>
+          </div>
+          {tags && tags.length > 0 && (
+            <div className={knowledge.tags}>
+              {tags.map((tag, idx) => (
+                <span key={idx} className={knowledge.tag}>#{tag}</span>
+              ))}
+            </div>
+          )}
+          <div className={knowledge.content}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+              {hasCover ? contentWithoutFirstImage : (content || '')}
+            </ReactMarkdown>
+          </div>
         </div>
-      )}
-      <div className={knowledge.content}>
-        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{content || ''}</ReactMarkdown>
       </div>
       <div className={knowledge.cardFooter}>
         <div className={knowledge.meta}>
@@ -120,12 +149,27 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  const handleInsertImage = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    // 重置 input 以支持重复选同一文件
-    e.target.value = '';
+  const insertImageMarkdown = useCallback((file, imageUrl, cursorStart, cursorEnd) => {
+    const mdImage = `![${file.name}](${imageUrl})`;
+    const ta = textareaRef.current;
+    const start = cursorStart ?? ta?.selectionStart ?? content.length;
+    const end = cursorEnd ?? ta?.selectionEnd ?? content.length;
+    setContent(prev => {
+      const before = prev.substring(0, start);
+      const after = prev.substring(end);
+      return before + mdImage + after;
+    });
+    requestAnimationFrame(() => {
+      if (ta) {
+        const pos = start + mdImage.length;
+        ta.selectionStart = ta.selectionEnd = pos;
+        ta.focus();
+      }
+    });
+  }, []);
 
+  const uploadImageAndInsert = useCallback(async (file, cursorStart, cursorEnd) => {
+    if (!file || !file.type.startsWith('image/')) return;
     setUploading(true);
     try {
       const formData = new FormData();
@@ -136,35 +180,36 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
       });
       const result = await resp.json();
       if (!result.success) throw new Error(result.message || '上传失败');
-
-      // Cloudinary 返回完整 URL，直接使用
       const imageUrl = result.data.url;
-      const mdImage = `![${file.name}](${imageUrl})`;
-
-      // 在光标位置插入
-      const ta = textareaRef.current;
-      if (ta) {
-        const start = ta.selectionStart;
-        const end = ta.selectionEnd;
-        const before = content.substring(0, start);
-        const after = content.substring(end);
-        const newContent = before + mdImage + after;
-        setContent(newContent);
-        // 下一帧移动光标到插入内容之后
-        requestAnimationFrame(() => {
-          const pos = start + mdImage.length;
-          ta.selectionStart = ta.selectionEnd = pos;
-          ta.focus();
-        });
-      } else {
-        setContent(prev => prev + '\n' + mdImage);
-      }
+      insertImageMarkdown(file, imageUrl, cursorStart, cursorEnd);
     } catch (err) {
       alert('图片上传失败: ' + err.message);
     } finally {
       setUploading(false);
     }
+  }, [insertImageMarkdown]);
+
+  const handleInsertImage = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    const ta = textareaRef.current;
+    const start = ta?.selectionStart;
+    const end = ta?.selectionEnd;
+    await uploadImageAndInsert(file, start, end);
   };
+
+  const handlePaste = useCallback(async (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    const file = Array.from(items).find(item => item.kind === 'file' && item.type.startsWith('image/'))?.getAsFile();
+    if (!file) return;
+    e.preventDefault();
+    const ta = textareaRef.current;
+    const start = ta?.selectionStart ?? 0;
+    const end = ta?.selectionEnd ?? 0;
+    await uploadImageAndInsert(file, start, end);
+  }, [uploadImageAndInsert]);
 
   const handleSubmit = async () => {
     if (!title.trim() || !content.trim()) {
@@ -234,9 +279,10 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
           </div>
           <textarea
             ref={textareaRef}
-            placeholder="Write your article in Markdown..."
+            placeholder="Write your article in Markdown... (paste image to insert)"
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            onPaste={handlePaste}
             className={knowledge.textarea}
             rows={14}
           />

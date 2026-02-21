@@ -1,19 +1,20 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding-bottom: 40px;
+  gap: 28px;
+  padding-bottom: 48px;
 }
 
 .profileCard, .statsCard, .bioCard, .skillsCard, .interestsCard, .infoCard, .linksCard, .guestbookCard {
   border: var(--nm-input-border);
-  border-radius: 12px;
-  padding: 32px;
+  border-radius: 16px;
+  padding: 32px 36px;
   background: var(--card-bgc);
-  transition: box-shadow var(--transition-type);
+  transition: box-shadow var(--transition-type), transform var(--transition-type);
 
   &:hover {
     box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
   }
 }
 
@@ -116,13 +117,13 @@
   justify-content: space-between;
   cursor: pointer;
   user-select: none;
-  margin-bottom: 24px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--nm-input-border);
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--nm-input-border);
   transition: opacity var(--transition-type);
 
   &:hover {
-    opacity: 0.8;
+    opacity: 0.85;
   }
 }
 
@@ -163,8 +164,9 @@
 .cardTitle {
   font-size: var(--h2-fontsize);
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--heading-color);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .toggleIcon {

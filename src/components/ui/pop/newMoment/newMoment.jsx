@@ -2,53 +2,123 @@ import React, {useCallback, useContext, useEffect, useMemo, useRef, useState} fr
 import IvPreview from "../../image_video_preview/ivPreview";
 import card from './newMomentPop.module.less';
 import CommonBtn from "../../../btn/commonBtn/commonBtn";
-import CloseButton from "../../../ui/close/CloseButton";
 import acknowledge from '../../acknowledge.module.less';
 import ToDraft from "../littlePop/toDraft/toDraft";
 import { SuccessBoardContext } from "../status/successBoardContext";
 
 const uidPrefix = () => localStorage.getItem('uid') || 'nm_iv';
 
-// 选择的图片/视频预览图：仅当 images/videos 变化时重建 URL，避免每次输入都重算导致卡顿
-const NmIvPreview = React.memo(({images, videos}) => {
+// 选择的图片/视频预览：支持单条移除
+const NmIvPreview = React.memo(({ images, videos, onRemoveImage, onRemoveVideo }) => {
 	const urlRef = useRef([]);
-	const items = useMemo(() => {
+	const { imageUrls, videoUrls } = useMemo(() => {
 		urlRef.current.forEach(u => URL.revokeObjectURL(u));
 		urlRef.current = [];
-		const list = [];
+		const imageUrls = [];
+		const videoUrls = [];
 		images.forEach(file => {
 			const url = URL.createObjectURL(file);
 			urlRef.current.push(url);
-			list.push([url, 'image']);
+			imageUrls.push(url);
 		});
 		videos.forEach(file => {
 			const url = URL.createObjectURL(file);
 			urlRef.current.push(url);
-			list.push([url, 'video']);
+			videoUrls.push(url);
 		});
-		return list;
+		return { imageUrls, videoUrls };
 	}, [images, videos]);
 	useEffect(() => () => {
 		urlRef.current.forEach(u => URL.revokeObjectURL(u));
 		urlRef.current = [];
 	}, []);
-	return <IvPreview items={items} prefix={uidPrefix()}/>;
+
+	const canRemove = Boolean(onRemoveImage || onRemoveVideo);
+
+	if (canRemove) {
+		return (
+			<>
+				{imageUrls.map((url, i) => (
+					<div key={`img-${i}`} className={card.nmIvItem}>
+						<img src={url} alt="" />
+						<button
+							type="button"
+							className={card.nmIvRemove}
+							onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemoveImage?.(i); }}
+							aria-label="移除图片"
+						>
+							×
+						</button>
+					</div>
+				))}
+				{videoUrls.map((url, j) => (
+					<div key={`vid-${j}`} className={card.nmIvItem}>
+						<video src={url} muted />
+						<button
+							type="button"
+							className={card.nmIvRemove}
+							onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemoveVideo?.(j); }}
+							aria-label="移除视频"
+						>
+							×
+						</button>
+					</div>
+				))}
+			</>
+		);
+	}
+
+	const items = [...imageUrls.map(u => [u, 'image']), ...videoUrls.map(u => [u, 'video'])];
+	return <IvPreview items={items} prefix={uidPrefix()} />;
 });
 
 
-// 编辑界面
-const NewMoment = ({onClose}) => {
+// 编辑界面；若父级通过 registerCloseHandler 注入 ref，则 Pop 的关闭会触发与内部关闭相同的逻辑（含草稿确认）
+const NewMoment = ({ onClose, registerCloseHandler }) => {
 	const { showSuccess } = useContext(SuccessBoardContext);
 	const [images, setImages] = useState([]);
 	const [videos, setVideos] = useState([]);
+	const addFiles = useCallback((fileList) => {
+		if (!fileList?.length) return;
+		for (const file of fileList) {
+			const fileType = file.type?.split('/').at(0);
+			if (fileType === 'image') setImages(prev => [...prev, file]);
+			else if (fileType === 'video') setVideos(prev => [...prev, file]);
+		}
+	}, []);
+
 	const addFile = e => {
 		const files = e.target.files;
-		for (const file of files) {
-			const fileType = file.type.split('/').at(0);
-			if (fileType === 'image') setImages(prevState => [...prevState, file]);
-			else if (fileType === 'video') setVideos(prevState => [...prevState, file]);
-		}
-	}
+		if (files?.length) addFiles(Array.from(files));
+		e.target.value = '';
+	};
+
+	const [dragOver, setDragOver] = useState(false);
+	const handleDragOver = useCallback((e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		e.dataTransfer.dropEffect = 'copy';
+		setDragOver(true);
+	}, []);
+	const handleDragLeave = useCallback((e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setDragOver(false);
+	}, []);
+	const handleDrop = useCallback((e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setDragOver(false);
+		const files = e.dataTransfer?.files;
+		if (files?.length) addFiles(Array.from(files));
+	}, [addFiles]);
+
+	const removeImageAt = useCallback((index) => {
+		setImages(prev => prev.filter((_, i) => i !== index));
+	}, []);
+	const removeVideoAt = useCallback((index) => {
+		setVideos(prev => prev.filter((_, i) => i !== index));
+	}, []);
 
 	// 检查是否完成必填项
 	const [allCompleted, setAllCompleted] = useState(false);
@@ -126,17 +196,20 @@ const NewMoment = ({onClose}) => {
 		}
 	}
 
-	// 编辑界面点击关闭按钮是否触发toDraft弹窗逻辑
+	// 编辑界面点击关闭（Pop 的 X/遮罩或内部关闭）是否触发 toDraft 弹窗逻辑
 	const formRef = useRef();
 	const handleCloseEdit = useCallback(() => {
-		// 检查是否有已填写项
 		const fd = new FormData(formRef.current);
 		const fv = Object.fromEntries(fd.entries());
-		// 需要有非空格的有效值输入才能通过检测
 		const haveValue = Object.entries(fv).filter(item => typeof item[1] === 'string').some(item => item[1].trim().length !== 0);
 		if (haveValue) setViewPop(true);
 		else onClose();
 	}, [onClose]);
+
+	useEffect(() => {
+		if (registerCloseHandler) registerCloseHandler.current = handleCloseEdit;
+		return () => { if (registerCloseHandler) registerCloseHandler.current = null; };
+	}, [handleCloseEdit, registerCloseHandler]);
 
 	// 文字输入
 	const [title, setTitle] = useState('');
@@ -169,7 +242,6 @@ const NewMoment = ({onClose}) => {
 			<form action="" className={card.entire} onChange={handleCheckRequired} onSubmit={handleSubmitMoment}
 						ref={formRef}>
 				<>
-					<CloseButton onClick={handleCloseEdit}/>
 					{/* 草稿保存弹窗 */}
 					{viewPop && <ToDraft
 						title={'close new moment edit'}
@@ -204,8 +276,21 @@ const NewMoment = ({onClose}) => {
 										onChange={e => setContent(e.target.value)}/>
 				</section>
 
-				<section id={'iv'}>
-					{(images.length !== 0 || videos.length !== 0) && <NmIvPreview images={images} videos={videos}/>}
+				<section
+					id={'iv'}
+					className={dragOver ? card.dropZoneActive : ''}
+					onDragOver={handleDragOver}
+					onDragLeave={handleDragLeave}
+					onDrop={handleDrop}
+				>
+					{(images.length !== 0 || videos.length !== 0) && (
+						<NmIvPreview
+							images={images}
+							videos={videos}
+							onRemoveImage={removeImageAt}
+							onRemoveVideo={removeVideoAt}
+						/>
+					)}
 					<label htmlFor={'files'}></label>
 					<input type='file' name={'files'} id={'files'} multiple={true} accept={'image/*, video/*'}
 								 onChange={addFile}/>

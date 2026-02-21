@@ -1,11 +1,12 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import archive from './archive.module.less';
 import { getArchiveData, getArchiveStats } from '../../../utils/archive';
 import { ArchiveListContext } from './context/archiveListContext';
 
 const ArchiveItem = ({ item }) => {
-  // also content had
-  const { type, title, createdAt, username } = item;
+  const { _id, type, title, createdAt, username } = item;
+  const navigate = useNavigate();
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -34,6 +35,23 @@ const ArchiveItem = ({ item }) => {
     return colorMap[type] || 'rgba(158, 158, 158, 1)';
   };
 
+  const handleClick = () => {
+    if (type === 'moment') {
+      navigate(`/town/moments?mid=${_id}`);
+    } else if (type === 'knowledge') {
+      navigate(`/town/knowledge?kid=${_id}`);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
+  const isClickable = type === 'moment' || type === 'knowledge';
+
   return (
     <div className={archive.item}>
       <div className={archive.timelineSide}>
@@ -43,7 +61,13 @@ const ArchiveItem = ({ item }) => {
         />
         <div className={archive.line} />
       </div>
-      <div className={archive.itemContent}>
+      <div
+        className={`${archive.itemContent} ${isClickable ? archive.itemContentClickable : ''}`}
+        onClick={isClickable ? handleClick : undefined}
+        role={isClickable ? 'button' : undefined}
+        tabIndex={isClickable ? 0 : undefined}
+        onKeyDown={isClickable ? handleKeyDown : undefined}
+      >
         <div className={archive.itemHeader}>
           <span 
             className={archive.type}
@@ -61,6 +85,12 @@ const ArchiveItem = ({ item }) => {
           <div className={archive.meta}>
             <span>By {username}</span>
           </div>
+        )}
+        {isClickable && (
+          <span className={archive.viewHint}>
+            View detail
+            <span className={archive.viewArrow} aria-hidden>→</span>
+          </span>
         )}
       </div>
     </div>
@@ -274,11 +304,17 @@ const Archive = () => {
 
       <div className={archive.timelineWrap}>
         {loading ? (
-          <div className={archive.loading}>Loading...</div>
+          <div className={archive.loading}>
+            <span className={archive.loadingDot} />
+            Loading...
+          </div>
         ) : filteredData.length === 0 ? (
-          <div className={archive.empty}>No data yet</div>
+          <div className={archive.empty}>
+            <p className={archive.emptyText}>No entries in this filter.</p>
+            <p className={archive.emptyHint}>Try changing type or year.</p>
+          </div>
         ) : (
-          <div className={archive.list}>
+          <div className={archive.list} role="list">
             {filteredData.map(item => (
               <ArchiveItem key={item._id} item={item} />
             ))}

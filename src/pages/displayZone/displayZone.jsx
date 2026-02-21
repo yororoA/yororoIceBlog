@@ -208,7 +208,7 @@ const DisplayZone = () => {
 		<SuccessBoardContext.Provider value={{ showSuccess, showFailed }}>
 			{showAnnouncement && (
 				<Pop isLittle={false} onClose={handleCloseAnnouncement}>
-					<Announcement markdown={homeAnnouncementMarkdown} onClose={handleCloseAnnouncement} />
+					<Announcement markdown={homeAnnouncementMarkdown} />
 				</Pop>
 			)}
 			{((showConnectedBoard && connect) || successList.length > 0 || failedList.length > 0) && (

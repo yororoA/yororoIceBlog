@@ -103,6 +103,12 @@ const Moments = () => {
 		fetchMoments();
 	}, [fetchMoments]);
 
+	// Pop 的关闭（X/遮罩）触发 NewMoment 的 handleCloseEdit（含草稿确认）
+	const newMomentCloseRef = useRef(null);
+	const handlePopClose = useCallback(() => {
+		newMomentCloseRef.current?.();
+	}, []);
+
 	// 获取用户已点赞评论信息
 	const [likedComments, setLikedComments] = useState([]);
 	const commentLikedChange = (state = true, commentId) => {
@@ -137,8 +143,8 @@ const Moments = () => {
 				</button>
 			)}
 			{editing && !isGuest() &&
-				<Pop isLittle={false}>
-					<NewMoment onClose={handleCloseNewMoment}/>
+				<Pop isLittle={false} onClose={handlePopClose}>
+					<NewMoment onClose={handleCloseNewMoment} registerCloseHandler={newMomentCloseRef}/>
 				</Pop>}
 			<div className={moments.entire}>
 				<CommentsLikedContext value={{likedComments, commentLikedChange}}>
