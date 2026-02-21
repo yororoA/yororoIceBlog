@@ -10,11 +10,15 @@ export async function getGuestbookComments() {
   return data.data || [];
 }
 
-export async function postGuestbookComment(content) {
+export async function postGuestbookComment(content, username) {
+  const payload = { content };
+  if (username) {
+    payload.username = username;
+  }
   const resp = await fetch(API, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify(payload),
   });
   const data = await resp.json().catch(() => ({}));
   if (!resp.ok) {

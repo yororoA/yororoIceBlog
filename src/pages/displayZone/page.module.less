@@ -32,9 +32,10 @@
       gap: 24px;
       width: 90%;
       max-width: 1400px;
-      min-height: var(--logo-height);
+      min-height: calc(var(--logo-height) * 0.9);
+      height: calc(var(--logo-height) * 0.9);
       margin: 0 auto;
-      padding: 8px 20px;
+      padding: 6px 20px;
       box-sizing: border-box;
 
       img.logo {
@@ -90,8 +91,27 @@
       .navRight {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 12px;
         flex-shrink: 0;
+      }
+
+      .announcementBtn {
+        flex-shrink: 0;
+        box-sizing: border-box;
+        text-align: center;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        color: var(--text-color-secondary);
+        font-size: var(--h4-fontsize);
+        transition: all var(--transition-type);
+        user-select: none;
+
+        &:hover {
+          color: var(--text-color);
+          background-color: rgba(0, 0, 0, 0.05);
+          transform: translateY(-1px);
+        }
       }
 
       .linkLogout {
@@ -126,7 +146,7 @@
       padding: calc(var(--logo-height) * 0.2) 0;
 
       span {
-        font-size: calc(var(--h2-fontsize) * 1.5);
+        font-size: var(--h2-fontsize);
         font-weight: var(--commonBtn-fontWeight);
       }
     }

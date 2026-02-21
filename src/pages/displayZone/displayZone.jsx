@@ -57,14 +57,27 @@ const DisplayZone = () => {
 		}
 	}, [location.search, location.pathname, navigate]);
 
-	// 首页公告：未选「下次不再显示」时，当前会话首次进入展示一次
-	const [showAnnouncement, setShowAnnouncement] = useState(
-		() => localStorage.getItem('welcomeAnnouncementDismissed') !== '1' && sessionStorage.getItem('welcomeAnnouncementSeen') !== '1'
-	);
-	const handleCloseAnnouncement = useCallback((dontShowAgain) => {
+	// 公告状态管理：每个用户只弹出一次，关闭后不再主动弹出
+	const [showAnnouncement, setShowAnnouncement] = useState(false);
+	
+	// 首次进入时检查是否需要自动弹出公告
+	// 如果用户之前选择了"下次不再显示"，则不再弹出（向后兼容）
+	useEffect(() => {
+		const dismissed = localStorage.getItem('welcomeAnnouncementDismissed') === '1';
+		const seen = sessionStorage.getItem('welcomeAnnouncementSeen') === '1';
+		if (!dismissed && !seen) {
+			setShowAnnouncement(true);
+		}
+	}, []);
+	
+	const handleCloseAnnouncement = useCallback(() => {
 		setShowAnnouncement(false);
 		sessionStorage.setItem('welcomeAnnouncementSeen', '1');
-		if (dontShowAgain) localStorage.setItem('welcomeAnnouncementDismissed', '1');
+	}, []);
+	
+	// 手动打开公告（通过按钮）
+	const handleOpenAnnouncement = useCallback(() => {
+		setShowAnnouncement(true);
 	}, []);
 
 	// default home page - 现在首页是公告页面，不需要跳转
@@ -201,7 +214,7 @@ const DisplayZone = () => {
 			<div className={page.entire} ref={scrollContainerRef}>
 				<div className={page.navBox}>
 					<nav>
-						<img src={logo} className={page.logo} alt="logo" />
+						<img src={logo} className={page.logo} alt="logo" onClick={() => navigate('/town')} style={{ cursor: 'pointer' }} />
 						<div className={page.link} onClick={handleRedirect}>
 							<span
 								id="home"
@@ -220,6 +233,11 @@ const DisplayZone = () => {
 							))}
 						</div>
 						<div className={page.navRight}>
+							<span className={page.announcementBtn} onClick={handleOpenAnnouncement} title="查看公告">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16ZM11 11H13V13H11V11ZM11 7H13V9H11V7Z" fill="currentColor"/>
+								</svg>
+							</span>
 							<span className={page.linkLogout} onClick={handleLogout}>{'Log out'}</span>
 							<SwitchTheme />
 						</div>

@@ -5,7 +5,7 @@
   padding-bottom: 40px;
 }
 
-.profileCard, .statsCard, .bioCard, .skillsCard, .interestsCard, .infoCard, .friendLinksCard {
+.profileCard, .statsCard, .bioCard, .skillsCard, .interestsCard, .infoCard, .linksCard, .guestbookCard {
   border: var(--nm-input-border);
   border-radius: 12px;
   padding: 32px;
@@ -110,13 +110,63 @@
   }
 }
 
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--nm-input-border);
+  transition: opacity var(--transition-type);
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+// 折叠/展开内容区域动画
+.expandableContent {
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+}
+
+.expandableContent.expanded {
+  max-height: 5000px;
+  opacity: 1;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.expandableContent.collapsed {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.toggleIcon {
+  transition: transform 0.3s ease-out;
+  display: inline-block;
+}
+
+.linksCard:has(.expandableContent.collapsed) .toggleIcon,
+.guestbookCard:has(.expandableContent.collapsed) .toggleIcon {
+  transform: rotate(-90deg);
+}
+
 .cardTitle {
   font-size: var(--h2-fontsize);
   font-weight: 600;
   color: var(--text-color);
-  margin: 0 0 24px 0;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--nm-input-border);
+  margin: 0;
+}
+
+.toggleIcon {
+  font-size: var(--h4-fontsize);
+  color: var(--text-color-secondary);
+  transition: transform var(--transition-type);
 }
 
 .statsGrid {
@@ -249,9 +299,7 @@
     font-size: var(--h3-fontsize);
   }
 
-  .leftSidebar {
-    display: none;
-  }
+  // 左侧边栏已移除，guestbook移到主内容区
 
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -316,12 +364,12 @@
   border-bottom: var(--nm-input-border);
 }
 
-// ── Friend Links (moved to bottom) ──
-.friendLinksCard {
+// ── Links (renamed from Friend Links) ──
+.linksCard {
   margin-top: 8px;
 }
 
-.friendLinkTip {
+.linkTip {
   font-size: var(--h5-fontsize);
   color: var(--text-color-secondary);
   line-height: 1.6;
@@ -329,13 +377,50 @@
   opacity: 0.8;
 }
 
-.friendLinks {
+.categoryTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.categoryTab {
+  padding: 8px 16px;
+  font-size: var(--h5-fontsize);
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  background: var(--input-bgc);
+  border: 1px solid var(--nm-input-border);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all var(--transition-type);
+
+  &:hover {
+    background: var(--accent-color-light);
+    border-color: var(--accent-color-border);
+    color: var(--text-color);
+  }
+}
+
+.categoryTabActive {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+
+  &:hover {
+    background: var(--accent-color-hover);
+    border-color: var(--accent-color-hover);
+    color: white;
+  }
+}
+
+.linksList {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
 
-.friendLinksEmpty {
+.linksEmpty {
   font-size: var(--h5-fontsize);
   color: var(--text-color-secondary);
   text-align: center;
@@ -344,7 +429,7 @@
   opacity: 0.7;
 }
 
-.friendLink {
+.link {
   display: inline-flex;
   align-items: center;
   padding: 10px 18px;
@@ -366,7 +451,7 @@
   }
 }
 
-.friendLinkWithImage {
+.linkWithImage {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -388,7 +473,7 @@
   }
 }
 
-.friendLinkImage {
+.linkImage {
   width: 32px;
   height: 32px;
   object-fit: cover;
@@ -398,7 +483,7 @@
   border: 1px solid var(--nm-input-border);
 }
 
-.friendLinkName {
+.linkName {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -411,6 +496,28 @@
   flex-direction: column;
   gap: 8px;
   margin-bottom: 12px;
+}
+
+.guestbookNameInput {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: var(--h5-fontsize);
+  border: var(--nm-input-border);
+  border-radius: 6px;
+  background: var(--input-bgc);
+  color: var(--text-color);
+  box-sizing: border-box;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent-color-border);
+  }
+
+  &::placeholder {
+    color: var(--text-color-secondary);
+    opacity: 0.6;
+  }
 }
 
 .guestbookInput {

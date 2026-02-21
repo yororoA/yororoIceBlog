@@ -10,45 +10,39 @@ import { formatDateTime } from '../../../utils/formatDateTime';
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
 
-// ── Static profile configuration ──
+// ── Static configuration ──
 const PROFILE = {
   author: 'yororoIce',
-  avatar: adminImg,
-  description: 'Time mends the wounds, love soothes the scars.',
-  bio: 'Full-stack developer with a passion for coding and open source. Love exploring new technologies and sharing knowledge. This is where I document my journey.',
-  email: '3364817735song@gmail.com',
-  github: 'https://github.com/yororoA',
-  skills: ['JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'Docker', 'MongoDB'],
-  interests: ['Coding', 'Photography', 'Travel', 'Reading', 'Music', 'Gaming', 'Anime'],
 };
 
 const BLOG_INFO = {
-  name: 'yororoIce Town',
   since: '2024',
-  stack: 'React + Node.js',
-  hosting: 'Self-hosted',
   license: 'CC BY-NC-SA 4.0',
 };
 
-// Friend links (static)
-// 支持两种格式：
-// 1. 纯文字链接: { name: 'Example Blog', url: 'https://example.com' }
-// 2. 带图片链接: { name: 'Example Blog', url: 'https://example.com', image: '/path/to/image.png' }
-const FRIEND_LINKS = [
-  // { name: 'Example Blog', url: 'https://example.com' },
-  // { name: 'Tech Corner', url: 'https://example2.com', image: '/path/to/logo.png' },
+// Links (static)
+// 支持格式：
+// 1. 纯文字链接: { name: 'Example Blog', url: 'https://example.com', category: 'friend' }
+// 2. 带图片链接: { name: 'Example Blog', url: 'https://example.com', image: '/path/to/image.png', category: 'friend' }
+// 3. 工具链接: { name: 'Tool Name', url: 'https://tool.com', category: 'tool' }
+// 4. 其他链接: { name: 'Other Link', url: 'https://other.com', category: 'other' }
+// category: 'friend' (Friend Links) 或 'tool' (Tool Links) 或 'other' (Other)，默认为 'friend'
+const LINKS = [
+  // { name: 'Example Blog', url: 'https://example.com', category: 'friend' },
+  // { name: 'Tech Corner', url: 'https://example2.com', image: '/path/to/logo.png', category: 'friend' },
+  // { name: 'Useful Tool', url: 'https://tool.com', category: 'tool' },
+  // { name: 'Other Link', url: 'https://other.com', category: 'other' },
 ];
-
-// Social links — GitHub only
-const socialLinks = [
-  { name: 'GitHub', url: PROFILE.github, show: PROFILE.github },
-].filter(link => link.show);
 
 const About = () => {
   // ── Guestbook state ──
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [guestName, setGuestName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [linksExpanded, setLinksExpanded] = useState(true);
+  const [guestbookExpanded, setGuestbookExpanded] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'friend', 'tool', 'other'
 
   useEffect(() => {
     getGuestbookComments().then(setComments).catch(() => {});
@@ -58,189 +52,164 @@ const About = () => {
     if (!newComment.trim() || submitting) return;
     setSubmitting(true);
     try {
-      const result = await postGuestbookComment(newComment.trim());
+      // 游客模式下，如果提供了name，则使用该name
+      const username = isGuest() && guestName.trim() ? guestName.trim() : undefined;
+      const result = await postGuestbookComment(newComment.trim(), username);
       if (result.success && result.data) {
         setComments(prev => [result.data, ...prev]);
         setNewComment('');
+        setGuestName(''); // 清空游客名称
       }
     } catch (err) {
       console.error('Post guestbook comment failed:', err);
     } finally {
       setSubmitting(false);
     }
-  }, [newComment, submitting]);
+  }, [newComment, guestName, submitting]);
 
   return (
     <>
       <section id="header">
-        <span>About</span>
+        <span>Other</span>
       </section>
 
-      {/* Left Sidebar — symmetric with status board on right */}
-      <aside className={about.leftSidebar}>
-        {/* Guestbook */}
-        <div className={about.sidebarCard}>
-          <h4 className={about.sidebarTitle}>Guestbook</h4>
-          {!isGuest() && (
-            <div className={about.guestbookForm}>
-              <textarea
-                className={about.guestbookInput}
-                placeholder="Leave a message..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                rows={3}
-              />
-              <button
-                className={about.guestbookSubmit}
-                onClick={handlePostComment}
-                disabled={submitting || !newComment.trim()}
-              >
-                {submitting ? 'Posting...' : 'Post'}
-              </button>
-            </div>
-          )}
-          <div className={about.guestbookList}>
-            {comments.length === 0 ? (
-              <p className={about.guestbookEmpty}>No messages yet</p>
-            ) : (
-              comments.map(c => (
-                <div key={c._id} className={about.guestbookItem}>
-                  {ADMIN_UIDS.includes(c.uid) ? (
-                    <img src={adminImg} alt={c.username} className={about.guestbookAvatarImg} />
-                  ) : c.uid === BINES_UID ? (
-                    <img src={binesImg} alt={c.username} className={about.guestbookAvatarImg} />
-                  ) : (
-                    <div className={about.guestbookAvatar} style={{ backgroundColor: getAvatarColor(c.uid) }}>
-                      {c.username?.charAt(0).toUpperCase() || '?'}
-                    </div>
-                  )}
-                  <div className={about.guestbookBody}>
-                    <div className={about.guestbookMeta}>
-                      <span className={about.guestbookUsername}>{c.username}</span>
-                      <span className={about.guestbookDate}>{formatDateTime(c.createdAt)}</span>
-                    </div>
-                    <p className={about.guestbookText}>{c.content}</p>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </aside>
 
       <div className={about.container}>
-        {/* Profile Card */}
-        <div className={about.profileCard}>
-          <div className={about.avatarSection}>
-            {PROFILE.avatar ? (
-              <img src={PROFILE.avatar} alt={PROFILE.author} className={about.avatar} />
-            ) : (
-              <div className={about.avatarPlaceholder}>
-                {PROFILE.author.charAt(0).toUpperCase()}
-              </div>
-            )}
+        {/* Links */}
+        <div className={about.linksCard}>
+          <div className={about.cardHeader} onClick={() => setLinksExpanded(!linksExpanded)}>
+            <h3 className={about.cardTitle}>Links</h3>
+            <span className={about.toggleIcon}>{linksExpanded ? '▼' : '▶'}</span>
           </div>
-          <h2 className={about.authorName}>{PROFILE.author}</h2>
-          <p className={about.description}>{PROFILE.description}</p>
-          {PROFILE.email && (
-            <p className={about.emailDisplay}>{PROFILE.email}</p>
-          )}
-          <div className={about.socialLinks}>
-            {socialLinks.map(link => (
-              <a
-                key={link.name}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={about.socialLink}
-                title={link.name}
-              >
-                {/* <span className={about.icon}>{link.icon}</span> */}
-                <span className={about.linkText}>{link.name}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* Skills */}
-        {PROFILE.skills.length > 0 && (
-          <div className={about.skillsCard}>
-            <h3 className={about.cardTitle}>Skills</h3>
-            <div className={about.tags}>
-              {PROFILE.skills.map((skill, idx) => (
-                <span key={idx} className={about.tag}>{skill}</span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Interests */}
-        {PROFILE.interests.length > 0 && (
-          <div className={about.interestsCard}>
-            <h3 className={about.cardTitle}>Interests</h3>
-            <div className={about.tags}>
-              {PROFILE.interests.map((interest, idx) => (
-                <span key={idx} className={about.tag}>{interest}</span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Blog Info */}
-        <div className={about.infoCard}>
-          <h3 className={about.cardTitle}>Blog Info</h3>
-          <div className={about.infoList}>
-            <div className={about.infoItem}>
-              <span className={about.infoLabel}>Name:</span>
-              <span className={about.infoValue}>{BLOG_INFO.name}</span>
-            </div>
-            <div className={about.infoItem}>
-              <span className={about.infoLabel}>Since:</span>
-              <span className={about.infoValue}>{BLOG_INFO.since}</span>
-            </div>
-            <div className={about.infoItem}>
-              <span className={about.infoLabel}>Stack:</span>
-              <span className={about.infoValue}>{BLOG_INFO.stack}</span>
-            </div>
-            <div className={about.infoItem}>
-              <span className={about.infoLabel}>Hosting:</span>
-              <span className={about.infoValue}>{BLOG_INFO.hosting}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Friend Links */}
-        <div className={about.friendLinksCard}>
-          <h3 className={about.cardTitle}>Friend Links</h3>
-          <p className={about.friendLinkTip}>To add your link, please email me and add this site to your blogroll first.</p>
-          <div className={about.friendLinks}>
-            {FRIEND_LINKS.length === 0 ? (
-              <p className={about.friendLinksEmpty}>No friend links yet</p>
-            ) : (
-              FRIEND_LINKS.map((link, idx) => (
-                <a 
-                  key={idx} 
-                  href={link.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className={link.image ? about.friendLinkWithImage : about.friendLink}
-                  title={link.name}
+          <div className={`${about.expandableContent} ${linksExpanded ? about.expanded : about.collapsed}`}>
+            <p className={about.linkTip}>To add your link, please email me and add this site to your blogroll first.</p>
+              {/* 分类标签 */}
+              <div className={about.categoryTabs}>
+                <button
+                  className={`${about.categoryTab} ${selectedCategory === 'all' ? about.categoryTabActive : ''}`}
+                  onClick={() => setSelectedCategory('all')}
                 >
-                  {link.image && (
-                    <img 
-                      src={link.image} 
-                      alt={link.name} 
-                      className={about.friendLinkImage}
-                      onError={(e) => {
-                        // 如果图片加载失败，隐藏图片，只显示文字
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  )}
-                  <span className={about.friendLinkName}>{link.name}</span>
-                </a>
-              ))
-            )}
+                  All Categories
+                </button>
+                <button
+                  className={`${about.categoryTab} ${selectedCategory === 'friend' ? about.categoryTabActive : ''}`}
+                  onClick={() => setSelectedCategory('friend')}
+                >
+                  Friend Links
+                </button>
+                <button
+                  className={`${about.categoryTab} ${selectedCategory === 'tool' ? about.categoryTabActive : ''}`}
+                  onClick={() => setSelectedCategory('tool')}
+                >
+                  Tool Links
+                </button>
+                <button
+                  className={`${about.categoryTab} ${selectedCategory === 'other' ? about.categoryTabActive : ''}`}
+                  onClick={() => setSelectedCategory('other')}
+                >
+                  Other
+                </button>
+              </div>
+              {/* 链接列表 */}
+              <div className={about.linksList}>
+                {(() => {
+                  const filteredLinks = selectedCategory === 'all' 
+                    ? LINKS 
+                    : LINKS.filter(link => {
+                        const category = link.category || 'friend';
+                        if (selectedCategory === 'friend') return category === 'friend';
+                        if (selectedCategory === 'tool') return category === 'tool';
+                        if (selectedCategory === 'other') return category === 'other';
+                        return false;
+                      });
+                  
+                  if (filteredLinks.length === 0) {
+                    return <p className={about.linksEmpty}>No links yet</p>;
+                  }
+                  
+                  return filteredLinks.map((link, idx) => (
+                    <a 
+                      key={idx} 
+                      href={link.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className={link.image ? about.linkWithImage : about.link}
+                      title={link.name}
+                    >
+                      {link.image && (
+                        <img 
+                          src={link.image} 
+                          alt={link.name} 
+                          className={about.linkImage}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      )}
+                      <span className={about.linkName}>{link.name}</span>
+                    </a>
+                  ));
+                })()}
+              </div>
+          </div>
+        </div>
+
+        {/* Guestbook */}
+        <div className={about.guestbookCard}>
+          <div className={about.cardHeader} onClick={() => setGuestbookExpanded(!guestbookExpanded)}>
+            <h3 className={about.cardTitle}>Guestbook</h3>
+            <span className={about.toggleIcon}>{guestbookExpanded ? '▼' : '▶'}</span>
+          </div>
+          <div className={`${about.expandableContent} ${guestbookExpanded ? about.expanded : about.collapsed}`}>
+              <div className={about.guestbookForm}>
+                <input
+                  type="text"
+                  className={about.guestbookNameInput}
+                  placeholder="Your name (optional)"
+                  value={guestName}
+                  onChange={(e) => setGuestName(e.target.value)}
+                />
+                <textarea
+                  className={about.guestbookInput}
+                  placeholder="Leave a message..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  rows={3}
+                />
+                <button
+                  className={about.guestbookSubmit}
+                  onClick={handlePostComment}
+                  disabled={submitting || !newComment.trim()}
+                >
+                  {submitting ? 'Posting...' : 'Post'}
+                </button>
+              </div>
+              <div className={about.guestbookList}>
+                {comments.length === 0 ? (
+                  <p className={about.guestbookEmpty}>No messages yet</p>
+                ) : (
+                  comments.map(c => (
+                    <div key={c._id} className={about.guestbookItem}>
+                      {ADMIN_UIDS.includes(c.uid) ? (
+                        <img src={adminImg} alt={c.username} className={about.guestbookAvatarImg} />
+                      ) : c.uid === BINES_UID ? (
+                        <img src={binesImg} alt={c.username} className={about.guestbookAvatarImg} />
+                      ) : (
+                        <div className={about.guestbookAvatar} style={{ backgroundColor: getAvatarColor(c.uid) }}>
+                          {c.username?.charAt(0).toUpperCase() || '?'}
+                        </div>
+                      )}
+                      <div className={about.guestbookBody}>
+                        <div className={about.guestbookMeta}>
+                          <span className={about.guestbookUsername}>{c.username}</span>
+                          <span className={about.guestbookDate}>{formatDateTime(c.createdAt)}</span>
+                        </div>
+                        <p className={about.guestbookText}>{c.content}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
           </div>
         </div>
 
