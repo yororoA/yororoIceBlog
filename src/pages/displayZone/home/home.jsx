@@ -8,7 +8,7 @@ const Home = () => {
 	return (
 		<>
 			<section id="header">
-				<span>公告</span>
+				<span>Notice</span>
 			</section>
 			<div className={homeStyles.container}>
 				<article className={homeStyles.content}>

@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react';
 import entireCard from './entireLoginCard.module.less';
 import lr from './lrCard.module.less';
 import {useNavigate} from "react-router-dom";
-import { submitLogin } from '../../../utils/submitLogin';
+import { submitLoginWithFallback } from '../../../utils/submitLogin';
 import { guestLogin } from '../../../utils/guestLogin';
 
 const LoginCard = () => {
@@ -36,9 +36,13 @@ const LoginCard = () => {
 			const action = form.action || `${process.env.REACT_APP_SERVER_HOST}/api/login`;
 			const formData = new FormData(form);
 			const payload = Object.fromEntries(formData.entries());
-			const result = await submitLogin(payload, action);
+			const result = await submitLoginWithFallback(payload, action);
 			if (result?.ok && result?.data) {
-				const { token, uid } = result.data;
+				const { token, uid, migrated } = result.data;
+				// 如果密码已迁移，可以给用户提示（可选）
+				if (migrated) {
+					console.log('您的密码已自动迁移到新格式，下次登录将使用新格式');
+				}
 				localStorage.removeItem('guest_token');
 				localStorage.removeItem('guest_uid');
 				const rememberMe = form.elements?.checkbox?.checked === true;

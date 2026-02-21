@@ -141,7 +141,7 @@ const Moments = () => {
 					存在 {pendingCount} 条新 moment，点击加载
 				</button>
 			)}
-			{editing &&
+			{editing && !isGuest() &&
 				<Pop isLittle={false}>
 					<NewMoment onClose={handleCloseNewMoment}/>
 				</Pop>}

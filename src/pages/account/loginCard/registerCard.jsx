@@ -87,7 +87,7 @@ const RegisterCard = () => {
 				const {token, uid} = result.data;
 				localStorage.setItem('token', token);
 				localStorage.setItem('uid', uid);
-				navigate('/town/moments');
+				navigate('/town');
 			}else throw new Error(result.data.message);
 		} catch (err) {
 			console.error('Register request failed:', err);
