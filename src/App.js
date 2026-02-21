@@ -1,6 +1,20 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { lazy, useEffect, Suspense } from "react";
+
+const TITLE_SUFFIX = ' - YororoIce Town';
+const PAGE_TITLES = {
+	'/account': `Account${TITLE_SUFFIX}`,
+	'/account/login': `Login${TITLE_SUFFIX}`,
+	'/account/register': `Register${TITLE_SUFFIX}`,
+	'/town': 'YororoIce Town',
+	'/town/': 'YororoIce Town',
+	'/town/moments': `Moments${TITLE_SUFFIX}`,
+	'/town/gallery': `Gallery${TITLE_SUFFIX}`,
+	'/town/articles': `Articles${TITLE_SUFFIX}`,
+	'/town/archive': `Archive${TITLE_SUFFIX}`,
+	'/town/other': `Other${TITLE_SUFFIX}`,
+};
 
 const Account = lazy(() => import('./pages/account/account'));
 const Login = lazy(() => import('./pages/account/loginCard/loginCard'));
@@ -17,15 +31,20 @@ const About = lazy(() => import('./pages/displayZone/about/about'));
 // 创建一个在Router内部的组件来处理导航逻辑
 function AppContent() {
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	useEffect(() => {
-		// redirect to account page if no token exist
 		const pathname = window.location.pathname.split('/').filter(item => item !== '').at(-1);
 		const hasToken = localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken');
 		if (!hasToken && pathname !== 'login' && pathname !== 'register') {
 			navigate('/account');
 		} else if (pathname === undefined) navigate('/town');
 	}, [navigate]);
+
+	useEffect(() => {
+		const path = location.pathname.replace(/\/$/, '') || '/';
+		document.title = PAGE_TITLES[path] ?? PAGE_TITLES[path + '/'] ?? 'YororoIce Town';
+	}, [location.pathname]);
 
 	return (
 		<Suspense fallback={null}>
