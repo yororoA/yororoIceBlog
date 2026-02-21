@@ -315,6 +315,7 @@ const Archive = () => {
           </div>
         ) : (
           <div className={archive.list} role="list">
+            <div className={archive.timelineTrack} aria-hidden="true" />
             {filteredData.map(item => (
               <ArchiveItem key={item._id} item={item} />
             ))}

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import logo from '../../assets/images/logo.png'
 import SwitchTheme from "../../components/switchTheme/switchTheme";
 import page from './page.module.less';
@@ -267,6 +268,12 @@ const DisplayZone = () => {
 					</ScrollContainerContext.Provider>
 				</main>
 			</div>
+			{createPortal(
+				<footer className={page.globalFooter}>
+					<p className={page.globalFooterCopyright}>© 2025 yororoIce. All rights reserved.</p>
+				</footer>,
+				document.body
+			)}
 		</SuccessBoardContext.Provider>
 	);
 };

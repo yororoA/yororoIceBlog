@@ -230,3 +230,37 @@
     }
   }
 }
+
+/* 固定页脚：与导航栏对称，始终贴在视口底部（通过 Portal 挂到 body） */
+.globalFooter {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px;
+  box-sizing: border-box;
+  background: var(--nav-bgc);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
+
+  p {
+    margin: 1px 0;
+  }
+}
+
+.globalFooterCopyright {
+  color: var(--text-color-secondary);
+  font-size: var(--h5-fontsize);
+}
+
+.globalFooterLicense {
+  color: var(--text-color-secondary);
+  font-size: var(--h6-fontsize);
+  opacity: 0.8;
+}

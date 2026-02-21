@@ -26,18 +26,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 24px;
   width: 90%;
-  max-width: 1200px;
-  min-height: var(--logo-height);
+  max-width: 1400px;
+  min-height: calc(var(--logo-height) * 0.9);
+  height: calc(var(--logo-height) * 0.9);
   margin: 0 auto;
-  padding: 8px 16px;
+  padding: 6px 20px;
   box-sizing: border-box;
-  border: var(--nm-input-border);
 }
 .entire .navBox nav img.logo {
   height: var(--logo-height);
   flex-shrink: 0;
+  cursor: pointer;
+  transition: transform var(--transition-type);
+}
+.entire .navBox nav img.logo:hover {
+  transform: scale(1.05);
 }
 .entire .navBox nav div.link {
   display: flex;
@@ -46,49 +51,147 @@
   gap: 4px;
   flex: 1;
   min-width: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  max-width: 800px;
+  margin: 0 auto;
 }
 .entire .navBox nav div.link span {
   flex-shrink: 0;
   text-align: center;
-  margin: var(--nav-link-margin);
-  border: var(--nm-input-border);
-  padding: var(--nav-link-padding);
-  border-radius: calc(var(--logo-height) / 2);
+  padding: 8px 16px;
+  border-radius: 8px;
   box-sizing: border-box;
-  background-clip: padding-box;
   cursor: pointer;
-  transition: background-color var(--transition-type), box-shadow var(--transition-type);
+  color: var(--text-color-secondary);
+  font-weight: 500;
+  font-size: var(--h5-fontsize);
+  white-space: nowrap;
+  transition: all var(--transition-type);
 }
 .entire .navBox nav div.link span:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-  box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.02);
+  color: var(--text-color);
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+.entire .navBox nav .activeLink {
+  color: var(--accent-color) !important;
+  background-color: var(--accent-color-light) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.entire .navBox nav .navRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.entire .navBox nav .announcementBtn {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-color-secondary);
+  font-size: var(--h4-fontsize);
+  transition: all var(--transition-type);
+  user-select: none;
+}
+.entire .navBox nav .announcementBtn:hover {
+  color: var(--text-color);
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
 }
 .entire .navBox nav .linkLogout {
   flex-shrink: 0;
   box-sizing: border-box;
   text-align: center;
-  margin: var(--nav-link-margin);
-  border: var(--nm-input-border);
-  padding: var(--nav-link-padding);
-  border-radius: calc(var(--logo-height) / 2);
+  padding: 6px 16px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color var(--transition-type), box-shadow var(--transition-type);
+  color: var(--text-color-secondary);
+  font-size: var(--h5-fontsize);
+  font-weight: 500;
+  transition: all var(--transition-type);
 }
 .entire .navBox nav .linkLogout:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-  box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.02);
+  color: var(--text-color);
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
 }
 .entire main {
   width: 60%;
+  min-width: 0;
+  padding: 0 0 calc(var(--logo-height) * 2) 0;
+  box-sizing: border-box;
 }
 .entire main section[id='header'] {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: calc(var(--logo-height) * 0.2) 0;
+  padding: calc(var(--logo-height) * 0.35) 0 calc(var(--logo-height) * 0.25) 0;
+  margin-bottom: calc(var(--logo-height) * 0.15);
+  border-bottom: 1px solid var(--nm-input-border);
 }
 .entire main section[id='header'] span {
-  font-size: calc(var(--h2-fontsize) * 1.5);
+  font-size: var(--h2-fontsize);
   font-weight: var(--commonBtn-fontWeight);
+  color: var(--heading-color);
+  letter-spacing: -0.02em;
+}
+@media (max-width: 1024px) {
+  .entire main {
+    width: 85%;
+  }
+}
+@media (max-width: 1024px) {
+  .navBox nav {
+    width: 95%;
+    padding: 6px 12px;
+    gap: 16px;
+  }
+  .navBox nav div.link {
+    gap: 2px;
+  }
+  .navBox nav div.link span {
+    padding: 6px 12px;
+    font-size: var(--h6-fontsize);
+  }
+}
+@media (max-width: 768px) {
+  .navBox nav {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 8px 12px;
+  }
+  .navBox nav img.logo {
+    height: calc(var(--logo-height) * 0.9);
+  }
+  .navBox nav div.link {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 4px 0;
+    scrollbar-width: thin;
+  }
+  .navBox nav div.link::-webkit-scrollbar {
+    height: 4px;
+  }
+  .navBox nav div.link span {
+    padding: 6px 10px;
+    font-size: var(--h6-fontsize);
+    white-space: nowrap;
+  }
+  .navBox nav .navRight {
+    order: 2;
+    gap: 8px;
+  }
+  .navBox nav .linkLogout {
+    padding: 4px 10px;
+    font-size: var(--h6-fontsize);
+  }
 }

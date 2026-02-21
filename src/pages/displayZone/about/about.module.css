@@ -4,31 +4,40 @@
   gap: 28px;
   padding-bottom: 48px;
 }
-
-.profileCard, .statsCard, .bioCard, .skillsCard, .interestsCard, .infoCard, .linksCard, .guestbookCard {
+.profileCard,
+.statsCard,
+.bioCard,
+.skillsCard,
+.interestsCard,
+.infoCard,
+.linksCard,
+.guestbookCard {
   border: var(--nm-input-border);
   border-radius: 16px;
   padding: 32px 36px;
   background: var(--card-bgc);
   transition: box-shadow var(--transition-type), transform var(--transition-type);
-
-  &:hover {
-    box-shadow: var(--card-shadow-hover);
-    transform: translateY(-2px);
-  }
 }
-
+.profileCard:hover,
+.statsCard:hover,
+.bioCard:hover,
+.skillsCard:hover,
+.interestsCard:hover,
+.infoCard:hover,
+.linksCard:hover,
+.guestbookCard:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+}
 .profileCard {
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .avatarSection {
   margin-bottom: 10px;
 }
-
 .avatar {
   width: 120px;
   height: 120px;
@@ -37,7 +46,6 @@
   border: 4px solid var(--nav-bgc);
   box-shadow: var(--card-shadow);
 }
-
 .avatarPlaceholder {
   width: 120px;
   height: 120px;
@@ -52,7 +60,6 @@
   border: 4px solid var(--nav-bgc);
   box-shadow: var(--card-shadow);
 }
-
 .authorName {
   font-size: var(--h2-fontsize);
   font-weight: 700;
@@ -60,7 +67,6 @@
   margin: 0 0 16px 0;
   line-height: 1.3;
 }
-
 .description {
   font-size: var(--h4-fontsize);
   color: var(--text-color-secondary);
@@ -68,21 +74,18 @@
   margin: 0 0 16px 0;
   max-width: 600px;
 }
-
 .emailDisplay {
   font-size: var(--h5-fontsize);
   color: var(--text-color-secondary);
   margin: 0 0 20px 0;
   word-break: break-all;
 }
-
 .socialLinks {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
 }
-
 .socialLink {
   display: flex;
   align-items: center;
@@ -95,22 +98,18 @@
   text-decoration: none;
   font-size: var(--h5-fontsize);
   transition: all var(--transition-type);
-
-  &:hover {
-    background-color: var(--accent-color-light);
-    border-color: var(--accent-color-border);
-    transform: translateY(-2px);
-  }
-
-  .icon {
-    font-size: var(--h4-fontsize);
-  }
-
-  .linkText {
-    font-weight: 500;
-  }
 }
-
+.socialLink:hover {
+  background-color: var(--accent-color-light);
+  border-color: var(--accent-color-border);
+  transform: translateY(-2px);
+}
+.socialLink .icon {
+  font-size: var(--h4-fontsize);
+}
+.socialLink .linkText {
+  font-weight: 500;
+}
 .cardHeader {
   display: flex;
   align-items: center;
@@ -121,13 +120,10 @@
   padding-bottom: 14px;
   border-bottom: 1px solid var(--nm-input-border);
   transition: opacity var(--transition-type);
-
-  &:hover {
-    opacity: 0.85;
-  }
 }
-
-// 折叠/展开内容区域动画：用 grid-template-rows 让高度从实际内容高度过渡到 0，与 opacity 同步，避免先消失再变短
+.cardHeader:hover {
+  opacity: 0.85;
+}
 .expandableContent {
   display: grid;
   overflow: hidden;
@@ -135,32 +131,26 @@
   will-change: grid-template-rows, opacity;
   box-sizing: border-box;
 }
-
 .expandableContent.expanded {
   grid-template-rows: 1fr;
   opacity: 1;
 }
-
 .expandableContent.collapsed {
   grid-template-rows: 0fr;
   opacity: 0;
 }
-
 .expandableContentInner {
   min-height: 0;
   overflow: hidden;
 }
-
 .toggleIcon {
   transition: transform 0.3s ease-out;
   display: inline-block;
 }
-
 .linksCard:has(.expandableContent.collapsed) .toggleIcon,
 .guestbookCard:has(.expandableContent.collapsed) .toggleIcon {
   transform: rotate(-90deg);
 }
-
 .cardTitle {
   font-size: var(--h2-fontsize);
   font-weight: 600;
@@ -168,58 +158,49 @@
   margin: 0;
   letter-spacing: -0.02em;
 }
-
 .toggleIcon {
   font-size: var(--h4-fontsize);
   color: var(--text-color-secondary);
   transition: transform var(--transition-type);
 }
-
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 20px;
 }
-
 .statItem {
   text-align: center;
   padding: 16px;
   border-radius: 8px;
   background: var(--input-bgc);
   transition: transform var(--transition-type), box-shadow var(--transition-type);
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--card-shadow);
-  }
 }
-
+.statItem:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow);
+}
 .statValue {
   font-size: var(--h1-fontsize);
   font-weight: 700;
   color: var(--accent-color);
   margin-bottom: 8px;
 }
-
 .statLabel {
   font-size: var(--h5-fontsize);
   color: var(--text-color-secondary);
   font-weight: 500;
 }
-
 .bioText {
   font-size: var(--h4-fontsize);
   line-height: 1.8;
   color: var(--text-color);
   margin: 0;
 }
-
 .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
-
 .tag {
   padding: 8px 16px;
   font-size: var(--h5-fontsize);
@@ -228,30 +209,25 @@
   border-radius: 20px;
   font-weight: 500;
   transition: all var(--transition-type);
-
-  &:hover {
-    background: var(--accent-color-active);
-    transform: scale(1.05);
-  }
 }
-
+.tag:hover {
+  background: var(--accent-color-active);
+  transform: scale(1.05);
+}
 .infoList {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-
 .infoItem {
   display: flex;
   align-items: center;
   padding: 12px 0;
   border-bottom: var(--nm-input-border);
-
-  &:last-child {
-    border-bottom: none;
-  }
 }
-
+.infoItem:last-child {
+  border-bottom: none;
+}
 .infoLabel {
   font-size: var(--h4-fontsize);
   font-weight: 600;
@@ -259,80 +235,68 @@
   min-width: 120px;
   flex-shrink: 0;
 }
-
 .infoValue {
   font-size: var(--h4-fontsize);
   color: var(--text-color);
   flex: 1;
 }
-
 .footer {
   text-align: center;
   padding: 32px 20px;
   color: var(--text-color-secondary);
   font-size: var(--h5-fontsize);
-  
-  p {
-    margin: 8px 0;
-  }
 }
-
+.footer p {
+  margin: 8px 0;
+}
 .footerNote {
   font-size: var(--h6-fontsize);
   opacity: 0.7;
 }
-
-// 响应式设计
 @media (max-width: 768px) {
   .container {
     gap: 16px;
   }
-
-  .profileCard, .statsCard, .bioCard, .skillsCard, .interestsCard, .infoCard, .friendLinksCard {
+  .profileCard,
+  .statsCard,
+  .bioCard,
+  .skillsCard,
+  .interestsCard,
+  .infoCard,
+  .friendLinksCard {
     padding: 20px;
   }
-
-  .avatar, .avatarPlaceholder {
+  .avatar,
+  .avatarPlaceholder {
     width: 100px;
     height: 100px;
   }
-
   .avatarPlaceholder {
     font-size: 40px;
   }
-
   .authorName {
     font-size: var(--h3-fontsize);
   }
-
-  // 左侧边栏已移除，guestbook移到主内容区
-
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
-
   .socialLinks {
     flex-direction: column;
     width: 100%;
   }
-
   .socialLink {
     width: 100%;
     justify-content: center;
   }
-
   .infoLabel {
     min-width: 100px;
     font-size: var(--h5-fontsize);
   }
-
   .infoValue {
     font-size: var(--h5-fontsize);
   }
 }
-
-// ── Left Sidebar — fixed, symmetric with status board on right ──
 .leftSidebar {
   position: fixed;
   left: 0;
@@ -347,12 +311,10 @@
   overflow-y: auto;
   z-index: 5;
   scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
-
+.leftSidebar::-webkit-scrollbar {
+  display: none;
+}
 .sidebarCard {
   border: var(--nm-input-border);
   border-radius: 10px;
@@ -360,7 +322,6 @@
   background: var(--card-bgc);
   transition: box-shadow var(--transition-type);
 }
-
 .sidebarTitle {
   font-size: var(--h4-fontsize);
   font-weight: 600;
@@ -369,12 +330,9 @@
   padding-bottom: 8px;
   border-bottom: var(--nm-input-border);
 }
-
-// ── Links (renamed from Friend Links) ──
 .linksCard {
   margin-top: 8px;
 }
-
 .linkTip {
   font-size: var(--h5-fontsize);
   color: var(--text-color-secondary);
@@ -382,14 +340,12 @@
   margin: 0 0 16px 0;
   opacity: 0.8;
 }
-
 .categoryTabs {
   display: flex;
   gap: 8px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
-
 .categoryTab {
   padding: 8px 16px;
   font-size: var(--h5-fontsize);
@@ -400,76 +356,27 @@
   border-radius: 20px;
   cursor: pointer;
   transition: all var(--transition-type);
-
-  &:hover {
-    background: var(--accent-color-light);
-    border-color: var(--accent-color-border);
-    color: var(--text-color);
-  }
 }
-
+.categoryTab:hover {
+  background: var(--accent-color-light);
+  border-color: var(--accent-color-border);
+  color: var(--text-color);
+}
 .categoryTabActive {
   background: var(--accent-color);
   color: white;
   border-color: var(--accent-color);
-
-  &:hover {
-    background: var(--accent-color-hover);
-    border-color: var(--accent-color-hover);
-    color: white;
-  }
 }
-
+.categoryTabActive:hover {
+  background: var(--accent-color-hover);
+  border-color: var(--accent-color-hover);
+  color: white;
+}
 .linksList {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
-
-.linksByCategory {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.linksCategorySection {
-  width: 100%;
-}
-
-.linksCategoryHeading {
-  font-size: var(--h4-fontsize);
-  font-weight: 600;
-  color: var(--heading-color);
-  margin: 0 0 10px 0;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--nm-input-border);
-}
-
-.linksCategoryGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-
-  a {
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-}
-
-@media (max-width: 768px) {
-  .linksCategoryGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .linksCategoryGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .linksEmpty {
   font-size: var(--h5-fontsize);
   color: var(--text-color-secondary);
@@ -478,7 +385,6 @@
   margin: 0;
   opacity: 0.7;
 }
-
 .link {
   display: inline-flex;
   align-items: center;
@@ -492,15 +398,13 @@
   transition: all var(--transition-type);
   word-break: break-word;
   font-weight: 500;
-
-  &:hover {
-    background: var(--accent-color-light);
-    border-color: var(--accent-color-border);
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
 }
-
+.link:hover {
+  background: var(--accent-color-light);
+  border-color: var(--accent-color-border);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 .linkWithImage {
   display: inline-flex;
   align-items: center;
@@ -514,15 +418,13 @@
   border: 1px solid var(--nm-input-border);
   transition: all var(--transition-type);
   font-weight: 500;
-
-  &:hover {
-    background: var(--accent-color-light);
-    border-color: var(--accent-color-border);
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
 }
-
+.linkWithImage:hover {
+  background: var(--accent-color-light);
+  border-color: var(--accent-color-border);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 .linkImage {
   width: 32px;
   height: 32px;
@@ -533,22 +435,18 @@
   background: var(--link-icon-bgc);
   border: 1px solid var(--nm-input-border);
 }
-
 .linkName {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
 }
-
-// ── Guestbook ──
 .guestbookForm {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 12px;
 }
-
 .guestbookNameInput {
   width: 100%;
   padding: 8px 10px;
@@ -559,18 +457,15 @@
   color: var(--text-color);
   box-sizing: border-box;
   font-family: inherit;
-
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--accent-color-border);
-  }
-
-  &::placeholder {
-    color: var(--text-color-secondary);
-    opacity: 0.6;
-  }
 }
-
+.guestbookNameInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-color-border);
+}
+.guestbookNameInput::placeholder {
+  color: var(--text-color-secondary);
+  opacity: 0.6;
+}
 .guestbookInput {
   width: 100%;
   padding: 8px 10px;
@@ -583,18 +478,15 @@
   font-family: inherit;
   resize: vertical;
   min-height: 60px;
-
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--accent-color-border);
-  }
-
-  &::placeholder {
-    color: var(--text-color-secondary);
-    opacity: 0.6;
-  }
 }
-
+.guestbookInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-color-border);
+}
+.guestbookInput::placeholder {
+  color: var(--text-color-secondary);
+  opacity: 0.6;
+}
 .guestbookSubmit {
   align-self: flex-end;
   padding: 6px 16px;
@@ -606,23 +498,19 @@
   cursor: pointer;
   font-weight: 500;
   transition: all var(--transition-type);
-
-  &:hover:not(:disabled) {
-    background: var(--accent-color-hover);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
 }
-
+.guestbookSubmit:hover:not(:disabled) {
+  background: var(--accent-color-hover);
+}
+.guestbookSubmit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .guestbookList {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
 .guestbookEmpty {
   font-size: var(--h5-fontsize);
   color: var(--text-color-secondary);
@@ -630,18 +518,15 @@
   padding: 12px 0;
   margin: 0;
 }
-
 .guestbookItem {
   display: flex;
   gap: 8px;
   padding: 8px 0;
   border-bottom: var(--nm-input-border);
-
-  &:last-child {
-    border-bottom: none;
-  }
 }
-
+.guestbookItem:last-child {
+  border-bottom: none;
+}
 .guestbookAvatar {
   width: 28px;
   height: 28px;
@@ -655,7 +540,6 @@
   color: white;
   user-select: none;
 }
-
 .guestbookAvatarImg {
   width: 28px;
   height: 28px;
@@ -663,12 +547,10 @@
   border-radius: 50%;
   object-fit: cover;
 }
-
 .guestbookBody {
   flex: 1;
   min-width: 0;
 }
-
 .guestbookMeta {
   display: flex;
   justify-content: space-between;
@@ -676,7 +558,6 @@
   gap: 4px;
   margin-bottom: 4px;
 }
-
 .guestbookUsername {
   font-size: var(--h6-fontsize);
   font-weight: 600;
@@ -685,14 +566,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .guestbookDate {
   font-size: var(--h6-fontsize);
   color: var(--text-color-secondary);
   white-space: nowrap;
   flex-shrink: 0;
 }
-
 .guestbookText {
   font-size: var(--h5-fontsize);
   color: var(--text-color);

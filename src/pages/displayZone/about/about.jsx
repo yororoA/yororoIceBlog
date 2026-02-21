@@ -10,15 +10,6 @@ import { formatDateTime } from '../../../utils/formatDateTime';
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
 
-// ── Static configuration ──
-const PROFILE = {
-  author: 'yororoIce',
-};
-
-const BLOG_INFO = {
-  since: '2024',
-  license: 'CC BY-NC-SA 4.0',
-};
 
 // Links (static)
 // 支持格式：
@@ -41,6 +32,14 @@ const LINKS = [
   {name:'MongoDB', image:'https://www.mongodb.com/favicon.ico', url:'https://www.mongodb.com', category: 'development'},
   {name:'Cloudflare', image:'https://dash.cloudflare.com/c411dbca6e493cdb.svg', url:'https://developers.cloudflare.com', category: 'development'},
 ];
+
+const CATEGORY_LABELS = {
+  friend: 'Friend Links',
+  tool: 'Tool Links',
+  development: 'Development',
+  other: 'Other',
+};
+const CATEGORY_ORDER = ['friend', 'tool', 'development', 'other'];
 
 const About = () => {
   // ── Guestbook state ──
@@ -77,11 +76,6 @@ const About = () => {
 
   return (
     <>
-      <section id="header">
-        <span>Other</span>
-      </section>
-
-
       <div className={about.container}>
         {/* Links */}
         <div className={about.linksCard}>
@@ -125,37 +119,22 @@ const About = () => {
                   Other
                 </button>
               </div>
-              {/* 链接列表 */}
+              {/* 链接列表：All 时按类型分栏，否则单列表 */}
               <div className={about.linksList}>
                 {(() => {
-                  const filteredLinks = selectedCategory === 'all' 
-                    ? LINKS 
-                    : LINKS.filter(link => {
-                        const category = link.category || 'friend';
-                        if (selectedCategory === 'friend') return category === 'friend';
-                        if (selectedCategory === 'tool') return category === 'tool';
-                        if (selectedCategory === 'development') return category === 'development';
-                        if (selectedCategory === 'other') return category === 'other';
-                        return false;
-                      });
-                  
-                  if (filteredLinks.length === 0) {
-                    return <p className={about.linksEmpty}>No links yet</p>;
-                  }
-                  
-                  return filteredLinks.map((link, idx) => (
-                    <a 
-                      key={idx} 
-                      href={link.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
+                  const renderLinkCard = (link, idx) => (
+                    <a
+                      key={idx}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className={link.image ? about.linkWithImage : about.link}
                       title={link.name}
                     >
                       {link.image && (
-                        <img 
-                          src={link.image} 
-                          alt={link.name} 
+                        <img
+                          src={link.image}
+                          alt={link.name}
                           className={about.linkImage}
                           onError={(e) => {
                             e.target.style.display = 'none';
@@ -164,7 +143,43 @@ const About = () => {
                       )}
                       <span className={about.linkName}>{link.name}</span>
                     </a>
-                  ));
+                  );
+
+                  if (selectedCategory === 'all') {
+                    const grouped = {};
+                    LINKS.forEach(link => {
+                      const cat = link.category || 'friend';
+                      if (!grouped[cat]) grouped[cat] = [];
+                      grouped[cat].push(link);
+                    });
+                    const sections = CATEGORY_ORDER.filter(cat => grouped[cat]?.length > 0);
+                    if (sections.length === 0) {
+                      return <p className={about.linksEmpty}>No links yet</p>;
+                    }
+                    return (
+                      <div className={about.linksByCategory}>
+                        {sections.map(cat => (
+                          <section key={cat} className={about.linksCategorySection}>
+                            <h4 className={about.linksCategoryHeading}>
+                              {CATEGORY_LABELS[cat]} ({grouped[cat].length})
+                            </h4>
+                            <div className={about.linksCategoryGrid}>
+                              {grouped[cat].map((link, idx) => renderLinkCard(link, idx))}
+                            </div>
+                          </section>
+                        ))}
+                      </div>
+                    );
+                  }
+
+                  const filteredLinks = LINKS.filter(link => {
+                    const category = link.category || 'friend';
+                    return category === selectedCategory;
+                  });
+                  if (filteredLinks.length === 0) {
+                    return <p className={about.linksEmpty}>No links yet</p>;
+                  }
+                  return filteredLinks.map((link, idx) => renderLinkCard(link, idx));
                 })()}
               </div>
             </div>
@@ -230,12 +245,6 @@ const About = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className={about.footer}>
-          <p>© {BLOG_INFO.since}-{new Date().getFullYear()} {PROFILE.author}. All rights reserved.</p>
-          <p className={about.footerNote}>Content licensed under {BLOG_INFO.license}</p>
         </div>
       </div>
     </>
