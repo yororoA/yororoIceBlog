@@ -67,8 +67,8 @@ export async function submitLoginWithFallback(data, actionUrl) {
 	let result = await submitLogin(data, actionUrl, false);
 	
 	// 如果失败且提示是旧用户，尝试旧格式
-	if (!result.ok && result.data?.hint) {
-		console.log('尝试使用旧格式登录...');
+	if (!result.ok && result.data?.hint === 'legacy_user_detected') {
+		console.log('检测到旧用户，尝试使用旧格式登录...');
 		result = await submitLogin(data, actionUrl, true);
 	}
 	
