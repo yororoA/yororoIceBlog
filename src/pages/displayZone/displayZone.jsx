@@ -13,6 +13,8 @@ import Announcement from '../../components/ui/announcement/announcement';
 import { homeAnnouncementMarkdown } from '../../config/announcementMarkdown';
 import { GalleryContext } from './gallery/context/galleryContext';
 import { MomentsListContext } from './moments/context/momentsListContext';
+import { KnowledgeListContext } from './knowledge/context/knowledgeListContext';
+import { ArchiveListContext } from './archive/context/archiveListContext';
 import { ScrollContainerContext } from './scrollContainerContext';
 import { getUid, logout } from '../../utils/auth';
 
@@ -28,6 +30,14 @@ const DisplayZone = () => {
 	const [deletingIds, setDeletingIds] = useState([]);
 	// 累计收到的 moment.new 的 _id（及完整数据），moment.delete 时从其中移除；点击加载后按顺序写入列表并清空
 	const [pendingNewMoments, setPendingNewMoments] = useState([]);
+	// knowledge 列表、已点赞 id、分类列表放在 DisplayZone，避免切换路由后重复加载
+	const [articlesData, setArticlesData] = useState([]);
+	const [likedArticles, setLikedArticles] = useState([]);
+	const [categories, setCategories] = useState([]);
+	// archive 列表、统计信息、年份列表放在 DisplayZone，避免切换路由后重复加载
+	const [archiveData, setArchiveData] = useState([]);
+	const [archiveStats, setArchiveStats] = useState({});
+	const [archiveYears, setArchiveYears] = useState(['all']);
 	const [successList, setSuccessList] = useState([]);
 	const [failedList, setFailedList] = useState([]);
 	const [showConnectedBoard, setShowConnectedBoard] = useState(true);
@@ -247,7 +257,11 @@ const DisplayZone = () => {
 					<ScrollContainerContext.Provider value={scrollContainerRef}>
 						<GalleryContext.Provider value={[galleryIvs, setGalleryIvs, galleryHasMore, setGalleryHasMore]}>
 							<MomentsListContext.Provider value={[momentsData, setMomentsData, likedMoments, setLikedMoments, momentsFilesCache, setMomentsFilesCache, deletingIds, markMomentDeleting, pendingNewMoments, loadPendingNewMoments]}>
-								<Outlet />
+								<KnowledgeListContext.Provider value={[articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories]}>
+									<ArchiveListContext.Provider value={[archiveData, setArchiveData, archiveStats, setArchiveStats, archiveYears, setArchiveYears]}>
+										<Outlet />
+									</ArchiveListContext.Provider>
+								</KnowledgeListContext.Provider>
 							</MomentsListContext.Provider>
 						</GalleryContext.Provider>
 					</ScrollContainerContext.Provider>

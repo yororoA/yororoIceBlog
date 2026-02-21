@@ -12,6 +12,7 @@ import { SuccessBoardContext } from '../../../components/ui/pop/status/successBo
 import { isGuest, getUid } from '../../../utils/auth';
 import { getKnowledgeArticles, createArticle, getCategories, getArticleLikesList, deleteArticle, incrementArticleView } from '../../../utils/knowledge';
 import { sendArticleLike } from '../../../utils/sendArticleLike';
+import { KnowledgeListContext } from './context/knowledgeListContext';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 
@@ -264,15 +265,13 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
 };
 
 const Knowledge = () => {
-  const [articles, setArticles] = useState([]);
+  const [articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories] = useContext(KnowledgeListContext);
   const [filteredArticles, setFilteredArticles] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [showNewForm, setShowNewForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [detailArticle, setDetailArticle] = useState(null);
-  const [likedArticles, setLikedArticles] = useState([]);
 
   const { showSuccess, showFailed } = useContext(SuccessBoardContext);
 
@@ -302,18 +301,21 @@ const Knowledge = () => {
   const currentUid = getUid();
   const isAdmin = ADMIN_UIDS.includes(currentUid);
 
-  // 获取文章数据
+  // 获取文章数据：首次无数据时拉取并写入 context，避免切换路由重复加载
   const fetchArticles = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getKnowledgeArticles({ category: selectedCategory, keyword: searchKeyword });
-      setArticles(data);
+      setArticlesData(data);
       
-      const cats = await getCategories();
-      setCategories(['all', ...cats]);
+      // 只在categories为空时获取分类列表
+      if (categories.length === 0) {
+        const cats = await getCategories();
+        setCategories(['all', ...cats]);
+      }
 
-      // 获取已点赞列表
-      if (!isGuest()) {
+      // 获取已点赞列表（只在首次或likedArticles为空时）
+      if (!isGuest() && likedArticles.length === 0) {
         const liked = await getArticleLikesList();
         setLikedArticles(liked);
       }
@@ -322,35 +324,47 @@ const Knowledge = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, searchKeyword]);
+  }, [selectedCategory, searchKeyword, articlesData.length, categories.length, likedArticles.length, setArticlesData, setCategories, setLikedArticles]);
 
   useEffect(() => {
-    fetchArticles();
-  }, [fetchArticles]);
+    // 只在首次加载或数据为空时请求
+    if (articlesData.length === 0) {
+      fetchArticles();
+    }
+  }, [articlesData.length, fetchArticles]);
 
   // 通过 URL kid 参数自动打开文章详情（仅在 kid 变化时触发一次）
   const autoOpenedKidRef = useRef(null);
+  const isManuallyClosedRef = useRef(false);
   useEffect(() => {
-    if (!kidFromQuery || articles.length === 0) return;
+    if (!kidFromQuery || articlesData.length === 0) {
+      // 如果kid被清除，关闭详情并重置标记
+      if (!kidFromQuery && detailArticle) {
+        autoOpenedKidRef.current = null;
+        setDetailArticle(null);
+        // 如果用户手动关闭，重置手动关闭标记
+        if (isManuallyClosedRef.current) {
+          isManuallyClosedRef.current = false;
+        }
+      }
+      return;
+    }
+    // 如果用户手动关闭过，不再自动打开
+    if (isManuallyClosedRef.current) return;
     // 同一个 kid 只自动打开一次，防止关闭后因 state 变化重复触发
     if (autoOpenedKidRef.current === kidFromQuery) return;
-    const target = articles.find(a => a._id === kidFromQuery);
+    const target = articlesData.find(a => a._id === kidFromQuery);
     if (target) {
       autoOpenedKidRef.current = kidFromQuery;
       setDetailArticle(target);
       // 查看详情 → views +1
       incrementArticleView(target._id);
     }
-  }, [kidFromQuery, articles]);
-
-  // URL 中 kid 被清除时重置标记，以便下次通过 URL 打开
-  useEffect(() => {
-    if (!kidFromQuery) autoOpenedKidRef.current = null;
-  }, [kidFromQuery]);
+  }, [kidFromQuery, articlesData, detailArticle]);
 
   // 过滤文章
   useEffect(() => {
-    let result = articles;
+    let result = articlesData;
     if (selectedCategory !== 'all') {
       result = result.filter(a => a.category === selectedCategory);
     }
@@ -363,12 +377,12 @@ const Knowledge = () => {
       );
     }
     setFilteredArticles(result);
-  }, [articles, selectedCategory, searchKeyword]);
+  }, [articlesData, selectedCategory, searchKeyword]);
 
   const handleSubmitArticle = async (articleData) => {
     try {
       const newArticle = await createArticle(articleData);
-      setArticles(prev => [newArticle, ...prev]);
+      setArticlesData(prev => [newArticle, ...prev]);
       if (!categories.includes(newArticle.category)) {
         setCategories(prev => [...prev, newArticle.category]);
       }
@@ -379,18 +393,21 @@ const Knowledge = () => {
 
   // 点击卡片打开详情
   const handleOpenDetail = useCallback((article) => {
+    isManuallyClosedRef.current = false; // 手动点击打开时，重置手动关闭标记
     setDetailArticle(article);
     onOpenDetails(article._id);
     // 查看详情 → views +1
     incrementArticleView(article._id);
     // 前端计数也 +1
-    setArticles(prev => prev.map(a => a._id === article._id ? { ...a, views: (a.views || 0) + 1 } : a));
-  }, [onOpenDetails]);
+    setArticlesData(prev => prev.map(a => a._id === article._id ? { ...a, views: (a.views || 0) + 1 } : a));
+  }, [onOpenDetails, setArticlesData]);
 
   // 关闭详情
   const handleCloseDetail = useCallback(() => {
-    setDetailArticle(null);
-    onCloseDetails();
+    isManuallyClosedRef.current = true; // 标记为手动关闭
+    autoOpenedKidRef.current = null; // 重置自动打开标记
+    setDetailArticle(null); // 关闭详情
+    onCloseDetails(); // 清除URL参数
   }, [onCloseDetails]);
 
   // 点赞状态
@@ -413,7 +430,7 @@ const Knowledge = () => {
     setDetailViews(prev => prev + 1);
     await sendArticleLike(detailArticle._id, checked);
     // 更新列表中的数据
-    setArticles(prev => prev.map(a => a._id === detailArticle._id
+    setArticlesData(prev => prev.map(a => a._id === detailArticle._id
       ? { ...a, likes: checked ? (a.likes || 0) + 1 : Math.max(0, (a.likes || 0) - 1), views: (a.views || 0) + 1 }
       : a
     ));
@@ -435,8 +452,8 @@ const Knowledge = () => {
     // 分享 → views +1
     incrementArticleView(detailArticle._id);
     setDetailViews(prev => prev + 1);
-    setArticles(prev => prev.map(a => a._id === detailArticle._id ? { ...a, views: (a.views || 0) + 1 } : a));
-  }, [detailArticle, showSuccess]);
+    setArticlesData(prev => prev.map(a => a._id === detailArticle._id ? { ...a, views: (a.views || 0) + 1 } : a));
+  }, [detailArticle, showSuccess, setArticlesData]);
 
   // 删除
   const canDelete = detailArticle && !isGuest() && (currentUid === detailArticle.uid || isAdmin);
@@ -446,7 +463,7 @@ const Knowledge = () => {
     if (!detailArticle) return;
     try {
       await deleteArticle(detailArticle._id);
-      setArticles(prev => prev.filter(a => a._id !== detailArticle._id));
+      setArticlesData(prev => prev.filter(a => a._id !== detailArticle._id));
       setDetailArticle(null);
       onCloseDetails();
       showSuccess('Deleted');

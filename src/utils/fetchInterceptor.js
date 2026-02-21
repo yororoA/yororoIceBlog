@@ -32,7 +32,28 @@ window.fetch = async function (input, init) {
 
 		// 注意：不要在这里随意修改 body（如 JSON 字符串/表单），避免破坏调用方
 		const resp = await originFetch(url, config);
-		if (!resp.ok) {
+		
+		// 先处理token刷新（无论响应是否成功，都可能返回新token）
+		// 处理token刷新：支持正式用户和游客用户
+		const hasRefreshedToken = resp.headers.get('X-Refreshed-Token');
+		if (hasRefreshedToken) {
+			const refreshed = hasRefreshedToken;
+			const wasGuestRequest = !!(guestToken && guestUid);
+			
+			if (wasGuestRequest) {
+				// 游客token刷新：更新guest_token
+				localStorage.setItem('guest_token', refreshed);
+				console.log('[Fetch Interceptor] 已更新游客token');
+			} else {
+				// 正式用户token刷新：更新token
+				if (localStorage.getItem('token')) localStorage.setItem('token', refreshed);
+				if (sessionStorage.getItem('token')) sessionStorage.setItem('token', refreshed);
+				console.log('[Fetch Interceptor] 已更新用户token');
+			}
+		}
+		
+		// 处理401错误：如果token已刷新，则不处理；否则清理token并跳转登录页
+		if (!resp.ok && resp.status === 401 && !hasRefreshedToken) {
 			// 用 clone() 读取 body，避免消费原 resp，否则调用方再 resp.json() 会报 "body stream already read"
 			let data;
 			try {
@@ -40,23 +61,23 @@ window.fetch = async function (input, init) {
 			} catch {
 				data = {};
 			}
-			if (data.hasOwnProperty('tokenError')) {
-				const wasGuestRequest = !!(guestToken && guestUid);
-				if (!wasGuestRequest) {
-					localStorage.removeItem('token');
-					localStorage.removeItem('uid');
-					sessionStorage.removeItem('token');
-					sessionStorage.removeItem('uid');
-					localStorage.removeItem('guest_token');
-					localStorage.removeItem('guest_uid');
+			
+			// 401错误且没有token刷新，清理所有token并跳转登录页
+			if (data.hasOwnProperty('tokenError') || resp.status === 401) {
+				// 清理所有token和uid
+				localStorage.removeItem('token');
+				localStorage.removeItem('uid');
+				sessionStorage.removeItem('token');
+				sessionStorage.removeItem('uid');
+				localStorage.removeItem('guest_token');
+				localStorage.removeItem('guest_uid');
+				
+				console.log('[Fetch Interceptor] 401错误，已清理token，跳转登录页');
+				// 避免重复跳转
+				if (!window.location.pathname.includes('/account/login')) {
 					window.location.href = '/account/login';
 				}
 			}
-		}
-		if (resp.headers['X-Refreshed-Token'] !== undefined) {
-			const refreshed = resp.headers['X-Refreshed-Token'];
-			if (localStorage.getItem('token')) localStorage.setItem('token', refreshed);
-			if (sessionStorage.getItem('token')) sessionStorage.setItem('token', refreshed);
 		}
 		return resp;
 	} else {

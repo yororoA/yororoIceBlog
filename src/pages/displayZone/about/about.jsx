@@ -82,6 +82,7 @@ const About = () => {
             <span className={about.toggleIcon}>{linksExpanded ? '▼' : '▶'}</span>
           </div>
           <div className={`${about.expandableContent} ${linksExpanded ? about.expanded : about.collapsed}`}>
+            <div className={about.expandableContentInner}>
             <p className={about.linkTip}>To add your link, please email me and add this site to your blogroll first.</p>
               {/* 分类标签 */}
               <div className={about.categoryTabs}>
@@ -151,6 +152,7 @@ const About = () => {
                   ));
                 })()}
               </div>
+            </div>
           </div>
         </div>
 
@@ -161,6 +163,7 @@ const About = () => {
             <span className={about.toggleIcon}>{guestbookExpanded ? '▼' : '▶'}</span>
           </div>
           <div className={`${about.expandableContent} ${guestbookExpanded ? about.expanded : about.collapsed}`}>
+            <div className={about.expandableContentInner}>
               <div className={about.guestbookForm}>
                 <input
                   type="text"
@@ -210,6 +213,7 @@ const About = () => {
                   ))
                 )}
               </div>
+            </div>
           </div>
         </div>
 

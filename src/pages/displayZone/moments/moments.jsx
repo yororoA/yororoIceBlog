@@ -82,14 +82,10 @@ const Moments = () => {
 		if (momentsData.length === 0 && !editing) fetchMoments();
 	}, [editing, momentsData.length, fetchMoments]);
 
-	// 由 context 中的 momentsData / likedMoments 渲染列表
-	const [elements, setElements] = useState([]);
-	useEffect(() => {
-		if (momentsData.length === 0) {
-			setElements([]);
-			return;
-		}
-		setElements(momentsData.map(item => (
+	// 直接根据数据渲染列表，midFromQuery 变化时只更新 props 不整表替换，避免关闭详情时卡片重挂载导致 Pop 关闭动画重播
+	const elements = momentsData.length === 0
+		? 'no moments yet'
+		: momentsData.map(item => (
 			<MomentItem
 				data={item}
 				liked={likedMoments.includes(item._id)}
@@ -99,8 +95,7 @@ const Moments = () => {
 				onOpenDetails={onOpenDetails}
 				isDeleting={deletingIds.includes(item._id)}
 			/>
-		)));
-	}, [momentsData, likedMoments, midFromQuery, onCloseDetails, onOpenDetails, deletingIds]);
+		));
 
 	// 发布新 moment 关闭弹层后刷新列表并更新 context
 	const handleCloseNewMoment = useCallback(() => {
@@ -147,7 +142,7 @@ const Moments = () => {
 				</Pop>}
 			<div className={moments.entire}>
 				<CommentsLikedContext value={{likedComments, commentLikedChange}}>
-					{elements.length > 0 ? elements : 'no moments yet'}
+					{elements}
 				</CommentsLikedContext>
 			</div>
 		</>

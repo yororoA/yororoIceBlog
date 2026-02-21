@@ -126,24 +126,28 @@
   }
 }
 
-// 折叠/展开内容区域动画
+// 折叠/展开内容区域动画：用 grid-template-rows 让高度从实际内容高度过渡到 0，与 opacity 同步，避免先消失再变短
 .expandableContent {
+  display: grid;
   overflow: hidden;
-  transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
+  transition: grid-template-rows 0.3s ease-out, opacity 0.3s ease-out;
+  will-change: grid-template-rows, opacity;
+  box-sizing: border-box;
 }
 
 .expandableContent.expanded {
-  max-height: 5000px;
+  grid-template-rows: 1fr;
   opacity: 1;
-  padding-top: 0;
-  padding-bottom: 0;
 }
 
 .expandableContent.collapsed {
-  max-height: 0;
+  grid-template-rows: 0fr;
   opacity: 0;
-  padding-top: 0;
-  padding-bottom: 0;
+}
+
+.expandableContentInner {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .toggleIcon {

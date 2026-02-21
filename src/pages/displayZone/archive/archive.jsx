@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import archive from './archive.module.less';
 import { getArchiveData, getArchiveStats } from '../../../utils/archive';
+import { ArchiveListContext } from './context/archiveListContext';
 
 const ArchiveItem = ({ item }) => {
   // also content had
@@ -67,16 +68,14 @@ const ArchiveItem = ({ item }) => {
 };
 
 const Archive = () => {
-  const [archiveData, setArchiveData] = useState([]);
+  const [archiveData, setArchiveData, stats, setStats, years, setYears] = useContext(ArchiveListContext);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedType, setSelectedType] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
   const [loading, setLoading] = useState(false);
-  const [years, setYears] = useState(['all']);
-  const [stats, setStats] = useState({});
   const yearsInitialized = useRef(false);
 
-  // Fetch all archive data (no year filter sent to backend)
+  // Fetch all archive data：首次无数据时拉取并写入 context，避免切换路由重复加载
   const fetchArchiveData = useCallback(async () => {
     setLoading(true);
     try {
@@ -85,7 +84,7 @@ const Archive = () => {
       setArchiveData(data);
 
       // Only compute years once from the full dataset
-      if (!yearsInitialized.current) {
+      if (!yearsInitialized.current && years.length === 1 && years[0] === 'all') {
         const yearSet = new Set(data.map(item =>
           new Date(item.createdAt).getFullYear()
         ));
@@ -93,14 +92,16 @@ const Archive = () => {
         yearsInitialized.current = true;
       }
 
-      // Stats
-      const statsData = await getArchiveStats();
-      setStats({
-        total: data.length,
-        moment: statsData.moments || 0,
-        knowledge: statsData.articles || 0,
-        photos: statsData.photos || 0
-      });
+      // Stats（只在首次或stats为空时获取）
+      if (Object.keys(stats).length === 0) {
+        const statsData = await getArchiveStats();
+        setStats({
+          total: data.length,
+          moment: statsData.moments || 0,
+          knowledge: statsData.articles || 0,
+          photos: statsData.photos || 0
+        });
+      }
 
     } catch (err) {
       console.error('Failed to fetch archive data:', err);
@@ -175,11 +176,14 @@ const Archive = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedType]);
+  }, [selectedType, archiveData.length, years.length, stats, setArchiveData, setYears, setStats]);
 
   useEffect(() => {
-    fetchArchiveData();
-  }, [fetchArchiveData]);
+    // 只在首次加载或数据为空时请求
+    if (archiveData.length === 0) {
+      fetchArchiveData();
+    }
+  }, [archiveData.length, fetchArchiveData]);
 
   // Filter data locally
   useEffect(() => {

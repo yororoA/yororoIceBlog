@@ -1,4 +1,4 @@
-import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import adminImg from '../../../../assets/images/admin.png';
 import binesImg from '../../../../assets/images/bines.png';
 import card from './card.module.less';
@@ -108,12 +108,33 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 
 	// 查看 moment 详情（支持通过 URL 查询参数 mid 自动打开）
 	const [showDetails, setShowDetails] = useState(false);
+	const autoOpenedMidRef = useRef(null);
+	const isManuallyClosedRef = useRef(false);
+	
 	// 有图时需等 getFiles 完成再打开详情，否则详情里图片无法展示
 	useEffect(() => {
-		if (!openDetailsOnMount) return;
+		if (!openDetailsOnMount) {
+			// 如果openDetailsOnMount变为false，关闭详情并重置标记
+			if (autoOpenedMidRef.current === _id) {
+				autoOpenedMidRef.current = null;
+				setShowDetails(false);
+			}
+			// 如果用户手动关闭，重置手动关闭标记
+			if (isManuallyClosedRef.current) {
+				isManuallyClosedRef.current = false;
+			}
+			return;
+		}
+		// 如果用户手动关闭过，不再自动打开
+		if (isManuallyClosedRef.current) return;
+		// 同一个moment只自动打开一次，防止关闭后因state变化重复触发
+		if (autoOpenedMidRef.current === _id) return;
 		const mediaReady = filenames.length === 0 || ivs.length > 0;
-		if (mediaReady) setShowDetails(true);
-	}, [openDetailsOnMount, filenames.length, ivs.length]);
+		if (mediaReady) {
+			autoOpenedMidRef.current = _id;
+			setShowDetails(true);
+		}
+	}, [openDetailsOnMount, filenames.length, ivs.length, _id]);
 
 	// 展示时间：优先使用 updatedAt，没有则回退到 createdAt
 	const displayTime = formatDateTime(updatedAt || createdAt);
@@ -148,7 +169,13 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 
 	return (
 		<>
-			<div className={card.entire} onClick={preview ? () => { setShowDetails(true); onOpenDetails?.(_id); incrementMomentView(_id); setViewCount(prev => prev + 1); } : undefined}>
+			<div className={card.entire} onClick={preview ? () => { 
+				isManuallyClosedRef.current = false; // 手动点击打开时，重置手动关闭标记
+				setShowDetails(true); 
+				onOpenDetails?.(_id); 
+				incrementMomentView(_id); 
+				setViewCount(prev => prev + 1); 
+			} : undefined}>
 				<div className={card.content}>
 					{/* alt=username */}
 					{headshotType ? (
@@ -185,7 +212,12 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 				</div>
 			</div>
 			{showDetails &&
-				<Pop isLittle={false} onClose={() => { setShowDetails(false); onCloseDetails?.(); }}>
+				<Pop isLittle={false} onClose={() => { 
+					isManuallyClosedRef.current = true; // 标记为手动关闭
+					autoOpenedMidRef.current = null; // 重置自动打开标记
+					setShowDetails(false); // 关闭详情
+					onCloseDetails?.(); // 清除URL参数
+				}}>
 					<MomentDetailsCtx value={{momentItem, filesInfos: ivs, like, setLike, setLikeNumbers, likeNumbers, setCommentToDt, onMomentDeleted: removeFromListAndClose}}>
 						<MomentDetails headshotType={headshotType} />
 					</MomentDetailsCtx>
