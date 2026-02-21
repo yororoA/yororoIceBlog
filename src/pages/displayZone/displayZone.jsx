@@ -67,14 +67,18 @@ const DisplayZone = () => {
 		if (dontShowAgain) localStorage.setItem('welcomeAnnouncementDismissed', '1');
 	}, []);
 
-	// default home page
-	const pathname = window.location.pathname.split('/').filter(item => item !== '').at(-1);
-	useEffect(() => {
-		if (pathname === 'town') navigate('moments');
-	}, [pathname, navigate]);
+	// default home page - 现在首页是公告页面，不需要跳转
+	// const pathname = window.location.pathname.split('/').filter(item => item !== '').at(-1);
+	// useEffect(() => {
+	// 	if (pathname === 'town') navigate('moments');
+	// }, [pathname, navigate]);
 	// click to nav link
 	const handleRedirect = useCallback(e => {
-		if (e.target.id) navigate(e.target.id);
+		if (e.target.id === 'home' || (e.target.id === '' && e.target.textContent === 'Home')) {
+			navigate('/town');
+		} else if (e.target.id) {
+			navigate(e.target.id);
+		}
 	}, [navigate]);
 	const handleLogout = useCallback(() => {
 		logout();
@@ -199,6 +203,12 @@ const DisplayZone = () => {
 					<nav>
 						<img src={logo} className={page.logo} alt="logo" />
 						<div className={page.link} onClick={handleRedirect}>
+							<span
+								id="home"
+								className={location.pathname === '/town' || location.pathname === '/town/' ? page.activeLink : ''}
+							>
+								Home
+							</span>
 							{['moments', 'gallery', 'knowledge', 'archive', 'about'].map(name => (
 								<span
 									key={name}

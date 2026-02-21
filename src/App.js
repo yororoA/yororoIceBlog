@@ -7,6 +7,7 @@ const Login = lazy(() => import('./pages/account/loginCard/loginCard'));
 const Register = lazy(() => import('./pages/account/loginCard/registerCard'));
 
 const DisplayZone = lazy(() => import('./pages/displayZone/displayZone'));
+const Home = lazy(() => import('./pages/displayZone/home/home'));
 const Moments = lazy(() => import('./pages/displayZone/moments/moments'));
 const GalleryEntire = lazy(() => import('./pages/displayZone/gallery/context/galleryContext'));
 const Knowledge = lazy(() => import('./pages/displayZone/knowledge/knowledge'));
@@ -31,6 +32,7 @@ function AppContent() {
 			<Routes>
 				{/* access allowed only after account */}
 				<Route path='/town' element={<DisplayZone />}>
+					<Route index element={<Home />} />
 					<Route path='moments' element={<Moments />} />
 					<Route path='gallery' element={<GalleryEntire />} />
 					<Route path='knowledge' element={<Knowledge />} />

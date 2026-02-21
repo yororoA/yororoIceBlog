@@ -60,7 +60,7 @@ const LoginCard = () => {
 						localStorage.removeItem('uid');
 					}
 				}
-				navigate('/town/moments');
+				navigate('/town');
 			}
 		} catch (err) {
 			console.error('Login request failed:', err);
@@ -70,7 +70,7 @@ const LoginCard = () => {
 	const handleGuestLogin = async () => {
 		try {
 			await guestLogin();
-			navigate('/town/moments');
+			navigate('/town');
 		} catch (err) {
 			console.error('Guest login failed:', err);
 		}
