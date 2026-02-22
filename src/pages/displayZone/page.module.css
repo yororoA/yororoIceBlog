@@ -131,6 +131,65 @@
   background-color: rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
 }
+.entire .navBox nav .localeMenuWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.entire .navBox nav .localeIconBtn {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-color-secondary);
+  transition: all var(--transition-type);
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+.entire .navBox nav .localeIconBtn:hover {
+  color: var(--text-color);
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+.entire .navBox nav .localeMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 110px;
+  padding: 6px;
+  border-radius: 10px;
+  border: var(--nm-input-border);
+  background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 20;
+}
+.entire .navBox nav .localeMenuItem {
+  border: none;
+  background: transparent;
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
+  text-align: left;
+  border-radius: 7px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all var(--transition-type);
+}
+.entire .navBox nav .localeMenuItem:hover {
+  color: var(--text-color);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.entire .navBox nav .localeMenuItemActive {
+  color: var(--accent-color);
+  background: var(--accent-color-light);
+}
 .entire main {
   width: 60%;
   min-width: 0;
@@ -211,6 +270,10 @@
   .navBox nav .linkLogout {
     padding: 4px 10px;
     font-size: var(--h6-fontsize);
+  }
+  .navBox nav .localeIconBtn {
+    width: 32px;
+    height: 28px;
   }
 }
 /* 固定页脚：与导航栏对称，始终贴在视口底部（通过 Portal 挂到 body） */

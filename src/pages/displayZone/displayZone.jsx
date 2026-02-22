@@ -22,6 +22,8 @@ import { UiPersistContext } from './context/uiPersistContext';
 import ProfileMiniCard from './shared/profileMiniCard';
 import { getUid, logout } from '../../utils/auth';
 
+const LOCALE_ORDER = ['en', 'zh', 'ja'];
+
 const DisplayZone = () => {
 	const uid = getUid();
 	// gallery 的 ivs、hasMore 放在 DisplayZone，切换路由时不会卸载，回来时图片仍在且不会重复请求
@@ -54,6 +56,7 @@ const DisplayZone = () => {
 	const [successList, setSuccessList] = useState([]);
 	const [failedList, setFailedList] = useState([]);
 	const [showConnectedBoard, setShowConnectedBoard] = useState(true);
+	const [showLocaleMenu, setShowLocaleMenu] = useState(false);
 	const showSuccess = useCallback((content) => {
 		setSuccessList(prev => [...prev, { id: Date.now(), content }]);
 	}, []);
@@ -69,6 +72,7 @@ const DisplayZone = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const scrollContainerRef = useRef(null);
+	const localeMenuRef = useRef(null);
 
 	// 若有 mid 查询参数，则跳到 moments 页并用现有逻辑展示对应 moment
 	useEffect(() => {
@@ -104,9 +108,23 @@ const DisplayZone = () => {
 		setShowAnnouncement(true);
 	}, []);
 
-	const toggleLocale = useCallback(() => {
-		setLocale(prev => (prev === 'en' ? 'zh' : 'en'));
+	const handleToggleLocaleMenu = useCallback(() => {
+		setShowLocaleMenu(prev => !prev);
 	}, []);
+	const handleSelectLocale = useCallback((nextLocale) => {
+		setLocale(nextLocale);
+		setShowLocaleMenu(false);
+	}, []);
+	useEffect(() => {
+		if (!showLocaleMenu) return undefined;
+		const onPointerDown = (e) => {
+			if (localeMenuRef.current && !localeMenuRef.current.contains(e.target)) {
+				setShowLocaleMenu(false);
+			}
+		};
+		window.addEventListener('pointerdown', onPointerDown);
+		return () => window.removeEventListener('pointerdown', onPointerDown);
+	}, [showLocaleMenu]);
 
 	useEffect(() => {
 		localStorage.setItem('ui_locale', locale);
@@ -279,9 +297,39 @@ const DisplayZone = () => {
 									<path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16ZM11 11H13V13H11V11ZM11 7H13V9H11V7Z" fill="currentColor" />
 								</svg>
 							</span>
-							<span className={page.linkLogout} onClick={toggleLocale} title={t(locale, 'languageToggle')}>
-								{locale === 'en' ? t(locale, 'localeZh') : t(locale, 'localeEn')}
-							</span>
+							<div className={page.localeMenuWrap} ref={localeMenuRef}>
+								<button
+									type="button"
+									className={page.localeIconBtn}
+									onClick={handleToggleLocaleMenu}
+									title={t(locale, 'languageToggle')}
+									aria-haspopup="menu"
+									aria-expanded={showLocaleMenu}
+								>
+									<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+										<circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+										<path d="M3.5 12H20.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+										<path d="M12 3C14.5 5.3 16 8.5 16 12C16 15.5 14.5 18.7 12 21" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+										<path d="M12 3C9.5 5.3 8 8.5 8 12C8 15.5 9.5 18.7 12 21" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+									</svg>
+								</button>
+								{showLocaleMenu && (
+									<div className={page.localeMenu} role="menu">
+										{LOCALE_ORDER.map((item) => (
+											<button
+												key={item}
+												type="button"
+												role="menuitemradio"
+												aria-checked={locale === item}
+												className={`${page.localeMenuItem}${locale === item ? ` ${page.localeMenuItemActive}` : ''}`}
+												onClick={() => handleSelectLocale(item)}
+											>
+												{item === 'en' ? t(locale, 'localeEn') : item === 'zh' ? t(locale, 'localeZh') : t(locale, 'localeJa')}
+											</button>
+										))}
+									</div>
+								)}
+							</div>
 							<span className={page.linkLogout} onClick={handleLogout}>{'Log out'}</span>
 							<SwitchTheme />
 						</div>

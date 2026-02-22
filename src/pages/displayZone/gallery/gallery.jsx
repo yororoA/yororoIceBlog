@@ -136,7 +136,7 @@ const Gallery = () => {
       // 清空 input 以便再次选择相同文件
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
-  }, [showSuccess, showFailed, setIvs, setHasMore]);
+  }, [showSuccess, showFailed, setIvs, setHasMore, locale]);
 
   return (
     <div className="gallery-page page-enter">
