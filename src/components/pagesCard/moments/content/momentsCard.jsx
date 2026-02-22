@@ -1,4 +1,4 @@
-import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
 import adminImg from '../../../../assets/images/admin.png';
 import binesImg from '../../../../assets/images/bines.png';
 import card from './card.module.less';
@@ -13,16 +13,14 @@ import {getFiles} from "../../../../utils/getFiles";
 import {sendMomentLike} from "../../../../utils/sendMomentLike";
 import {deleteMoment} from "../../../../utils/deleteMoment";
 import {incrementMomentView} from "../../../../utils/incrementMomentView";
-import Pop from "../../../ui/pop/pop";
-import MomentDetails from "../../../../pages/displayZone/moments/momentDetails/momentDetails";
 import {formatDateTime} from "../../../../utils/formatDateTime";
 
 // context of moment details
 export const MomentDetailsCtx = createContext({});
 
-const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpenDetails}) => {
+const MomentsCard = ({liked, preview, onOpenDetails, onRequestDetail}) => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames, updatedAt}
-	const {momentItem, setCommentToDt} = useContext(MomentIdContext);
+	const {momentItem} = useContext(MomentIdContext);
 	const [, , , , momentsFilesCache, setMomentsFilesCache, , markMomentDeleting] = useContext(MomentsListContext);
 	const { showSuccess, showFailed } = useContext(SuccessBoardContext);
 	const {uid, username, content, title, createdAt, updatedAt, _id, likes, filenames} = momentItem;
@@ -106,36 +104,6 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 	}, [_id, showSuccess]);
 
 
-	// 查看 moment 详情（支持通过 URL 查询参数 mid 自动打开）
-	const [showDetails, setShowDetails] = useState(false);
-	const autoOpenedMidRef = useRef(null);
-	const isManuallyClosedRef = useRef(false);
-	
-	// 有图时需等 getFiles 完成再打开详情，否则详情里图片无法展示
-	useEffect(() => {
-		if (!openDetailsOnMount) {
-			// 如果openDetailsOnMount变为false，关闭详情并重置标记
-			if (autoOpenedMidRef.current === _id) {
-				autoOpenedMidRef.current = null;
-				setShowDetails(false);
-			}
-			// 如果用户手动关闭，重置手动关闭标记
-			if (isManuallyClosedRef.current) {
-				isManuallyClosedRef.current = false;
-			}
-			return;
-		}
-		// 如果用户手动关闭过，不再自动打开
-		if (isManuallyClosedRef.current) return;
-		// 同一个moment只自动打开一次，防止关闭后因state变化重复触发
-		if (autoOpenedMidRef.current === _id) return;
-		const mediaReady = filenames.length === 0 || ivs.length > 0;
-		if (mediaReady) {
-			autoOpenedMidRef.current = _id;
-			setShowDetails(true);
-		}
-	}, [openDetailsOnMount, filenames.length, ivs.length, _id]);
-
 	// 展示时间：优先使用 updatedAt，没有则回退到 createdAt
 	const displayTime = formatDateTime(updatedAt || createdAt);
 
@@ -153,7 +121,6 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 
 	const removeFromListAndClose = useCallback(() => {
 		markMomentDeleting(_id);
-		setShowDetails(false);
 		showSuccess('Deleted');
 	}, [_id, markMomentDeleting, showSuccess]);
 
@@ -170,8 +137,7 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 	return (
 		<>
 			<div className={card.entire} onClick={preview ? () => { 
-				isManuallyClosedRef.current = false; // 手动点击打开时，重置手动关闭标记
-				setShowDetails(true); 
+				onRequestDetail?.(momentItem);
 				onOpenDetails?.(_id); 
 				incrementMomentView(_id); 
 				setViewCount(prev => prev + 1); 
@@ -211,19 +177,6 @@ const MomentsCard = ({liked, preview, openDetailsOnMount, onCloseDetails, onOpen
 					</div>
 				</div>
 			</div>
-			{showDetails &&
-				<Pop isLittle={false} onClose={(proceed) => { 
-					isManuallyClosedRef.current = true;
-					autoOpenedMidRef.current = null;
-					setShowDetails(false);
-					onCloseDetails?.();
-					if (typeof proceed === 'function') proceed();
-				}}>
-					<MomentDetailsCtx value={{momentItem, filesInfos: ivs, like, setLike, setLikeNumbers, likeNumbers, setCommentToDt, onMomentDeleted: removeFromListAndClose}}>
-						<MomentDetails headshotType={headshotType} />
-					</MomentDetailsCtx>
-				</Pop>
-			}
 		</>
 	);
 };

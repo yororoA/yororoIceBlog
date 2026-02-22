@@ -121,7 +121,20 @@ const KnowledgeCard = ({ article, liked, onOpenDetail }) => {
   );
 };
 
-const ArticleDetail = ({ article, liked, onLikeChange, onShare, onDelete, canDelete, likeNumbers, viewCount }) => {
+const ArticleDetail = ({
+  article,
+  liked,
+  onLikeChange,
+  onShare,
+  onDelete,
+  canDelete,
+  likeNumbers,
+  viewCount,
+  hasPrevArticle,
+  hasNextArticle,
+  onPrevArticle,
+  onNextArticle
+}) => {
   const { title, category, tags, content, createdAt, updatedAt, _id } = article;
 
   const formatDate = (dateStr) => {
@@ -160,6 +173,8 @@ const ArticleDetail = ({ article, liked, onLikeChange, onShare, onDelete, canDel
       <div className={knowledge.detailFooter} onClick={e => e.stopPropagation()}>
         <Like onChange={onLikeChange} checked={liked} likes={likeNumbers} _id={_id} type="article" />
         <div className={knowledge.actions}>
+          <button type="button" className={knowledge.actionBtn} onClick={onPrevArticle} disabled={!hasPrevArticle}>{'上一篇'}</button>
+          <button type="button" className={knowledge.actionBtn} onClick={onNextArticle} disabled={!hasNextArticle}>{'下一篇'}</button>
           {canDelete && (
             <button type="button" className={knowledge.actionBtn} onClick={onDelete}>{'删除'}</button>
           )}
@@ -550,6 +565,23 @@ const Knowledge = () => {
     }
   }, [detailArticle, onCloseDetails, showSuccess, showFailed, setArticlesData]);
 
+  const detailNavList = filteredArticles.some(a => a._id === detailArticle?._id) ? filteredArticles : articlesData;
+  const detailIndex = detailArticle ? detailNavList.findIndex(a => a._id === detailArticle._id) : -1;
+  const hasPrevArticle = detailIndex > 0;
+  const hasNextArticle = detailIndex >= 0 && detailIndex < detailNavList.length - 1;
+
+  const handlePrevArticle = useCallback((e) => {
+    e.stopPropagation();
+    if (!hasPrevArticle) return;
+    handleOpenDetail(detailNavList[detailIndex - 1]);
+  }, [detailIndex, detailNavList, handleOpenDetail, hasPrevArticle]);
+
+  const handleNextArticle = useCallback((e) => {
+    e.stopPropagation();
+    if (!hasNextArticle) return;
+    handleOpenDetail(detailNavList[detailIndex + 1]);
+  }, [detailIndex, detailNavList, handleOpenDetail, hasNextArticle]);
+
   return (
     <>
       <div className="page-enter">
@@ -611,6 +643,10 @@ const Knowledge = () => {
             liked={detailLiked}
             likeNumbers={detailLikes}
             viewCount={detailViews}
+            hasPrevArticle={hasPrevArticle}
+            hasNextArticle={hasNextArticle}
+            onPrevArticle={handlePrevArticle}
+            onNextArticle={handleNextArticle}
             onLikeChange={handleLikeChange}
             onShare={handleShare}
             onDelete={handleDelete}

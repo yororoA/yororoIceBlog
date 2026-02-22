@@ -768,3 +768,7 @@
   color: var(--text-color);
   background-color: rgba(0, 0, 0, 0.04);
 }
+.actionBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

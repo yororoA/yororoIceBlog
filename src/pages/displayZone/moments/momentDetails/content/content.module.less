@@ -85,6 +85,7 @@
       display: flex;
       align-items: center;
       gap: var(--moments-zone-gap);
+      flex-wrap: wrap;
     }
 
     .actionBtn {
@@ -100,6 +101,11 @@
       &:hover {
         color: var(--text-color);
         background-color: rgba(0, 0, 0, 0.04);
+      }
+
+      &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
       }
     }
   }

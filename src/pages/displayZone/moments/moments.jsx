@@ -1,6 +1,7 @@
 import React, {useCallback, useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import { useSearchParams } from "react-router-dom";
 import MomentsCard from "../../../components/pagesCard/moments/content/momentsCard";
+import { MomentDetailsCtx } from "../../../components/pagesCard/moments/content/momentsCard";
 import moments from './moments.module.less';
 import MomentIdContext from "./context/momentIdContext";
 import { MomentsListContext } from "./context/momentsListContext";
@@ -8,14 +9,19 @@ import CommonBtn from "../../../components/btn/commonBtn/commonBtn";
 import addContent from "../../../components/btn/addContent.module.less";
 import Pop from "../../../components/ui/pop/pop";
 import NewMoment from "../../../components/ui/pop/newMoment/newMoment";
+import MomentDetails from "./momentDetails/momentDetails";
 import {getMoments} from "../../../utils/getMoments";
 import {getLikesList} from "../../../utils/getLikesList";
+import {getFiles} from "../../../utils/getFiles";
+import {incrementMomentView} from "../../../utils/incrementMomentView";
 import {useSelector} from "react-redux";
 import {CommentsLikedContext} from "./context/commentsLikedContext";
 import { isGuest } from "../../../utils/auth";
+import adminImg from '../../../assets/images/admin.png';
+import binesImg from '../../../assets/images/bines.png';
 
 
-const MomentItem = ({data, liked, openDetailsOnMount, onCloseDetails, onOpenDetails, isDeleting}) => {
+const MomentItem = ({data, liked, onOpenDetails, onRequestDetail, isDeleting}) => {
 	const [dt, setDt] = useState(data);
 	const [visible, setVisible] = useState(false);
 	const [animFinished, setAnimFinished] = useState(false);
@@ -63,7 +69,12 @@ const MomentItem = ({data, liked, openDetailsOnMount, onCloseDetails, onOpenDeta
 				onAnimationEnd={() => setAnimFinished(true)}
 				onMouseEnter={() => setAnimFinished(true)}
 			>
-				<MomentsCard liked={liked} preview={true} openDetailsOnMount={openDetailsOnMount} onCloseDetails={onCloseDetails} onOpenDetails={onOpenDetails}/>
+				<MomentsCard
+					liked={liked}
+					preview={true}
+					onOpenDetails={onOpenDetails}
+					onRequestDetail={onRequestDetail}
+				/>
 			</div>
 		</MomentIdContext>
 	)
@@ -71,7 +82,18 @@ const MomentItem = ({data, liked, openDetailsOnMount, onCloseDetails, onOpenDeta
 
 
 const Moments = () => {
-	const [momentsData, setMomentsData, likedMoments, setLikedMoments, , , deletingIds = [], , pendingNewMoments = [], loadPendingNewMoments] = useContext(MomentsListContext);
+	const [
+		momentsData,
+		setMomentsData,
+		likedMoments,
+		setLikedMoments,
+		momentsFilesCache,
+		setMomentsFilesCache,
+		deletingIds = [],
+		markMomentDeleting,
+		pendingNewMoments = [],
+		loadPendingNewMoments,
+	] = useContext(MomentsListContext);
 	const pendingCount = pendingNewMoments.length;
 	const [editing, setEditing] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -100,6 +122,117 @@ const Moments = () => {
 	setMidInUrlRef.current = setMidInUrl;
 	const onOpenDetails = useCallback((id) => setMidInUrlRef.current?.(id), []);
 
+	const [detailMomentId, setDetailMomentId] = useState(null);
+	const [detailLike, setDetailLike] = useState(false);
+	const [detailLikeNumbers, setDetailLikeNumbers] = useState(0);
+	const [detailFilesInfos, setDetailFilesInfos] = useState([]);
+	const isManuallyClosedRef = useRef(false);
+
+	const detailMoment = detailMomentId ? momentsData.find(item => item._id === detailMomentId) || null : null;
+	const detailIndex = detailMoment ? momentsData.findIndex(item => item._id === detailMoment._id) : -1;
+	const hasPrevDetail = detailIndex > 0;
+	const hasNextDetail = detailIndex >= 0 && detailIndex < momentsData.length - 1;
+
+	const handleRequestDetail = useCallback((momentItem) => {
+		if (!momentItem?._id) return;
+		isManuallyClosedRef.current = false;
+		setDetailMomentId(momentItem._id);
+	}, []);
+
+	useEffect(() => {
+		if (!midFromQuery) {
+			setDetailMomentId(null);
+			isManuallyClosedRef.current = false;
+			return;
+		}
+		if (isManuallyClosedRef.current) return;
+		if (momentsData.some(item => item._id === midFromQuery)) {
+			setDetailMomentId(midFromQuery);
+		}
+	}, [midFromQuery, momentsData]);
+
+	useEffect(() => {
+		if (!detailMoment) return;
+		setDetailLike(likedMoments.includes(detailMoment._id));
+		setDetailLikeNumbers(detailMoment.likes || 0);
+	}, [detailMoment, likedMoments]);
+
+	useEffect(() => {
+		if (!detailMoment) {
+			setDetailFilesInfos([]);
+			return;
+		}
+		const currentId = detailMoment._id;
+		const cached = momentsFilesCache[currentId];
+		if (cached !== undefined) {
+			setDetailFilesInfos(cached);
+			return;
+		}
+		if (!detailMoment.filenames || detailMoment.filenames.length === 0) {
+			setDetailFilesInfos([]);
+			return;
+		}
+		let cancelled = false;
+		async function fetchDetailFiles() {
+			const result = await getFiles(detailMoment.filenames, 'moments');
+			const list = result || [];
+			if (cancelled) return;
+			setDetailFilesInfos(list);
+			setMomentsFilesCache(prev => ({ ...prev, [currentId]: list }));
+		}
+		fetchDetailFiles();
+		return () => {
+			cancelled = true;
+		};
+	}, [detailMoment, momentsFilesCache, setMomentsFilesCache]);
+
+	const setCommentToDt = useCallback((newCommentId) => {
+		if (!detailMomentId || !newCommentId) return;
+		setMomentsData(prev => prev.map(item => {
+			if (item._id !== detailMomentId) return item;
+			if (item.comments?.includes(newCommentId)) return item;
+			return { ...item, comments: [...(item.comments || []), newCommentId] };
+		}));
+	}, [detailMomentId, setMomentsData]);
+
+	const handlePrevDetail = useCallback((e) => {
+		e?.stopPropagation?.();
+		if (!hasPrevDetail) return;
+		const prev = momentsData[detailIndex - 1];
+		if (!prev) return;
+		onOpenDetails(prev._id);
+		setDetailMomentId(prev._id);
+		incrementMomentView(prev._id);
+	}, [detailIndex, hasPrevDetail, momentsData, onOpenDetails]);
+
+	const handleNextDetail = useCallback((e) => {
+		e?.stopPropagation?.();
+		if (!hasNextDetail) return;
+		const next = momentsData[detailIndex + 1];
+		if (!next) return;
+		onOpenDetails(next._id);
+		setDetailMomentId(next._id);
+		incrementMomentView(next._id);
+	}, [detailIndex, hasNextDetail, momentsData, onOpenDetails]);
+
+	const onMomentDeleted = useCallback(() => {
+		if (!detailMomentId) return;
+		markMomentDeleting(detailMomentId);
+		setDetailMomentId(null);
+		onCloseDetails();
+	}, [detailMomentId, markMomentDeleting, onCloseDetails]);
+
+	const handleCloseDetailPop = useCallback((proceed) => {
+		isManuallyClosedRef.current = true;
+		setDetailMomentId(null);
+		onCloseDetails();
+		if (typeof proceed === 'function') proceed();
+	}, [onCloseDetails]);
+
+	const detailHeadshotType = detailMoment
+		? (['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'].includes(detailMoment.uid) ? adminImg : detailMoment.uid === 'u_mlkpl8fl_52a3d8c2068b281a' ? binesImg : null)
+		: null;
+
 	// 首次无数据时拉取并写入 context；与 gallery 一致，避免切换路由重复加载
 	const fetchMoments = useCallback(async () => {
 		setLoading(true);
@@ -126,9 +259,8 @@ const Moments = () => {
 				data={item}
 				liked={likedMoments.includes(item._id)}
 				key={item._id}
-				openDetailsOnMount={midFromQuery === item._id}
-				onCloseDetails={onCloseDetails}
 				onOpenDetails={onOpenDetails}
+				onRequestDetail={handleRequestDetail}
 				isDeleting={deletingIds.includes(item._id)}
 			/>
 		));
@@ -174,7 +306,7 @@ const Moments = () => {
 
 
 	return (
-		<>
+		<CommentsLikedContext value={{likedComments, commentLikedChange}}>
 			<div className="page-enter">
 				<section id={'header'}>
 					<span>{'Moments'}</span>
@@ -192,17 +324,37 @@ const Moments = () => {
 						Loading...
 					</div>
 				) : (
-					<CommentsLikedContext value={{likedComments, commentLikedChange}}>
-						{elements}
-					</CommentsLikedContext>
+					elements
 				)}
 				</div>
 			</div>
+			{detailMoment && (
+				<Pop isLittle={false} onClose={handleCloseDetailPop}>
+					<MomentDetailsCtx
+						value={{
+							momentItem: detailMoment,
+							filesInfos: detailFilesInfos,
+							like: detailLike,
+							setLike: setDetailLike,
+							setLikeNumbers: setDetailLikeNumbers,
+							likeNumbers: detailLikeNumbers,
+							setCommentToDt,
+							onMomentDeleted,
+							hasPrevDetail,
+							hasNextDetail,
+							onPrevDetail: handlePrevDetail,
+							onNextDetail: handleNextDetail,
+						}}
+					>
+						<MomentDetails headshotType={detailHeadshotType} />
+					</MomentDetailsCtx>
+				</Pop>
+			)}
 			{editing && !isGuest() &&
 				<Pop isLittle={false} onClose={handlePopClose}>
 					<NewMoment onClose={handleCloseNewMoment} registerCloseHandler={newMomentCloseRef}/>
 				</Pop>}
-		</>
+		</CommentsLikedContext>
 	);
 };
 

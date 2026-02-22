@@ -12,7 +12,19 @@ import card from './content.module.less';
 
 // {uid,username, comments, content, title, createdAt, _id, likes, filenames}
 const Content = ({ headshotType }) => {
-	const {momentItem, like, filesInfos, setLike, setLikeNumbers, likeNumbers, onMomentDeleted} = useContext(MomentDetailsCtx);
+	const {
+		momentItem,
+		like,
+		filesInfos,
+		setLike,
+		setLikeNumbers,
+		likeNumbers,
+		onMomentDeleted,
+		hasPrevDetail,
+		hasNextDetail,
+		onPrevDetail,
+		onNextDetail,
+	} = useContext(MomentDetailsCtx);
 	const { showSuccess, showFailed } = useContext(SuccessBoardContext);
 
 	// const {uid, username, content, title, createdAt, _id} = momentItem;
@@ -77,6 +89,8 @@ const Content = ({ headshotType }) => {
 			<div className={card.footer}>
 				<Like onChange={onFeedBackChange} checked={like} likes={likeNumbers} _id={_id} disabled={isGuest()}/>
 				<div className={card.actions}>
+					<button type="button" className={card.actionBtn} onClick={onPrevDetail} disabled={!hasPrevDetail}>{'上一条'}</button>
+					<button type="button" className={card.actionBtn} onClick={onNextDetail} disabled={!hasNextDetail}>{'下一条'}</button>
 					{canDelete && (
 						<button type="button" className={card.actionBtn} onClick={handleDelete}>{'删除'}</button>
 					)}

@@ -9,7 +9,7 @@ export const PROFILE = {
   bilibili: 'https://space.bilibili.com/411513480',
   x: 'https://x.com/yororo_ice',
   steam: 'https://steamcommunity.com/profiles/76561199041131347/',
-  skills: ['JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'Docker', 'MongoDB'],
+  skills: ['JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'Golang', 'Rust', 'MongoDB'],
   interests: ['Coding', 'Photography', 'Travel', 'Reading', 'Music', 'Gaming', 'Anime'],
 };
 
