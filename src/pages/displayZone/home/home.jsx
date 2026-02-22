@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import homeStyles from './home.module.less';
 import { PROFILE, SOCIAL_LINKS } from '../shared/profileInfo';
+import { UiPersistContext } from '../context/uiPersistContext';
+import { t } from '../../../i18n/uiText';
+import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
 
 const Home = () => {
+	const { locale } = useContext(UiPersistContext);
+	const { showSuccess } = useContext(SuccessBoardContext);
+	const displayAuthor = t(locale, 'profileAuthor');
+	const interestItems = t(locale, 'interestsItems');
+	const handleCopyEmail = async () => {
+		if (!PROFILE.email) return;
+		try {
+			await navigator.clipboard.writeText(PROFILE.email);
+			showSuccess(t(locale, 'copiedEmail'));
+		} catch (_) {}
+	};
 	return (
 		<>
 			<div className={`${homeStyles.container} page-enter`}>
@@ -10,20 +24,20 @@ const Home = () => {
 				<div className={homeStyles.profileCard}>
 					<div className={homeStyles.avatarSection}>
 						{PROFILE.avatar ? (
-							<img src={PROFILE.avatar} alt={PROFILE.author} className={homeStyles.avatar} />
+							<img src={PROFILE.avatar} alt={displayAuthor} className={homeStyles.avatar} />
 						) : (
 							<div className={homeStyles.avatarPlaceholder}>
-								{PROFILE.author.charAt(0).toUpperCase()}
+								{displayAuthor.charAt(0).toUpperCase()}
 							</div>
 						)}
 					</div>
-					<h2 className={homeStyles.authorName}>{PROFILE.author}</h2>
-					<p className={homeStyles.description}>{PROFILE.description}</p>
+					<h2 className={homeStyles.authorName}>{displayAuthor}</h2>
+					<p className={homeStyles.description}>{t(locale, 'profileDescription')}</p>
 					{PROFILE.bio && (
 						<p className={homeStyles.bio}>{PROFILE.bio}</p>
 					)}
 					{PROFILE.email && (
-						<p className={homeStyles.emailDisplay}>{PROFILE.email}</p>
+						<p className={homeStyles.emailDisplay} onClick={handleCopyEmail} title={t(locale, 'copyEmail')}>{PROFILE.email}</p>
 					)}
 					<div className={homeStyles.socialLinks}>
 						{SOCIAL_LINKS.map(link => (
@@ -43,7 +57,7 @@ const Home = () => {
 					{/* Skills */}
 					{PROFILE.skills.length > 0 && (
 						<div className={homeStyles.skillsSection}>
-							<h3 className={homeStyles.sectionTitle}>Skills</h3>
+							<h3 className={homeStyles.sectionTitle}>{t(locale, 'skillsTitle')}</h3>
 							<div className={homeStyles.tags}>
 								{PROFILE.skills.map((skill, idx) => (
 									<span key={idx} className={homeStyles.tag}>{skill}</span>
@@ -53,11 +67,11 @@ const Home = () => {
 					)}
 
 					{/* Interests */}
-					{PROFILE.interests.length > 0 && (
+					{Array.isArray(interestItems) && interestItems.length > 0 && (
 						<div className={homeStyles.interestsSection}>
-							<h3 className={homeStyles.sectionTitle}>Interests</h3>
+							<h3 className={homeStyles.sectionTitle}>{t(locale, 'interestsTitle')}</h3>
 							<div className={homeStyles.tags}>
-								{PROFILE.interests.map((interest, idx) => (
+								{interestItems.map((interest, idx) => (
 									<span key={idx} className={homeStyles.tag}>{interest}</span>
 								))}
 							</div>

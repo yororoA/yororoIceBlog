@@ -1,6 +1,8 @@
-import React, {useCallback, useState, useEffect, useRef} from 'react';
+import React, {useCallback, useState, useEffect, useRef, useContext} from 'react';
 import { createPortal } from 'react-dom';
 import preview from './ivPreview.module.less';
+import { UiPersistContext } from '../../../pages/displayZone/context/uiPersistContext';
+import { t } from '../../../i18n/uiText';
 
 
 /* 图片预览
@@ -8,6 +10,7 @@ import preview from './ivPreview.module.less';
 * - url, type 必选；第三项可选，放大时在图片底部显示上传者（如 gallery 从 context 的 iv.username 传入）
 * @prefix: 任意不与其他`IvPreview`组件重复的string,用于绑定key */
 const IvPreview = ({items, prefix}) => {
+	const { locale } = useContext(UiPersistContext);
 	// 当前放大预览的下标: null 表示未打开
 	const [enlargedIndex, setEnlargedIndex] = useState(null);
 	const total = items.length;
@@ -123,7 +126,7 @@ const IvPreview = ({items, prefix}) => {
 						</div>
 						{currentUploader && (
 							<div className={preview.uploaderBar}>
-								<span className={preview.uploaderLabel}>上传者：{currentUploader}</span>
+								<span className={preview.uploaderLabel}>{t(locale, 'uploaderBy', currentUploader)}</span>
 							</div>
 						)}
 						{hasMultiple && (

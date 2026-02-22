@@ -12,6 +12,7 @@ import { SuccessBoardContext } from '../../components/ui/pop/status/successBoard
 import Pop from '../../components/ui/pop/pop';
 import Announcement from '../../components/ui/announcement/announcement';
 import { homeAnnouncementMarkdown } from '../../config/announcementMarkdown';
+import { t } from '../../i18n/uiText';
 import { GalleryContext } from './gallery/context/galleryContext';
 import { MomentsListContext } from './moments/context/momentsListContext';
 import { KnowledgeListContext } from './knowledge/context/knowledgeListContext';
@@ -42,6 +43,7 @@ const DisplayZone = () => {
 	const [archiveStats, setArchiveStats] = useState({});
 	const [archiveYears, setArchiveYears] = useState(['all']);
 	// 页面级 UI 状态缓存：切路由不丢失
+	const [locale, setLocale] = useState(() => localStorage.getItem('ui_locale') || 'en');
 	const [langViewMode, setLangViewMode] = useState('pie');
 	const [articlesSelectedCategory, setArticlesSelectedCategory] = useState('all');
 	const [archiveSelectedType, setArchiveSelectedType] = useState('all');
@@ -102,6 +104,14 @@ const DisplayZone = () => {
 		setShowAnnouncement(true);
 	}, []);
 
+	const toggleLocale = useCallback(() => {
+		setLocale(prev => (prev === 'en' ? 'zh' : 'en'));
+	}, []);
+
+	useEffect(() => {
+		localStorage.setItem('ui_locale', locale);
+	}, [locale]);
+
 	// default home page - 现在首页是公告页面，不需要跳转
 	// const pathname = window.location.pathname.split('/').filter(item => item !== '').at(-1);
 	// useEffect(() => {
@@ -109,7 +119,7 @@ const DisplayZone = () => {
 	// }, [pathname, navigate]);
 	// click to nav link
 	const handleRedirect = useCallback(e => {
-		if (e.target.id === 'home' || (e.target.id === '' && e.target.textContent === 'Home')) {
+		if (e.target.id === 'home') {
 			navigate('/town');
 		} else if (e.target.id) {
 			navigate(e.target.id);
@@ -220,7 +230,10 @@ const DisplayZone = () => {
 		<SuccessBoardContext.Provider value={{ showSuccess, showFailed }}>
 			{showAnnouncement && (
 				<Pop isLittle={false} onClose={handleCloseAnnouncement}>
-					<Announcement markdown={homeAnnouncementMarkdown} />
+					<Announcement
+						title={t(locale, 'announcementTitle')}
+						markdown={homeAnnouncementMarkdown[locale] || homeAnnouncementMarkdown.en}
+					/>
 				</Pop>
 			)}
 			{((showConnectedBoard && connect) || successList.length > 0 || failedList.length > 0) && (
@@ -242,23 +255,32 @@ const DisplayZone = () => {
 								id="home"
 								className={location.pathname === '/town' || location.pathname === '/town/' ? page.activeLink : ''}
 							>
-								Home
+								{t(locale, 'navHome')}
 							</span>
-							{['moments', 'articles', 'gallery', 'archive', 'other'].map(name => (
+							{[
+								{ id: 'moments', labelKey: 'navMoments' },
+								{ id: 'articles', labelKey: 'navArticles' },
+								{ id: 'gallery', labelKey: 'navGallery' },
+								{ id: 'archive', labelKey: 'navArchive' },
+								{ id: 'other', labelKey: 'navOther' },
+							].map(item => (
 								<span
-									key={name}
-									id={name}
-									className={location.pathname.includes(name) ? page.activeLink : ''}
+									key={item.id}
+									id={item.id}
+									className={location.pathname.includes(item.id) ? page.activeLink : ''}
 								>
-									{name.charAt(0).toUpperCase() + name.slice(1)}
+									{t(locale, item.labelKey)}
 								</span>
 							))}
 						</div>
 						<div className={page.navRight}>
-							<span className={page.announcementBtn} onClick={handleOpenAnnouncement} title="查看公告">
+							<span className={page.announcementBtn} onClick={handleOpenAnnouncement} title={t(locale, 'viewAnnouncement')}>
 								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16ZM11 11H13V13H11V11ZM11 7H13V9H11V7Z" fill="currentColor" />
 								</svg>
+							</span>
+							<span className={page.linkLogout} onClick={toggleLocale} title={t(locale, 'languageToggle')}>
+								{locale === 'en' ? t(locale, 'localeZh') : t(locale, 'localeEn')}
 							</span>
 							<span className={page.linkLogout} onClick={handleLogout}>{'Log out'}</span>
 							<SwitchTheme />
@@ -268,6 +290,8 @@ const DisplayZone = () => {
 				<main>
 					<UiPersistContext.Provider
 						value={{
+							locale,
+							setLocale,
 							langViewMode,
 							setLangViewMode,
 							articlesSelectedCategory,

@@ -7,6 +7,9 @@ import { isGuest } from '../../../utils/auth';
 import { getAvatarColor } from '../../../utils/avatarColor';
 import { formatDateTime } from '../../../utils/formatDateTime';
 import { UiPersistContext } from '../context/uiPersistContext';
+import { t } from '../../../i18n/uiText';
+import { PROFILE } from '../shared/profileInfo';
+import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
@@ -34,12 +37,6 @@ const LINKS = [
   {name:'Cloudflare', image:'https://dash.cloudflare.com/c411dbca6e493cdb.svg', url:'https://developers.cloudflare.com', category: 'development'},
 ];
 
-const CATEGORY_LABELS = {
-  friend: 'Friend Links',
-  tool: 'Tool Links',
-  development: 'Development',
-  other: 'Other',
-};
 const CATEGORY_ORDER = ['friend', 'tool', 'development', 'other'];
 
 /** 生成随机字母串，用于游客未填名称时的默认用户名 */
@@ -50,6 +47,7 @@ function randomLetterUsername(length = 8) {
 
 const About = () => {
   const {
+    locale,
     linksExpanded,
     setLinksExpanded,
     guestbookExpanded,
@@ -57,6 +55,13 @@ const About = () => {
     linksSelectedCategory: selectedCategory,
     setLinksSelectedCategory: setSelectedCategory,
   } = React.useContext(UiPersistContext);
+  const { showSuccess } = React.useContext(SuccessBoardContext);
+  const categoryLabels = {
+    friend: t(locale, 'friendLinks'),
+    tool: t(locale, 'toolLinks'),
+    development: t(locale, 'development'),
+    other: t(locale, 'other'),
+  };
   // ── Guestbook state ──
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
@@ -100,6 +105,24 @@ const About = () => {
     getGuestbookComments().then(setComments).catch(() => {});
   }, []);
 
+  const handleCopyEmail = useCallback(async (e) => {
+    e.stopPropagation();
+    if (!PROFILE.email) return;
+    try {
+      await navigator.clipboard.writeText(PROFILE.email);
+      showSuccess(t(locale, 'copiedEmail'));
+    } catch (_) {}
+  }, [locale, showSuccess]);
+
+  const handleCopySiteLink = useCallback(async (e) => {
+    e.stopPropagation();
+    const siteUrl = `https://www.yororoice.top`;
+    try {
+      await navigator.clipboard.writeText(siteUrl);
+      showSuccess(t(locale, 'copiedSiteLink'));
+    } catch (_) {}
+  }, [locale, showSuccess]);
+
   const handlePostComment = useCallback(async () => {
     if (!newComment.trim() || submitting) return;
     setSubmitting(true);
@@ -124,13 +147,19 @@ const About = () => {
   return (
     <div className="page-enter">
       <section id="header">
-        <span>Links & Guestbook</span>
+        <span>{t(locale, 'pageOtherTitle')}</span>
       </section>
       <div className={about.container}>
         {/* Links */}
         <div ref={linksRef} className={`${about.linksCard}${linksVisible ? ` ${about.cardVisible}` : ''}`}>
           <div className={about.cardHeader} onClick={() => setLinksExpanded(!linksExpanded)}>
-            <h3 className={about.cardTitle}>Links</h3>
+            <div className={about.cardHeaderLeft}>
+              <h3 className={about.cardTitle}>{t(locale, 'linksTitle')}</h3>
+              <div className={about.cardHeaderActions}>
+                <button type="button" className={about.headerActionBtn} onClick={handleCopyEmail}>{t(locale, 'copyEmail')}</button>
+                <button type="button" className={about.headerActionBtn} onClick={handleCopySiteLink}>{t(locale, 'copySiteLink')}</button>
+              </div>
+            </div>
             <span className={about.toggleIcon} aria-hidden>
               <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3.5 6L8 10.5L12.5 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -139,38 +168,38 @@ const About = () => {
           </div>
           <div className={`${about.expandableContent} ${linksExpanded ? about.expanded : about.collapsed}`}>
             <div className={about.expandableContentInner}>
-            <p className={about.linkTip}>To add your link, please email me and add this site to your blogroll first.</p>
+            <p className={about.linkTip}>{t(locale, 'linksTip')}</p>
               {/* 分类标签 */}
               <div className={about.categoryTabs}>
                 <button
                   className={`${about.categoryTab} ${selectedCategory === 'all' ? about.categoryTabActive : ''}`}
                   onClick={() => setSelectedCategory('all')}
                 >
-                  All Categories
+                  {t(locale, 'allCategories')}
                 </button>
                 <button
                   className={`${about.categoryTab} ${selectedCategory === 'friend' ? about.categoryTabActive : ''}`}
                   onClick={() => setSelectedCategory('friend')}
                 >
-                  Friend Links
+                  {t(locale, 'friendLinks')}
                 </button>
                 <button
                   className={`${about.categoryTab} ${selectedCategory === 'tool' ? about.categoryTabActive : ''}`}
                   onClick={() => setSelectedCategory('tool')}
                 >
-                  Tool Links
+                  {t(locale, 'toolLinks')}
                 </button>
                 <button
                   className={`${about.categoryTab} ${selectedCategory === 'development' ? about.categoryTabActive : ''}`}
                   onClick={() => setSelectedCategory('development')}
                 >
-                  Development
+                  {t(locale, 'development')}
                 </button>
                 <button
                   className={`${about.categoryTab} ${selectedCategory === 'other' ? about.categoryTabActive : ''}`}
                   onClick={() => setSelectedCategory('other')}
                 >
-                  Other
+                  {t(locale, 'other')}
                 </button>
               </div>
               {/* 链接列表：All 时按类型分栏，否则单列表 */}
@@ -208,14 +237,14 @@ const About = () => {
                     });
                     const sections = CATEGORY_ORDER.filter(cat => grouped[cat]?.length > 0);
                     if (sections.length === 0) {
-                      return <p className={about.linksEmpty}>No links yet</p>;
+                      return <p className={about.linksEmpty}>{t(locale, 'noLinksYet')}</p>;
                     }
                     return (
                       <div className={about.linksByCategory}>
                         {sections.map(cat => (
                           <section key={cat} className={about.linksCategorySection}>
                             <h4 className={about.linksCategoryHeading}>
-                              {CATEGORY_LABELS[cat]} ({grouped[cat].length})
+                              {categoryLabels[cat]} ({grouped[cat].length})
                             </h4>
                             <div className={about.linksCategoryGrid}>
                               {grouped[cat].map((link, idx) => renderLinkCard(link, idx))}
@@ -231,7 +260,7 @@ const About = () => {
                     return category === selectedCategory;
                   });
                   if (filteredLinks.length === 0) {
-                    return <p className={about.linksEmpty}>No links yet</p>;
+                    return <p className={about.linksEmpty}>{t(locale, 'noLinksYet')}</p>;
                   }
                   return filteredLinks.map((link, idx) => renderLinkCard(link, idx));
                 })()}
@@ -243,7 +272,7 @@ const About = () => {
         {/* Guestbook */}
         <div ref={gbRef} className={`${about.guestbookCard}${gbVisible ? ` ${about.cardVisible}` : ''}`}>
           <div className={about.cardHeader} onClick={() => setGuestbookExpanded(!guestbookExpanded)}>
-            <h3 className={about.cardTitle}>Guestbook</h3>
+            <h3 className={about.cardTitle}>{t(locale, 'guestbookTitle')}</h3>
             <span className={about.toggleIcon} aria-hidden>
               <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3.5 6L8 10.5L12.5 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -256,13 +285,13 @@ const About = () => {
                 <input
                   type="text"
                   className={about.guestbookNameInput}
-                  placeholder="Your name (optional)"
+                  placeholder={t(locale, 'yourNameOptional')}
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
                 />
                 <textarea
                   className={about.guestbookInput}
-                  placeholder="Leave a message..."
+                  placeholder={t(locale, 'leaveMessage')}
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   rows={3}
@@ -272,12 +301,12 @@ const About = () => {
                   onClick={handlePostComment}
                   disabled={submitting || !newComment.trim()}
                 >
-                  {submitting ? 'Posting...' : 'Post'}
+                  {submitting ? t(locale, 'posting') : t(locale, 'post')}
                 </button>
               </div>
               <div className={about.guestbookList}>
                 {comments.length === 0 ? (
-                  <p className={about.guestbookEmpty}>No messages yet</p>
+                  <p className={about.guestbookEmpty}>{t(locale, 'noMessagesYet')}</p>
                 ) : (
                   comments.map(c => (
                     <div key={c._id} className={about.guestbookItem}>

@@ -99,6 +99,13 @@
   color: var(--text-color-secondary);
   word-break: break-all;
   opacity: 0.9;
+  cursor: pointer;
+  transition: color var(--hover-duration) var(--hover-ease);
+
+  &:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+  }
 }
 
 .links {

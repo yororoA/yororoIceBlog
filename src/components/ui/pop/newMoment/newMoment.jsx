@@ -5,6 +5,8 @@ import CommonBtn from "../../../btn/commonBtn/commonBtn";
 import acknowledge from '../../acknowledge.module.less';
 import ToDraft from "../littlePop/toDraft/toDraft";
 import { SuccessBoardContext } from "../status/successBoardContext";
+import { UiPersistContext } from "../../../../pages/displayZone/context/uiPersistContext";
+import { t } from "../../../../i18n/uiText";
 
 const uidPrefix = () => localStorage.getItem('uid') || 'nm_iv';
 
@@ -76,6 +78,7 @@ const NmIvPreview = React.memo(({ images, videos, onRemoveImage, onRemoveVideo }
 // 编辑界面；若父级通过 registerCloseHandler 注入 ref，则 Pop 的关闭会触发与内部关闭相同的逻辑（含草稿确认）
 const NewMoment = ({ onClose, registerCloseHandler }) => {
 	const { showSuccess } = useContext(SuccessBoardContext);
+	const { locale } = useContext(UiPersistContext);
 	const [images, setImages] = useState([]);
 	const [videos, setVideos] = useState([]);
 	const addFiles = useCallback((fileList) => {
@@ -182,7 +185,7 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 			await resp.json();
 
 			if (resp.ok && published.current) {
-				showSuccess('Published');
+				showSuccess(t(locale, 'publish'));
 			}
 			if (!resp.ok) {
 			}
@@ -249,8 +252,8 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 				<>
 					{/* 草稿保存弹窗：点击遮罩/关闭未选择时收起弹窗，回到表单，可再次点大弹窗 X 重选 */}
 					{viewPop && <ToDraft
-						title={'close new moment edit'}
-						message={`whether to save edited content to draft(without saving pictures or videos)?`}
+						title={t(locale, 'saveDraftTitle')}
+						message={t(locale, 'saveDraftMessage')}
 						onDeny={onClose}
 						onDismiss={() => setViewPop(false)}
 						onConfirm={() => {
@@ -268,18 +271,18 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 							setContent(previousDraft.content);
 							setViewRestore(false);
 						}}
-						message={'resume draft?'}
+						message={t(locale, 'restoreDraftMessage')}
 					/>}
 				</>
 				<section>
-					<label htmlFor='newTitle'>{'title'}</label>
+					<label htmlFor='newTitle'>{t(locale, 'formTitle')}</label>
 					<input type="text" required={true} name={'title'} id={'newTitle'} value={title}
 								 onChange={e => setTitle(e.target.value)}/>
 				</section>
 
 				<section>
-					<label htmlFor="newContent">{'content'}</label>
-					<textarea required={true} placeholder={'文本内容'} name={'content'} id={'newContent'} value={content}
+					<label htmlFor="newContent">{t(locale, 'formContent')}</label>
+					<textarea required={true} placeholder={t(locale, 'formContentPlaceholder')} name={'content'} id={'newContent'} value={content}
 										onChange={e => setContent(e.target.value)}/>
 				</section>
 
@@ -305,10 +308,10 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 
 				<section className={acknowledge.acknowledge}>
 					<input type="checkbox" id='acknowledge' name='acknowledge'/>
-					<label htmlFor="acknowledge">{'commit to gallery at the same time'}</label>
+					<label htmlFor="acknowledge">{t(locale, 'commitToGallery')}</label>
 				</section>
 
-				<CommonBtn type={"submit"} text={'Publish'} disabled={!allCompleted} onClick={() => published.current = true}/>
+				<CommonBtn type={"submit"} text={t(locale, 'publish')} disabled={!allCompleted} onClick={() => published.current = true}/>
 			</form>
 		</>
 	);

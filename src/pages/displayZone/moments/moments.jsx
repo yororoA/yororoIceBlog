@@ -16,9 +16,11 @@ import {getFiles} from "../../../utils/getFiles";
 import {incrementMomentView} from "../../../utils/incrementMomentView";
 import {useSelector} from "react-redux";
 import {CommentsLikedContext} from "./context/commentsLikedContext";
+import { UiPersistContext } from "../context/uiPersistContext";
 import { isGuest } from "../../../utils/auth";
 import adminImg from '../../../assets/images/admin.png';
 import binesImg from '../../../assets/images/bines.png';
+import { t } from "../../../i18n/uiText";
 
 
 const MomentItem = ({data, liked, onOpenDetails, onRequestDetail, isDeleting}) => {
@@ -94,6 +96,7 @@ const Moments = () => {
 		pendingNewMoments = [],
 		loadPendingNewMoments,
 	] = useContext(MomentsListContext);
+	const { locale } = useContext(UiPersistContext);
 	const pendingCount = pendingNewMoments.length;
 	const [editing, setEditing] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -309,19 +312,19 @@ const Moments = () => {
 		<CommentsLikedContext value={{likedComments, commentLikedChange}}>
 			<div className="page-enter">
 				<section id={'header'}>
-					<span>{'Moments'}</span>
-					{!isGuest() && <CommonBtn className={addContent.new} text={'New Moment'} onClick={() => setEditing(true)}/>}
+					<span>{t(locale, 'navMoments')}</span>
+					{!isGuest() && <CommonBtn className={addContent.new} text={t(locale, 'newMoment')} onClick={() => setEditing(true)}/>}
 				</section>
 				{pendingCount > 0 && (
 					<button type="button" className={moments.newBanner} onClick={loadPendingNewMoments}>
-						存在 {pendingCount} 条新 moment，点击加载
+						{t(locale, 'pendingMomentsBanner', pendingCount)}
 					</button>
 				)}
 				<div className={moments.entire}>
 				{loading && momentsData.length === 0 ? (
 					<div className={moments.loading}>
 						<span className={moments.loadingDot} />
-						Loading...
+						{t(locale, 'loading')}
 					</div>
 				) : (
 					elements

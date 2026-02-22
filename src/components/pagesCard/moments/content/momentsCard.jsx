@@ -14,6 +14,8 @@ import {sendMomentLike} from "../../../../utils/sendMomentLike";
 import {deleteMoment} from "../../../../utils/deleteMoment";
 import {incrementMomentView} from "../../../../utils/incrementMomentView";
 import {formatDateTime} from "../../../../utils/formatDateTime";
+import { UiPersistContext } from "../../../../pages/displayZone/context/uiPersistContext";
+import { t } from "../../../../i18n/uiText";
 
 // context of moment details
 export const MomentDetailsCtx = createContext({});
@@ -21,6 +23,7 @@ export const MomentDetailsCtx = createContext({});
 const MomentsCard = ({liked, preview, onOpenDetails, onRequestDetail}) => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames, updatedAt}
 	const {momentItem} = useContext(MomentIdContext);
+	const { locale } = useContext(UiPersistContext);
 	const [, , , , momentsFilesCache, setMomentsFilesCache, , markMomentDeleting] = useContext(MomentsListContext);
 	const { showSuccess, showFailed } = useContext(SuccessBoardContext);
 	const {uid, username, content, title, createdAt, updatedAt, _id, likes, filenames} = momentItem;
@@ -171,9 +174,9 @@ const MomentsCard = ({liked, preview, onOpenDetails, onRequestDetail}) => {
 					</span>
 					<div className={card.actions}>
 						{canDelete && (
-							<button type="button" className={card.actionBtn} onClick={handleDelete}>{'删除'}</button>
+							<button type="button" className={card.actionBtn} onClick={handleDelete}>{t(locale, 'delete')}</button>
 						)}
-						<button type="button" className={card.actionBtn} onClick={handleShare}>{'分享'}</button>
+						<button type="button" className={card.actionBtn} onClick={handleShare}>{t(locale, 'share')}</button>
 					</div>
 				</div>
 			</div>

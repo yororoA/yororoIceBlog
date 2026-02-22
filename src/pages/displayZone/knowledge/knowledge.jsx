@@ -14,8 +14,15 @@ import { getKnowledgeArticles, createArticle, getCategories, getArticleLikesList
 import { sendArticleLike } from '../../../utils/sendArticleLike';
 import { KnowledgeListContext } from './context/knowledgeListContext';
 import { UiPersistContext } from '../context/uiPersistContext';
+import { t } from '../../../i18n/uiText';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
+
+const getCategoryLabel = (cat, locale) => {
+  if (cat === 'all') return t(locale, 'all');
+  if (cat === 'Uncategorized' || cat === '未分类') return t(locale, 'uncategorized');
+  return cat;
+};
 
 // 若 markdown 第一个非空块为单独一行图片，则提取为封面 URL，并返回去掉该行后的内容（用于列表预览）
 function getFirstImageAsCover(markdown) {
@@ -33,7 +40,7 @@ function getFirstImageAsCover(markdown) {
   return { coverUrl, contentWithoutFirstImage };
 }
 
-const KnowledgeCard = ({ article, liked, onOpenDetail }) => {
+const KnowledgeCard = ({ article, liked, onOpenDetail, locale }) => {
   const { title, category, tags, content, createdAt, updatedAt, likes = 0, views = 0 } = article;
   const { coverUrl, contentWithoutFirstImage } = getFirstImageAsCover(content || '');
   const hasCover = Boolean(coverUrl);
@@ -84,7 +91,7 @@ const KnowledgeCard = ({ article, liked, onOpenDetail }) => {
         <div className={knowledge.cardBody}>
           <div className={knowledge.cardHeader}>
             <h3 className={knowledge.title}>{title}</h3>
-            <span className={knowledge.category}>{category || 'Uncategorized'}</span>
+            <span className={knowledge.category}>{category || t(locale, 'uncategorized')}</span>
           </div>
           {tags && tags.length > 0 && (
             <div className={knowledge.tags}>
@@ -133,7 +140,8 @@ const ArticleDetail = ({
   hasPrevArticle,
   hasNextArticle,
   onPrevArticle,
-  onNextArticle
+  onNextArticle,
+  locale
 }) => {
   const { title, category, tags, content, createdAt, updatedAt, _id } = article;
 
@@ -147,7 +155,7 @@ const ArticleDetail = ({
       <div className={knowledge.detailHeader}>
         <h2 className={knowledge.detailTitle}>{title}</h2>
         <div className={knowledge.detailMeta}>
-          <span className={knowledge.category}>{category || 'Uncategorized'}</span>
+          <span className={knowledge.category}>{category || t(locale, 'uncategorized')}</span>
           <span>Created: {formatDate(createdAt)}</span>
           {updatedAt && updatedAt !== createdAt && (
             <span>Updated: {formatDate(updatedAt)}</span>
@@ -173,12 +181,12 @@ const ArticleDetail = ({
       <div className={knowledge.detailFooter} onClick={e => e.stopPropagation()}>
         <Like onChange={onLikeChange} checked={liked} likes={likeNumbers} _id={_id} type="article" />
         <div className={knowledge.actions}>
-          <button type="button" className={knowledge.actionBtn} onClick={onPrevArticle} disabled={!hasPrevArticle}>{'上一篇'}</button>
-          <button type="button" className={knowledge.actionBtn} onClick={onNextArticle} disabled={!hasNextArticle}>{'下一篇'}</button>
+          <button type="button" className={knowledge.actionBtn} onClick={onPrevArticle} disabled={!hasPrevArticle}>{t(locale, 'previousArticle')}</button>
+          <button type="button" className={knowledge.actionBtn} onClick={onNextArticle} disabled={!hasNextArticle}>{t(locale, 'nextArticle')}</button>
           {canDelete && (
-            <button type="button" className={knowledge.actionBtn} onClick={onDelete}>{'删除'}</button>
+            <button type="button" className={knowledge.actionBtn} onClick={onDelete}>{t(locale, 'delete')}</button>
           )}
-          <button type="button" className={knowledge.actionBtn} onClick={onShare}>{'分享'}</button>
+          <button type="button" className={knowledge.actionBtn} onClick={onShare}>{t(locale, 'share')}</button>
         </div>
       </div>
     </div>
@@ -186,6 +194,7 @@ const ArticleDetail = ({
 };
 
 const NewKnowledgeForm = ({ onClose, onSubmit }) => {
+  const { locale } = useContext(UiPersistContext);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [tags, setTags] = useState('');
@@ -280,7 +289,7 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
 
   return (
     <div className={knowledge.formContainer}>
-      <h2>New Article</h2>
+      <h2>{t(locale, 'newArticle')}</h2>
       <input
         type="text"
         placeholder="Title"
@@ -349,7 +358,7 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
           Cancel
         </button>
         <button onClick={handleSubmit} disabled={submitting} className={knowledge.submitBtn}>
-          {submitting ? 'Publishing...' : 'Publish'}
+          {submitting ? t(locale, 'publishing') : t(locale, 'publish')}
         </button>
       </div>
     </div>
@@ -358,7 +367,7 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
 
 const Knowledge = () => {
   const [articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories] = useContext(KnowledgeListContext);
-  const { articlesSelectedCategory: selectedCategory, setArticlesSelectedCategory: setSelectedCategory } = useContext(UiPersistContext);
+  const { locale, articlesSelectedCategory: selectedCategory, setArticlesSelectedCategory: setSelectedCategory } = useContext(UiPersistContext);
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [showNewForm, setShowNewForm] = useState(false);
@@ -586,10 +595,10 @@ const Knowledge = () => {
     <>
       <div className="page-enter">
         <section id="header">
-          <span>Articles</span>
+          <span>{t(locale, 'navArticles')}</span>
           {isAdmin && (
             <div className={addContent.container} onClick={() => setShowNewForm(true)}>
-              <CommonBtn className={addContent.new} text={'New Article'} />
+              <CommonBtn className={addContent.new} text={t(locale, 'newArticle')} />
             </div>
           )}
         </section>
@@ -610,7 +619,7 @@ const Knowledge = () => {
               className={`${knowledge.categoryBtn} ${selectedCategory === cat ? knowledge.active : ''}`}
               onClick={() => setSelectedCategory(cat)}
             >
-              {cat === 'all' ? 'All' : cat}
+              {getCategoryLabel(cat, locale)}
             </button>
           ))}
         </div>
@@ -620,7 +629,7 @@ const Knowledge = () => {
         {loading ? (
           <div className={knowledge.loading}>
             <span className={knowledge.loadingDot} />
-            Loading...
+            {t(locale, 'loading')}
           </div>
         ) : filteredArticles.length === 0 ? (
           <div className={knowledge.empty}>No articles yet</div>
@@ -631,6 +640,7 @@ const Knowledge = () => {
               article={article}
               liked={likedArticles.includes(article._id)}
               onOpenDetail={handleOpenDetail}
+              locale={locale}
             />
           ))
         )}
@@ -647,6 +657,7 @@ const Knowledge = () => {
             hasNextArticle={hasNextArticle}
             onPrevArticle={handlePrevArticle}
             onNextArticle={handleNextArticle}
+            locale={locale}
             onLikeChange={handleLikeChange}
             onShare={handleShare}
             onDelete={handleDelete}

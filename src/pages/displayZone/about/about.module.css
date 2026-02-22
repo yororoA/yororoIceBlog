@@ -168,6 +168,32 @@
 .cardHeader:hover {
   opacity: 0.85;
 }
+.cardHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.cardHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.headerActionBtn {
+  padding: 4px 10px;
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
+  background: var(--input-bgc);
+  border: 1px solid var(--nm-input-border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all var(--hover-duration) var(--hover-ease);
+}
+.headerActionBtn:hover {
+  color: var(--accent-color);
+  border-color: var(--accent-color-border);
+  background: var(--accent-color-light);
+}
 .expandableContent {
   display: grid;
   overflow: hidden;

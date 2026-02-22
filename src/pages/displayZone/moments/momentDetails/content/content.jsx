@@ -7,6 +7,8 @@ import {MomentDetailsCtx} from "../../../../../components/pagesCard/moments/cont
 import { SuccessBoardContext } from "../../../../../components/ui/pop/status/successBoardContext";
 import { getUid, isGuest } from "../../../../../utils/auth";
 import {getAvatarColor} from '../../../../../utils/avatarColor';
+import { UiPersistContext } from "../../../context/uiPersistContext";
+import { t } from "../../../../../i18n/uiText";
 import card from './content.module.less';
 
 
@@ -25,6 +27,7 @@ const Content = ({ headshotType }) => {
 		onPrevDetail,
 		onNextDetail,
 	} = useContext(MomentDetailsCtx);
+	const { locale } = useContext(UiPersistContext);
 	const { showSuccess, showFailed } = useContext(SuccessBoardContext);
 
 	// const {uid, username, content, title, createdAt, _id} = momentItem;
@@ -89,12 +92,12 @@ const Content = ({ headshotType }) => {
 			<div className={card.footer}>
 				<Like onChange={onFeedBackChange} checked={like} likes={likeNumbers} _id={_id} disabled={isGuest()}/>
 				<div className={card.actions}>
-					<button type="button" className={card.actionBtn} onClick={onPrevDetail} disabled={!hasPrevDetail}>{'上一条'}</button>
-					<button type="button" className={card.actionBtn} onClick={onNextDetail} disabled={!hasNextDetail}>{'下一条'}</button>
+					<button type="button" className={card.actionBtn} onClick={onPrevDetail} disabled={!hasPrevDetail}>{t(locale, 'previousMoment')}</button>
+					<button type="button" className={card.actionBtn} onClick={onNextDetail} disabled={!hasNextDetail}>{t(locale, 'nextMoment')}</button>
 					{canDelete && (
-						<button type="button" className={card.actionBtn} onClick={handleDelete}>{'删除'}</button>
+						<button type="button" className={card.actionBtn} onClick={handleDelete}>{t(locale, 'delete')}</button>
 					)}
-					<button type="button" className={card.actionBtn} onClick={handleShare}>{'分享'}</button>
+					<button type="button" className={card.actionBtn} onClick={handleShare}>{t(locale, 'share')}</button>
 				</div>
 			</div>
 		</div>

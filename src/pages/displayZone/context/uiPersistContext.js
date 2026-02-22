@@ -1,6 +1,8 @@
 import { createContext } from 'react';
 
 export const UiPersistContext = createContext({
+  locale: 'en',
+  setLocale: () => {},
   langViewMode: 'pie',
   setLangViewMode: () => {},
   articlesSelectedCategory: 'all',

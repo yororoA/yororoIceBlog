@@ -2,15 +2,17 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import styles from './profileMiniCard.module.less';
 import { PROFILE, SOCIAL_LINKS } from './profileInfo';
 import { UiPersistContext } from '../context/uiPersistContext';
+import { t } from '../../../i18n/uiText';
+import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
 
 const GITHUB_USERNAME = 'yororoA';
 const REFRESH_MS = 60 * 60 * 1000;
 const CACHE_KEY = 'github_stats_cache_v2';
 const PIE_COLORS = ['#3b82f6', '#60a5fa', '#22c55e', '#f59e0b', '#a855f7'];
 
-const formatTime = (iso) => {
+const formatTime = (iso, locale) => {
   if (!iso) return '--';
-  return new Date(iso).toLocaleString('zh-CN', { hour12: false });
+  return new Date(iso).toLocaleString(locale === 'zh' ? 'zh-CN' : 'en-US', { hour12: false });
 };
 
 const fetchJson = async (url) => {
@@ -49,7 +51,8 @@ const ProfileMiniCard = ({ visible = true }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [hoveredLang, setHoveredLang] = useState(null);
-  const { langViewMode, setLangViewMode } = useContext(UiPersistContext);
+  const { locale, langViewMode, setLangViewMode } = useContext(UiPersistContext);
+  const { showSuccess } = useContext(SuccessBoardContext);
   const [stats, setStats] = useState({
     reposCount: 0,
     weekCommits: 0,
@@ -57,6 +60,14 @@ const ProfileMiniCard = ({ visible = true }) => {
     lastCommitAt: null,
     languages: [],
   });
+  const displayAuthor = t(locale, 'profileAuthor');
+  const handleCopyEmail = async () => {
+    if (!PROFILE.email) return;
+    try {
+      await navigator.clipboard.writeText(PROFILE.email);
+      showSuccess(t(locale, 'copiedEmail'));
+    } catch (_) {}
+  };
 
   useEffect(() => {
     let active = true;
@@ -169,14 +180,14 @@ const ProfileMiniCard = ({ visible = true }) => {
         <div className={`${styles.card} page-enter`}>
           <div className={styles.avatarSection}>
             {PROFILE.avatar ? (
-              <img src={PROFILE.avatar} alt={PROFILE.author} className={styles.avatar} />
+              <img src={PROFILE.avatar} alt={displayAuthor} className={styles.avatar} />
             ) : (
-              <div className={styles.avatarPlaceholder}>{PROFILE.author.charAt(0).toUpperCase()}</div>
+              <div className={styles.avatarPlaceholder}>{displayAuthor.charAt(0).toUpperCase()}</div>
             )}
           </div>
-          <h3 className={styles.authorName}>{PROFILE.author}</h3>
-          <p className={styles.description}>{PROFILE.description}</p>
-          {PROFILE.email && <p className={styles.email}>{PROFILE.email}</p>}
+          <h3 className={styles.authorName}>{displayAuthor}</h3>
+          <p className={styles.description}>{t(locale, 'profileDescription')}</p>
+          {PROFILE.email && <p className={styles.email} onClick={handleCopyEmail} title={t(locale, 'copyEmail')}>{PROFILE.email}</p>}
           <div className={styles.links}>
             {SOCIAL_LINKS.map(link => (
               <a
@@ -202,30 +213,30 @@ const ProfileMiniCard = ({ visible = true }) => {
           </div>
 
           {loading ? (
-            <p className={styles.statsHint}>同步中...</p>
+            <p className={styles.statsHint}>{t(locale, 'githubSyncing')}</p>
           ) : error ? (
-            <p className={styles.statsHint}>同步失败（{error}）</p>
+            <p className={styles.statsHint}>{t(locale, 'githubSyncFailed', error)}</p>
           ) : (
             <>
               <div className={styles.metrics}>
                 <div className={styles.metricItem}>
                   <strong>{stats.weekCommits}</strong>
-                  <span>7天提交</span>
+                  <span>{t(locale, 'githubWeekCommits')}</span>
                 </div>
                 <div className={styles.metricItem}>
                   <strong>{stats.monthCommits}</strong>
-                  <span>30天提交</span>
+                  <span>{t(locale, 'githubMonthCommits')}</span>
                 </div>
                 <div className={styles.metricItem}>
                   <strong>{stats.reposCount}</strong>
-                  <span>仓库总数</span>
+                  <span>{t(locale, 'githubRepoCount')}</span>
                 </div>
               </div>
 
-              <p className={styles.statsHint}>最近提交：{formatTime(stats.lastCommitAt)}</p>
+              <p className={styles.statsHint}>{t(locale, 'githubLastCommit', formatTime(stats.lastCommitAt, locale))}</p>
 
               <div className={styles.langList}>
-                <div className={styles.langViewToggle} role="tablist" aria-label="语言展示切换">
+                <div className={styles.langViewToggle} role="tablist" aria-label={t(locale, 'githubLangViewSwitch')}>
                   <button
                     type="button"
                     className={`${styles.langViewBtn}${langViewMode === 'pie' ? ` ${styles.langViewBtnActive}` : ''}`}
@@ -233,7 +244,7 @@ const ProfileMiniCard = ({ visible = true }) => {
                     role="tab"
                     aria-selected={langViewMode === 'pie'}
                   >
-                    饼图
+                    {t(locale, 'githubLangPie')}
                   </button>
                   <button
                     type="button"
@@ -242,11 +253,11 @@ const ProfileMiniCard = ({ visible = true }) => {
                     role="tab"
                     aria-selected={langViewMode === 'bar'}
                   >
-                    进度条
+                    {t(locale, 'githubLangBar')}
                   </button>
                 </div>
                 {topLanguages.length === 0 ? (
-                  <p className={styles.statsHint}>暂无语言数据</p>
+                  <p className={styles.statsHint}>{t(locale, 'githubNoLangData')}</p>
                 ) : (
                   <div className={styles.langViewStage}>
                     <div
@@ -254,7 +265,7 @@ const ProfileMiniCard = ({ visible = true }) => {
                       aria-hidden={langViewMode !== 'pie'}
                     >
                       <div className={styles.pieWrap}>
-                        <svg viewBox={`0 0 ${PIE_VIEWBOX_W} ${PIE_VIEWBOX_H}`} className={styles.pieSvg} role="img" aria-label="GitHub 语言占比饼图">
+                        <svg viewBox={`0 0 ${PIE_VIEWBOX_W} ${PIE_VIEWBOX_H}`} className={styles.pieSvg} role="img" aria-label="GitHub language distribution pie chart">
                           {pieSegments.length === 1 ? (
                             <circle
                               cx={PIE_CX}

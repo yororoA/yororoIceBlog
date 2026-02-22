@@ -96,6 +96,12 @@
   color: var(--text-color-secondary);
   margin: 0 0 20px 0;
   word-break: break-all;
+  cursor: pointer;
+  transition: color var(--hover-duration) var(--hover-ease);
+}
+.emailDisplay:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
 }
 .socialLinks {
   display: flex;

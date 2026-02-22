@@ -3,10 +3,12 @@ import { loadGallery, resetGalleryCursor } from '../../../utils/loadGallery';
 import IvPreview from '../../../components/ui/image_video_preview/ivPreview';
 import { GalleryContext } from './context/galleryContext';
 import { ScrollContainerContext } from '../scrollContainerContext';
+import { UiPersistContext } from '../context/uiPersistContext';
 import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
 import { isGuest, getUid } from '../../../utils/auth';
 import CommonBtn from '../../../components/btn/commonBtn/commonBtn';
 import addContent from '../../../components/btn/addContent.module.less';
+import { t } from '../../../i18n/uiText';
 import './gallery.less';
 
 const mergeFilesWithUsername = (data) =>
@@ -23,6 +25,7 @@ const mergeFilesWithUsername = (data) =>
 
 const Gallery = () => {
   const [ivs, setIvs, hasMore, setHasMore] = useContext(GalleryContext);
+  const { locale } = useContext(UiPersistContext);
   const scrollContainerRef = useContext(ScrollContainerContext);
   const { showSuccess, showFailed } = useContext(SuccessBoardContext);
   const [loading, setLoading] = useState(false);
@@ -117,17 +120,17 @@ const Gallery = () => {
 
       if (!resp.ok) {
         const errBody = await resp.json().catch(() => ({}));
-        throw new Error(errBody.message || '上传失败');
+        throw new Error(errBody.message || t(locale, 'galleryUploadFailed'));
       }
 
-      showSuccess(`${files.length} 张图片上传成功`);
+      showSuccess(t(locale, 'galleryUploadSuccess', files.length));
       // 重置 gallery 状态并重新加载
       resetGalleryCursor();
       setIvs([]);
       setHasMore(true);
       initialDoneRef.current = false;
     } catch (err) {
-      showFailed(err.message || '上传失败');
+      showFailed(err.message || t(locale, 'galleryUploadFailed'));
     } finally {
       setUploading(false);
       // 清空 input 以便再次选择相同文件
@@ -138,10 +141,10 @@ const Gallery = () => {
   return (
     <div className="gallery-page page-enter">
       <section id="header">
-        <span>Gallery</span>
+        <span>{t(locale, 'navGallery')}</span>
         {canUpload && (
           <div className={addContent.container} onClick={() => fileInputRef.current?.click()}>
-            <CommonBtn className={addContent.new} text={uploading ? 'Uploading...' : 'Upload'} />
+            <CommonBtn className={addContent.new} text={uploading ? t(locale, 'uploading') : t(locale, 'upload')} />
             <input
               ref={fileInputRef}
               type="file"
@@ -163,13 +166,13 @@ const Gallery = () => {
         ) : loading ? (
           <div className="gallery-page__loading-wrap">
             <span className="gallery-page__loading-dot" />
-            加载中…
+            {t(locale, 'loading')}
           </div>
         ) : (
-          <p className="gallery-page__empty">暂无图片，稍后再来看看吧</p>
+          <p className="gallery-page__empty">{t(locale, 'galleryEmpty')}</p>
         )}
       </section>
-      {loading && ivs.length > 0 && <p className="gallery-page__loading">加载更多…</p>}
+      {loading && ivs.length > 0 && <p className="gallery-page__loading">{t(locale, 'galleryLoadingMore')}</p>}
     </div>
   );
 };

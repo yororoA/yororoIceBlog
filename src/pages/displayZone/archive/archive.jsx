@@ -4,10 +4,12 @@ import archive from './archive.module.less';
 import { getArchiveData, getArchiveStats } from '../../../utils/archive';
 import { ArchiveListContext } from './context/archiveListContext';
 import { UiPersistContext } from '../context/uiPersistContext';
+import { t } from '../../../i18n/uiText';
 
 const ArchiveItem = ({ item }) => {
   const { _id, type, title, createdAt, username } = item;
   const navigate = useNavigate();
+  const { locale } = useContext(UiPersistContext);
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -22,8 +24,8 @@ const ArchiveItem = ({ item }) => {
 
   const getTypeLabel = (type) => {
     const typeMap = {
-      'moment': 'Moment',
-      'knowledge': 'Article'
+      'moment': t(locale, 'moment'),
+      'knowledge': t(locale, 'article')
     };
     return typeMap[type] || type;
   };
@@ -89,7 +91,7 @@ const ArchiveItem = ({ item }) => {
         )}
         {isClickable && (
           <span className={archive.viewHint}>
-            View detail
+            {t(locale, 'archiveViewDetail')}
             <span className={archive.viewArrow} aria-hidden>→</span>
           </span>
         )}
@@ -101,6 +103,7 @@ const ArchiveItem = ({ item }) => {
 const Archive = () => {
   const [archiveData, setArchiveData, stats, setStats, years, setYears] = useContext(ArchiveListContext);
   const {
+    locale,
     archiveSelectedType: selectedType,
     setArchiveSelectedType: setSelectedType,
     archiveSelectedYear: selectedYear,
@@ -246,39 +249,39 @@ const Archive = () => {
   }, [archiveData, selectedType, selectedYear]);
 
   const types = [
-    { value: 'all', label: 'All' },
-    { value: 'moment', label: 'Moments' },
-    { value: 'knowledge', label: 'Articles' }
+    { value: 'all', label: t(locale, 'all') },
+    { value: 'moment', label: t(locale, 'archiveMoments') },
+    { value: 'knowledge', label: t(locale, 'archiveArticles') }
   ];
 
   return (
     <>
       <div className="page-enter">
         <section id="header">
-          <span>Archive</span>
+          <span>{t(locale, 'navArchive')}</span>
         </section>
         <div className={archive.stats}>
         <div className={archive.statItem}>
           <div className={archive.statValue}>{stats.total || 0}</div>
-          <div className={archive.statLabel}>Total</div>
+          <div className={archive.statLabel}>{t(locale, 'archiveTotal')}</div>
         </div>
         <div className={archive.statItem}>
           <div className={archive.statValue}>{stats.moment || 0}</div>
-          <div className={archive.statLabel}>Moments</div>
+          <div className={archive.statLabel}>{t(locale, 'archiveMoments')}</div>
         </div>
         <div className={archive.statItem}>
           <div className={archive.statValue}>{stats.knowledge || 0}</div>
-          <div className={archive.statLabel}>Articles</div>
+          <div className={archive.statLabel}>{t(locale, 'archiveArticles')}</div>
         </div>
         <div className={archive.statItem}>
           <div className={archive.statValue}>{stats.photos || 0}</div>
-          <div className={archive.statLabel}>Photos</div>
+          <div className={archive.statLabel}>{t(locale, 'archivePhotos')}</div>
         </div>
       </div>
 
       <div className={archive.filters}>
         <div className={archive.filterGroup}>
-          <span className={archive.filterLabel}>Type:</span>
+          <span className={archive.filterLabel}>{t(locale, 'archiveType')}:</span>
           <div className={archive.filterBtns}>
             {types.map(type => (
               <button
@@ -292,7 +295,7 @@ const Archive = () => {
           </div>
         </div>
         <div className={archive.filterGroup}>
-          <span className={archive.filterLabel}>Year:</span>
+          <span className={archive.filterLabel}>{t(locale, 'archiveYear')}:</span>
           <div className={archive.filterBtns}>
             {years.map(year => (
               <button
@@ -300,7 +303,7 @@ const Archive = () => {
                 className={`${archive.filterBtn} ${selectedYear === String(year) ? archive.active : ''}`}
                 onClick={() => setSelectedYear(String(year))}
               >
-                {year === 'all' ? 'All' : year}
+                {year === 'all' ? t(locale, 'all') : year}
               </button>
             ))}
           </div>
@@ -311,7 +314,7 @@ const Archive = () => {
         {loading ? (
           <div className={archive.loading}>
             <span className={archive.loadingDot} />
-            Loading...
+            {t(locale, 'loading')}
           </div>
         ) : filteredData.length === 0 ? (
           <div className={archive.empty}>
