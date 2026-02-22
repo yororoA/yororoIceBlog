@@ -1,0 +1,16 @@
+/* New Moment / New Article / Upload：次要操作，弱化视觉权重，不喧宾夺主 */
+button.new {
+  padding: calc(var(--h5-fontsize) * 0.9) calc(var(--h4-fontsize) * 1.2);
+  font-size: var(--h5-fontsize);
+  font-weight: 500;
+  color: var(--accent-color);
+  background-color: transparent;
+  border: 1px solid var(--accent-color-border);
+  border-radius: var(--btn-border-radius-normal);
+  transition: color var(--transition-type), background-color var(--transition-type), border-color var(--transition-type);
+}
+button.new:hover {
+  color: var(--accent-color-hover);
+  background-color: var(--accent-color-light);
+  border-color: var(--accent-color);
+}
