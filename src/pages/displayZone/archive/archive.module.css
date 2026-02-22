@@ -27,6 +27,7 @@
   padding: 12px 14px;
   text-align: center;
   background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
   transition: box-shadow var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
 }
 .statItem:hover {
@@ -52,6 +53,7 @@
   border: var(--nm-input-border);
   border-radius: 14px;
   background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
   transition: box-shadow var(--transition-type);
   animation: enterFadeInUp var(--enter-duration) var(--enter-ease) both;
   animation-delay: calc(var(--enter-stagger-step) * 2);
@@ -271,6 +273,7 @@
   cursor: pointer;
   background: var(--card-bgc);
   border-color: var(--nm-input-border);
+  box-shadow: var(--card-shadow);
 }
 .itemContentClickable:hover {
   background: var(--input-bgc);

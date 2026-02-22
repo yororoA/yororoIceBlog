@@ -138,6 +138,7 @@
   border-radius: 12px;
   overflow: hidden;
   background: var(--nm-iv-bgc);
+  box-shadow: var(--card-shadow);
   animation: enterFadeInUp var(--enter-duration) var(--enter-ease) both;
   transition: transform var(--hover-duration) var(--hover-ease), box-shadow var(--hover-duration) var(--hover-ease);
 }

@@ -61,15 +61,20 @@
   cursor: pointer;
 }
 @media (prefers-reduced-motion: reduce) {
+  .entire .item {
+    transition: box-shadow var(--hover-duration) var(--hover-ease), background-color var(--hover-duration) var(--hover-ease);
+  }
   .entire .item:hover {
     transform: none;
-    box-shadow: var(--card-shadow);
+    box-shadow: var(--card-shadow-hover);
   }
 }
 @media (hover: none) {
   .entire .item:hover {
     transform: none;
     box-shadow: var(--card-shadow);
+    background-color: var(--moments-card-bgc);
+    cursor: default;
   }
 }
 .entire .itemDeleting {

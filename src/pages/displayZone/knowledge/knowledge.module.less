@@ -84,6 +84,7 @@
   border-radius: 14px;
   overflow: hidden;
   background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
   cursor: pointer;
   opacity: 0;
   transform: translateY(20px);
@@ -106,18 +107,22 @@
 }
 
 .card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-4px);
   box-shadow: var(--card-shadow-hover);
   border-color: var(--accent-color-border);
   background: var(--input-bgc);
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: box-shadow var(--hover-duration) var(--hover-ease), border-color var(--hover-duration) var(--hover-ease), background-color var(--hover-duration) var(--hover-ease);
+  }
+
   .card:hover {
     transform: none;
-    box-shadow: none;
-    border-color: var(--nm-input-border);
-    background: var(--card-bgc);
+    box-shadow: var(--card-shadow-hover);
+    border-color: var(--accent-color-border);
+    background: var(--input-bgc);
   }
 }
 

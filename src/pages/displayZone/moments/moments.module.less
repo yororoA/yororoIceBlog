@@ -61,9 +61,13 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .item {
+      transition: box-shadow var(--hover-duration) var(--hover-ease), background-color var(--hover-duration) var(--hover-ease);
+    }
+
     .item:hover {
       transform: none;
-      box-shadow: var(--card-shadow);
+      box-shadow: var(--card-shadow-hover);
     }
   }
 
@@ -71,6 +75,8 @@
     .item:hover {
       transform: none;
       box-shadow: var(--card-shadow);
+      background-color: var(--moments-card-bgc);
+      cursor: default;
     }
   }
 

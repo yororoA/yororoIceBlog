@@ -26,6 +26,7 @@
   border-radius: 16px;
   padding: 32px 36px;
   background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
   animation: enterFadeInUp var(--enter-duration) var(--enter-ease) both;
   transition: box-shadow var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
 }
@@ -363,6 +364,7 @@
   border-radius: 10px;
   padding: 16px;
   background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
   transition: box-shadow var(--transition-type);
 }
 .sidebarTitle {
