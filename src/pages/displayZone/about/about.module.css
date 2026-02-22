@@ -207,6 +207,11 @@
   color: var(--text-color-secondary);
   transition: transform var(--transition-type);
 }
+.toggleIcon svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));

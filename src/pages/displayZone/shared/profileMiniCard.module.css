@@ -15,6 +15,9 @@
 .leftLane::-webkit-scrollbar {
   display: none;
 }
+.leftLaneHidden {
+  display: none;
+}
 .stack {
   display: flex;
   flex-direction: column;
@@ -163,6 +166,54 @@
   flex-direction: column;
   gap: 6px;
 }
+.langViewToggle {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 4px;
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--input-bgc);
+  border: var(--nm-input-border);
+}
+.langViewBtn {
+  border: none;
+  background: transparent;
+  color: var(--text-color-secondary);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: var(--h6-fontsize);
+  cursor: pointer;
+  transition: background-color var(--hover-duration) var(--hover-ease), color var(--hover-duration) var(--hover-ease);
+}
+.langViewBtnActive {
+  background: var(--card-bgc);
+  color: var(--text-color);
+  box-shadow: var(--card-shadow);
+}
+.langViewStage {
+  position: relative;
+  min-height: 146px;
+}
+.langPane {
+  will-change: opacity, transform;
+  transition: opacity 420ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transform-origin: top center;
+}
+.langPaneActive {
+  opacity: 1;
+  transform: translateX(0) translateY(0) scale(1);
+  position: relative;
+  pointer-events: auto;
+  z-index: 2;
+}
+.langPaneHidden {
+  opacity: 0;
+  transform: translateX(16px) translateY(8px) scale(0.92);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
 .pieWrap {
   display: flex;
   justify-content: center;
@@ -172,7 +223,7 @@
 .pieSvg {
   width: 100%;
   max-width: 260px;
-  height: 128px;
+  height: 146px;
   display: block;
 }
 .pieSlice {
@@ -193,14 +244,48 @@
   stroke-linejoin: round;
   opacity: 0.96;
 }
+.pieGuide rect {
+  fill: var(--card-bgc);
+  stroke: var(--nm-input-border);
+  stroke-width: 1;
+  opacity: 0.98;
+}
 .pieGuide text {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   fill: var(--text-color);
-  paint-order: stroke fill;
-  stroke: var(--card-bgc);
-  stroke-width: 3px;
+  letter-spacing: 0.1px;
   dominant-baseline: middle;
+}
+.barWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.barRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.barHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-color);
+  font-size: var(--h6-fontsize);
+}
+.barTrack {
+  width: 100%;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--input-bgc);
+  overflow: hidden;
+}
+.barTrack i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width var(--transition-type);
 }
 @media (max-width: 1024px) {
   .leftLane {
