@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import about from './about.module.less';
 import adminImg from '../../../assets/images/admin.png';
 import binesImg from '../../../assets/images/bines.png';
@@ -57,6 +57,39 @@ const About = () => {
   const [guestbookExpanded, setGuestbookExpanded] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'friend', 'tool', 'development', 'other'
 
+  const [linksVisible, setLinksVisible] = useState(false);
+  const [gbVisible, setGbVisible] = useState(false);
+  const linksRef = useRef(null);
+  const gbRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const pairs = [
+      [linksRef.current, setLinksVisible],
+      [gbRef.current, setGbVisible],
+    ];
+    const observers = [];
+    for (const [el, setVis] of pairs) {
+      if (!el) { setVis(true); continue; }
+      const { top, bottom } = el.getBoundingClientRect();
+      if (top < window.innerHeight && bottom > 0) {
+        setVis(true);
+        continue;
+      }
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setVis(true);
+            obs.unobserve(el);
+          }
+        },
+        { threshold: 0.1 },
+      );
+      obs.observe(el);
+      observers.push(obs);
+    }
+    return () => observers.forEach(o => o.disconnect());
+  }, []);
+
   useEffect(() => {
     getGuestbookComments().then(setComments).catch(() => {});
   }, []);
@@ -83,13 +116,13 @@ const About = () => {
   }, [newComment, guestName, submitting]);
 
   return (
-    <>
+    <div className="page-enter">
       <section id="header">
         <span>Links & Guestbook</span>
       </section>
       <div className={about.container}>
         {/* Links */}
-        <div className={about.linksCard}>
+        <div ref={linksRef} className={`${about.linksCard}${linksVisible ? ` ${about.cardVisible}` : ''}`}>
           <div className={about.cardHeader} onClick={() => setLinksExpanded(!linksExpanded)}>
             <h3 className={about.cardTitle}>Links</h3>
             <span className={about.toggleIcon}>{linksExpanded ? '▼' : '▶'}</span>
@@ -198,7 +231,7 @@ const About = () => {
         </div>
 
         {/* Guestbook */}
-        <div className={about.guestbookCard}>
+        <div ref={gbRef} className={`${about.guestbookCard}${gbVisible ? ` ${about.cardVisible}` : ''}`}>
           <div className={about.cardHeader} onClick={() => setGuestbookExpanded(!guestbookExpanded)}>
             <h3 className={about.cardTitle}>Guestbook</h3>
             <span className={about.toggleIcon}>{guestbookExpanded ? '▼' : '▶'}</span>
@@ -258,7 +291,7 @@ const About = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

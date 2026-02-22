@@ -1,8 +1,13 @@
 @keyframes enterFadeInUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
 .container {
   width: 100%;
   max-width: 800px;
@@ -13,7 +18,6 @@
   flex-direction: column;
   gap: 28px;
 }
-
 .profileCard {
   border: var(--nm-input-border);
   border-radius: 16px;
@@ -25,21 +29,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  &:hover {
-    box-shadow: var(--card-shadow-hover);
-    transform: translateY(-2px);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
+}
+.profileCard:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .profileCard {
     animation: none;
   }
 }
-
 .avatarSection {
   margin-bottom: 20px;
 }
-
 .avatar {
   width: 120px;
   height: 120px;
@@ -48,12 +50,11 @@
   border: 4px solid var(--nav-bgc);
   box-shadow: var(--card-shadow);
   transition: box-shadow var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
-  &:hover {
-    box-shadow: var(--card-shadow-hover);
-    transform: scale(1.02);
-  }
 }
-
+.avatar:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: scale(1.02);
+}
 .avatarPlaceholder {
   width: 120px;
   height: 120px;
@@ -68,7 +69,6 @@
   border: 4px solid var(--nav-bgc);
   box-shadow: var(--card-shadow);
 }
-
 .authorName {
   font-size: var(--h2-fontsize);
   font-weight: 700;
@@ -76,7 +76,6 @@
   margin: 0 0 12px 0;
   line-height: 1.3;
 }
-
 .description {
   font-size: var(--h4-fontsize);
   color: var(--text-color-secondary);
@@ -84,7 +83,6 @@
   margin: 0 0 12px 0;
   max-width: 600px;
 }
-
 .bio {
   font-size: var(--p-fontsize);
   color: var(--text-color);
@@ -92,21 +90,18 @@
   margin: 0 0 16px 0;
   max-width: 600px;
 }
-
 .emailDisplay {
   font-size: var(--h5-fontsize);
   color: var(--text-color-secondary);
   margin: 0 0 20px 0;
   word-break: break-all;
 }
-
 .socialLinks {
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
   justify-content: center;
 }
-
 .socialLink {
   display: flex;
   align-items: center;
@@ -120,41 +115,36 @@
   font-size: var(--h5-fontsize);
   font-weight: 500;
   transition: all var(--transition-type);
-
-  &:hover {
-    background-color: var(--accent-color-light);
-    border-color: var(--accent-color-border);
-    color: var(--accent-color);
-    transform: translateY(-2px);
-    box-shadow: var(--card-shadow);
-  }
 }
-
+.socialLink:hover {
+  background-color: var(--accent-color-light);
+  border-color: var(--accent-color-border);
+  color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow);
+}
 .linkText {
   font-weight: 500;
 }
-
-.skillsSection, .interestsSection {
+.skillsSection,
+.interestsSection {
   width: 100%;
   margin-top: 28px;
   padding-top: 28px;
   border-top: 1px solid var(--nm-input-border);
 }
-
 .sectionTitle {
   font-size: var(--h3-fontsize);
   font-weight: 600;
   color: var(--text-color);
   margin: 0 0 16px 0;
 }
-
 .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
 }
-
 .tag {
   padding: 8px 16px;
   font-size: var(--h5-fontsize);
@@ -163,9 +153,8 @@
   border-radius: 20px;
   font-weight: 500;
   transition: all var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
-
-  &:hover {
-    background: var(--accent-color-active);
-    transform: scale(1.05);
-  }
+}
+.tag:hover {
+  background: var(--accent-color-active);
+  transform: scale(1.05);
 }

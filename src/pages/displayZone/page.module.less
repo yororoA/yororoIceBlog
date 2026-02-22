@@ -1,3 +1,8 @@
+@keyframes enterFadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .entire {
   margin: 0 auto;
   width: 100vw;
@@ -150,12 +155,19 @@
       padding: calc(var(--logo-height) * 0.35) 0 calc(var(--logo-height) * 0.25) 0;
       margin-bottom: calc(var(--logo-height) * 0.15);
       border-bottom: 1px solid var(--nm-input-border);
+      transition: border-color var(--transition-type);
+      animation: enterFadeInUp var(--enter-duration) var(--enter-ease) both;
+
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
+      }
 
       span {
         font-size: var(--h2-fontsize);
         font-weight: var(--commonBtn-fontWeight);
         color: var(--heading-color);
         letter-spacing: -0.02em;
+        transition: color var(--transition-type);
       }
     }
   }

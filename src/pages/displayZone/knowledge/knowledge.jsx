@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -36,6 +36,30 @@ const KnowledgeCard = ({ article, liked, onOpenDetail }) => {
   const { title, category, tags, content, createdAt, updatedAt, likes = 0, views = 0 } = article;
   const { coverUrl, contentWithoutFirstImage } = getFirstImageAsCover(content || '');
   const hasCover = Boolean(coverUrl);
+  const [visible, setVisible] = useState(false);
+  const [animFinished, setAnimFinished] = useState(false);
+  const ref = useRef(null);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) { setVisible(true); return; }
+    const { top, bottom } = el.getBoundingClientRect();
+    if (top < window.innerHeight && bottom > 0) {
+      setVisible(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -43,7 +67,13 @@ const KnowledgeCard = ({ article, liked, onOpenDetail }) => {
   };
 
   return (
-    <div className={knowledge.card} onClick={() => onOpenDetail(article)}>
+    <div 
+      ref={ref} 
+      className={`${knowledge.card}${visible ? ` ${knowledge.cardVisible}` : ''}${visible && !animFinished ? ` ${knowledge.cardEnterAnim}` : ''}`} 
+      onClick={() => onOpenDetail(article)}
+      onAnimationEnd={() => setAnimFinished(true)}
+      onMouseEnter={() => setAnimFinished(true)}
+    >
       <div className={`${knowledge.cardTop} ${hasCover ? knowledge.cardTopWithCover : ''}`}>
         {hasCover && (
           <div className={knowledge.cardCover}>
@@ -521,16 +551,16 @@ const Knowledge = () => {
 
   return (
     <>
-      <section id="header">
-        <span>Articles</span>
-        {isAdmin && (
-          <div className={addContent.container} onClick={() => setShowNewForm(true)}>
-            <CommonBtn className={addContent.new} text={'New Article'} />
-          </div>
-        )}
-      </section>
-
-      <div className={knowledge.controls}>
+      <div className="page-enter">
+        <section id="header">
+          <span>Articles</span>
+          {isAdmin && (
+            <div className={addContent.container} onClick={() => setShowNewForm(true)}>
+              <CommonBtn className={addContent.new} text={'New Article'} />
+            </div>
+          )}
+        </section>
+        <div className={knowledge.controls}>
         <div className={knowledge.searchBox}>
           <input
             type="text"
@@ -551,9 +581,9 @@ const Knowledge = () => {
             </button>
           ))}
         </div>
-      </div>
+        </div>
 
-      <div className={knowledge.articleList}>
+        <div className={knowledge.articleList}>
         {loading ? (
           <div className={knowledge.loading}>
             <span className={knowledge.loadingDot} />
@@ -571,8 +601,8 @@ const Knowledge = () => {
             />
           ))
         )}
+        </div>
       </div>
-
       {detailArticle && (
         <Pop isLittle={false} onClose={handleCloseDetail}>
           <ArticleDetail

@@ -1,3 +1,13 @@
+@keyframes enterFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -16,7 +26,8 @@
   border-radius: 16px;
   padding: 32px 36px;
   background: var(--card-bgc);
-  transition: box-shadow var(--transition-type), transform var(--transition-type);
+  animation: enterFadeInUp var(--enter-duration) var(--enter-ease) both;
+  transition: box-shadow var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
 }
 .profileCard:hover,
 .statsCard:hover,
@@ -28,6 +39,36 @@
 .guestbookCard:hover {
   box-shadow: var(--card-shadow-hover);
   transform: translateY(-2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .profileCard,
+  .statsCard,
+  .bioCard,
+  .skillsCard,
+  .interestsCard,
+  .infoCard,
+  .linksCard,
+  .guestbookCard {
+    animation: none;
+  }
+}
+.linksCard,
+.guestbookCard {
+  animation: none;
+  opacity: 0;
+  transform: translateY(10px);
+}
+.cardVisible {
+  opacity: 1;
+  transform: translateY(0);
+  animation: enterFadeInUp var(--enter-duration) var(--enter-ease) backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cardVisible {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 .profileCard {
   text-align: center;
@@ -97,12 +138,14 @@
   color: var(--text-color);
   text-decoration: none;
   font-size: var(--h5-fontsize);
-  transition: all var(--transition-type);
+  transition: all var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
 }
 .socialLink:hover {
   background-color: var(--accent-color-light);
   border-color: var(--accent-color-border);
+  color: var(--accent-color);
   transform: translateY(-2px);
+  box-shadow: var(--card-shadow);
 }
 .socialLink .icon {
   font-size: var(--h4-fontsize);
@@ -376,6 +419,43 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+}
+.linksByCategory {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.linksCategorySection {
+  width: 100%;
+}
+.linksCategoryHeading {
+  font-size: var(--h4-fontsize);
+  font-weight: 600;
+  color: var(--heading-color);
+  margin: 0 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--nm-input-border);
+}
+.linksCategoryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.linksCategoryGrid a {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+@media (max-width: 768px) {
+  .linksCategoryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .linksCategoryGrid {
+    grid-template-columns: 1fr;
+  }
 }
 .linksEmpty {
   font-size: var(--h5-fontsize);

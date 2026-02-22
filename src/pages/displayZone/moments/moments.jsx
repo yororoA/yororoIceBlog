@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import { useSearchParams } from "react-router-dom";
 import MomentsCard from "../../../components/pagesCard/moments/content/momentsCard";
 import moments from './moments.module.less';
@@ -16,9 +16,32 @@ import { isGuest } from "../../../utils/auth";
 
 
 const MomentItem = ({data, liked, openDetailsOnMount, onCloseDetails, onOpenDetails, isDeleting}) => {
-	// {uid,username, comments, content, title, createdAt, _id, likes, filenames, updatedAt}
 	const [dt, setDt] = useState(data);
-	// new comment updated
+	const [visible, setVisible] = useState(false);
+	const [animFinished, setAnimFinished] = useState(false);
+	const ref = useRef(null);
+
+	useLayoutEffect(() => {
+		const el = ref.current;
+		if (!el) { setVisible(true); return; }
+		const { top, bottom } = el.getBoundingClientRect();
+		if (top < window.innerHeight && bottom > 0) {
+			setVisible(true);
+			return;
+		}
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting) {
+					setVisible(true);
+					observer.unobserve(el);
+				}
+			},
+			{ threshold: 0.1 },
+		);
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, []);
+
 	const setCommentToDt = (newComment_id) => {
 		setDt(prev => ({
 			...prev,
@@ -34,7 +57,12 @@ const MomentItem = ({data, liked, openDetailsOnMount, onCloseDetails, onOpenDeta
 
 	return (
 		<MomentIdContext value={{momentItem: dt, setCommentToDt}}>
-			<div className={`${moments.item}${isDeleting ? ` ${moments.itemDeleting}` : ''}`}>
+			<div
+				ref={ref}
+				className={`${moments.item}${visible ? ` ${moments.itemVisible}` : ''}${visible && !animFinished ? ` ${moments.itemEnterAnim}` : ''}${isDeleting ? ` ${moments.itemDeleting}` : ''}`}
+				onAnimationEnd={() => setAnimFinished(true)}
+				onMouseEnter={() => setAnimFinished(true)}
+			>
 				<MomentsCard liked={liked} preview={true} openDetailsOnMount={openDetailsOnMount} onCloseDetails={onCloseDetails} onOpenDetails={onOpenDetails}/>
 			</div>
 		</MomentIdContext>
@@ -147,20 +175,17 @@ const Moments = () => {
 
 	return (
 		<>
-			<section id={'header'}>
-				<span>{'Moments'}</span>
-				{!isGuest() && <CommonBtn className={addContent.new} text={'New Moment'} onClick={() => setEditing(true)}/>}
-			</section>
-			{pendingCount > 0 && (
-				<button type="button" className={moments.newBanner} onClick={loadPendingNewMoments}>
-					存在 {pendingCount} 条新 moment，点击加载
-				</button>
-			)}
-			{editing && !isGuest() &&
-				<Pop isLittle={false} onClose={handlePopClose}>
-					<NewMoment onClose={handleCloseNewMoment} registerCloseHandler={newMomentCloseRef}/>
-				</Pop>}
-			<div className={moments.entire}>
+			<div className="page-enter">
+				<section id={'header'}>
+					<span>{'Moments'}</span>
+					{!isGuest() && <CommonBtn className={addContent.new} text={'New Moment'} onClick={() => setEditing(true)}/>}
+				</section>
+				{pendingCount > 0 && (
+					<button type="button" className={moments.newBanner} onClick={loadPendingNewMoments}>
+						存在 {pendingCount} 条新 moment，点击加载
+					</button>
+				)}
+				<div className={moments.entire}>
 				{loading && momentsData.length === 0 ? (
 					<div className={moments.loading}>
 						<span className={moments.loadingDot} />
@@ -171,7 +196,12 @@ const Moments = () => {
 						{elements}
 					</CommentsLikedContext>
 				)}
+				</div>
 			</div>
+			{editing && !isGuest() &&
+				<Pop isLittle={false} onClose={handlePopClose}>
+					<NewMoment onClose={handleCloseNewMoment} registerCloseHandler={newMomentCloseRef}/>
+				</Pop>}
 		</>
 	);
 };

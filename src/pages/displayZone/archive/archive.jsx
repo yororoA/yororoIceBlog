@@ -248,11 +248,11 @@ const Archive = () => {
 
   return (
     <>
-      <section id="header">
-        <span>Archive</span>
-      </section>
-
-      <div className={archive.stats}>
+      <div className="page-enter">
+        <section id="header">
+          <span>Archive</span>
+        </section>
+        <div className={archive.stats}>
         <div className={archive.statItem}>
           <div className={archive.statValue}>{stats.total || 0}</div>
           <div className={archive.statLabel}>Total</div>
@@ -321,6 +321,7 @@ const Archive = () => {
             ))}
           </div>
         )}
+        </div>
       </div>
     </>
   );

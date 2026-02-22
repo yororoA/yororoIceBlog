@@ -8,6 +8,7 @@ div.iv {
   /* 让容器保持正方形比例，用于裁剪内部媒体 */
   aspect-ratio: 1 / 1;
   border-radius: var(--moments-live-radius);
+  transition: transform var(--transition-type);
 
   label {
     display: block;
@@ -18,7 +19,7 @@ div.iv {
     background-color: var(--backdrop);
     top: 0;
     cursor: pointer;
-    transition: .2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
 
     &:hover {
       opacity: 1;

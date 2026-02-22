@@ -31,7 +31,7 @@
 
     /* 卡片阴影 */
     --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.18);
 
     /* 渐变装饰（about 头像占位） */
     --gradient-accent: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(156, 39, 176, 0.8));
@@ -75,6 +75,14 @@
     --moments-meta-fontsize: 6rem; /* 对比 p 字体 8rem 略小 */
     --moments-meta-text-color: rgba(125,125,125,.7);
     --transition-type: .3s ease-in-out;
+    /* 移入/悬停动效 */
+    --hover-duration: 0.25s;
+    --hover-ease: ease-out;
+    /* 进入动效（列表项、卡片初次出现） */
+    --enter-duration: 0.35s;
+    --enter-ease: ease-out;
+    /* 列表项错峰延迟步长（nth-child 递增） */
+    --enter-stagger-step: 0.06s;
 
     --backdrop: rgba(225, 225, 225, .5);
 
@@ -154,7 +162,7 @@
 
     /* 阴影（深色） */
     --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    --card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.35);
+    --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.45);
 
     /* moments 卡片 */
     --moments-card-bgc: rgba(24, 25, 28, 1);
@@ -165,4 +173,37 @@
     --nm-iv-bgc: rgba(255, 255, 255, 0.03);
     --nm-iv-label-color: rgba(229, 231, 235, .8);
     --nm-iv-label-hover-bgc: rgba(148, 163, 184, .22);
+}
+
+/* 进入动效 keyframes：用于列表/卡片初次出现 */
+@keyframes enterFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 页面级进入动效：仅做 translateY 位移，不控制 opacity，
+   让子元素各自的 enterFadeInUp + stagger 延迟可见 */
+@keyframes pageEnterSlide {
+  from { transform: translateY(10px); }
+  to   { transform: translateY(0); }
+}
+
+.page-enter {
+  animation: pageEnterSlide var(--enter-duration) var(--enter-ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --enter-duration: 0.01s;
+    --enter-stagger-step: 0s;
+  }
+  .page-enter {
+    animation: none;
+  }
 }

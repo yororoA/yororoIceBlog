@@ -1,3 +1,8 @@
+@keyframes enterFadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -10,11 +15,34 @@
   border-radius: 16px;
   padding: 32px 36px;
   background: var(--card-bgc);
-  transition: box-shadow var(--transition-type), transform var(--transition-type);
+  animation: enterFadeInUp var(--enter-duration) var(--enter-ease) both;
+  transition: box-shadow var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
 
   &:hover {
     box-shadow: var(--card-shadow-hover);
     transform: translateY(-2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.linksCard, .guestbookCard {
+  animation: none;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.cardVisible {
+  opacity: 1;
+  transform: translateY(0);
+  animation: enterFadeInUp var(--enter-duration) var(--enter-ease) backwards;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -94,12 +122,14 @@
   color: var(--text-color);
   text-decoration: none;
   font-size: var(--h5-fontsize);
-  transition: all var(--transition-type);
+  transition: all var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
 
   &:hover {
     background-color: var(--accent-color-light);
     border-color: var(--accent-color-border);
+    color: var(--accent-color);
     transform: translateY(-2px);
+    box-shadow: var(--card-shadow);
   }
 
   .icon {

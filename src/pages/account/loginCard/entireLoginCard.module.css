@@ -1,0 +1,37 @@
+@keyframes enterFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.entire {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: enterFadeInUp var(--enter-duration) var(--enter-ease) both;
+  background: linear-gradient(to right, transparent 0%, var(--entire-bgc) 20%);
+  border-top-right-radius: 10rem;
+  transition: width var(--transition);
+}
+@media (prefers-reduced-motion: reduce) {
+  .entire {
+    animation: none;
+  }
+}
+.entire section.suggestion {
+  margin: 20rem 0;
+}
+.entire section.suggestion h3 {
+  display: inline;
+  margin-right: 5rem;
+}
+.entire section.suggestion h3.lr {
+  color: #2691ef;
+  cursor: pointer;
+}

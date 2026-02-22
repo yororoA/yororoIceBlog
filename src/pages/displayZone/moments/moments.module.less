@@ -1,3 +1,8 @@
+@keyframes enterFadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* 新 moment 提示横幅：点击加载 */
 .newBanner {
   display: block;
@@ -10,11 +15,12 @@
   color: var(--text-color);
   font-size: var(--p-fontsize);
   cursor: pointer;
-  transition: background-color var(--transition-type), box-shadow var(--transition-type);
+  transition: background-color var(--transition-type), box-shadow var(--transition-type), transform var(--hover-duration) var(--hover-ease);
 
   &:hover {
     background: var(--nm-iv-label-color);
     box-shadow: 0 2rem 8rem rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
   }
 }
 
@@ -27,33 +33,47 @@
     box-shadow: var(--card-shadow);
     overflow: hidden;
     margin-bottom: calc(var(--moments-zone-gap) * 2);
-    opacity: 1;
-    transition: transform .22s var(--transition-type), box-shadow .22s var(--transition-type), background-color .22s var(--transition-type), opacity 0.45s ease-out;
-
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--card-shadow-hover);
-      background-color: var(--moments-card-bgc);
-      cursor: pointer;
-    }
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform var(--hover-duration) var(--hover-ease), box-shadow var(--hover-duration) var(--hover-ease), background-color var(--hover-duration) var(--hover-ease), opacity 0.45s ease-out;
 
     @media (prefers-reduced-motion: reduce) {
+      opacity: 1;
+      transform: none;
       transition: none;
-      &:hover {
-        transform: none;
-        box-shadow: var(--card-shadow);
-      }
-    }
-
-    @media (hover: none) {
-      &:hover {
-        transform: none;
-        box-shadow: var(--card-shadow);
-      }
     }
   }
 
-  /* 删除中：淡出，与 .item 同用保证有 transition；删除时强制保留 opacity 过渡（即使用户开启 prefers-reduced-motion） */
+  .itemVisible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .itemEnterAnim {
+    animation: enterFadeInUp 0.45s var(--enter-ease) backwards;
+  }
+
+  .item:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--card-shadow-hover);
+    background-color: var(--moments-card-bgc);
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .item:hover {
+      transform: none;
+      box-shadow: var(--card-shadow);
+    }
+  }
+
+  @media (hover: none) {
+    .item:hover {
+      transform: none;
+      box-shadow: var(--card-shadow);
+    }
+  }
+
   .itemDeleting {
     opacity: 0 !important;
     pointer-events: none;

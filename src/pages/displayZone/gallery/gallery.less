@@ -1,3 +1,10 @@
+.gallery-grid-stagger(@i) when (@i > 0) {
+  .gallery-grid-stagger(@i - 1);
+  > div:nth-child(@{i}) {
+    animation-delay: unit((@i - 1) * 0.05, s);
+  }
+}
+
 .gallery-page {
   width: 100%;
   box-sizing: border-box;
@@ -8,6 +15,7 @@
     gap: var(--moments-zone-gap);
     padding: calc(var(--logo-height) * 0.3) 0;
     align-items: start;
+    .gallery-grid-stagger(40);
 
     /* IvPreview 渲染的 div.iv 作为 grid 子项 */
     > div {
@@ -16,11 +24,16 @@
       border-radius: 12px;
       overflow: hidden;
       background: var(--nm-iv-bgc);
-      transition: transform var(--transition-type), box-shadow var(--transition-type);
+      animation: enterFadeInUp var(--enter-duration) var(--enter-ease) both;
+      transition: transform var(--hover-duration) var(--hover-ease), box-shadow var(--hover-duration) var(--hover-ease);
 
       &:hover {
         transform: scale(1.03);
         box-shadow: var(--card-shadow-hover);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
       }
     }
   }

@@ -1,7 +1,5 @@
-// use for most btn's common style & welcome page's click btn
 button.common {
-  --transition: .15s;
-
+  --transition: 0.15s;
   height: fit-content;
   font-size: var(--h3-fontsize);
   padding: var(--h4-fontsize) var(--h3-fontsize);
@@ -12,10 +10,9 @@ button.common {
   cursor: pointer;
   transition: all var(--transition), transform var(--transition-type), box-shadow var(--transition-type);
 }
-
 button.common:hover {
   border-radius: var(--btn-border-radius-hover);
-  background-color: rgba(225, 225, 225, .8);
+  background-color: rgba(225, 225, 225, 0.8);
   transform: translateY(-1px);
   box-shadow: var(--card-shadow);
 }

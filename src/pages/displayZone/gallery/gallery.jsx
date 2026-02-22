@@ -136,7 +136,7 @@ const Gallery = () => {
   }, [showSuccess, showFailed, setIvs, setHasMore]);
 
   return (
-    <div className="gallery-page">
+    <div className="gallery-page page-enter">
       <section id="header">
         <span>Gallery</span>
         {canUpload && (
