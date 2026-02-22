@@ -1,0 +1,209 @@
+.leftLane {
+  position: fixed;
+  left: 0;
+  top: calc(var(--logo-height) * 1.05);
+  bottom: 40px;
+  width: 20vw;
+  padding: 8px 14px;
+  box-sizing: border-box;
+  z-index: 4;
+  pointer-events: none;
+  overflow-y: auto;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+}
+.leftLane::-webkit-scrollbar {
+  display: none;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: min-content;
+}
+.card {
+  border: var(--nm-input-border);
+  border-radius: 14px;
+  padding: 18px 16px;
+  background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  transition: box-shadow var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
+}
+.card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+}
+.stack > .card {
+  pointer-events: auto;
+}
+.avatarSection {
+  margin-top: 2px;
+  margin-bottom: -8px;
+}
+.avatar,
+.avatarPlaceholder {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 3px solid var(--nav-bgc);
+  box-shadow: var(--card-shadow);
+}
+.avatar {
+  object-fit: cover;
+}
+.avatarPlaceholder {
+  background: var(--gradient-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 24px;
+}
+.authorName {
+  margin: 0;
+  font-size: var(--h3-fontsize);
+  line-height: 1.3;
+  color: var(--text-color);
+}
+.description {
+  margin: 0;
+  font-size: var(--h5-fontsize);
+  color: var(--text-color-secondary);
+  line-height: 1.55;
+}
+.email {
+  margin: 0;
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
+  word-break: break-all;
+  opacity: 0.9;
+}
+.links {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+.link {
+  padding: 6px 10px;
+  border: var(--nm-input-border);
+  border-radius: 14px;
+  background: var(--input-bgc);
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: var(--h6-fontsize);
+  line-height: 1;
+  transition: all var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
+}
+.link:hover {
+  background: var(--accent-color-light);
+  border-color: var(--accent-color-border);
+  color: var(--accent-color);
+  transform: translateY(-1px);
+}
+.statsCard {
+  align-items: stretch;
+  text-align: left;
+  gap: 8px;
+}
+.statsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--h5-fontsize);
+  color: var(--text-color);
+  font-weight: 600;
+}
+.statsHeader a {
+  font-size: var(--h6-fontsize);
+  color: var(--accent-color);
+  text-decoration: none;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.metricItem {
+  border: var(--nm-input-border);
+  border-radius: 8px;
+  background: var(--input-bgc);
+  padding: 6px 4px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.metricItem strong {
+  font-size: var(--h5-fontsize);
+  color: var(--text-color);
+  line-height: 1.2;
+}
+.metricItem span {
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
+  line-height: 1.2;
+}
+.statsHint {
+  margin: 0;
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
+  line-height: 1.45;
+}
+.langList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pieWrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+.pieSvg {
+  width: 100%;
+  max-width: 260px;
+  height: 128px;
+  display: block;
+}
+.pieSlice {
+  cursor: pointer;
+  transition: opacity var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
+}
+.pieSlice:hover {
+  opacity: 0.9;
+}
+.pieGuide {
+  pointer-events: none;
+}
+.pieGuide polyline {
+  fill: none;
+  stroke: var(--text-color-secondary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.96;
+}
+.pieGuide text {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--text-color);
+  paint-order: stroke fill;
+  stroke: var(--card-bgc);
+  stroke-width: 3px;
+  dominant-baseline: middle;
+}
+@media (max-width: 1024px) {
+  .leftLane {
+    display: none;
+  }
+}

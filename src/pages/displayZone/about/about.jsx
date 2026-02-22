@@ -6,6 +6,7 @@ import { getGuestbookComments, postGuestbookComment } from '../../../utils/guest
 import { isGuest } from '../../../utils/auth';
 import { getAvatarColor } from '../../../utils/avatarColor';
 import { formatDateTime } from '../../../utils/formatDateTime';
+import { UiPersistContext } from '../context/uiPersistContext';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
@@ -48,14 +49,19 @@ function randomLetterUsername(length = 8) {
 }
 
 const About = () => {
+  const {
+    linksExpanded,
+    setLinksExpanded,
+    guestbookExpanded,
+    setGuestbookExpanded,
+    linksSelectedCategory: selectedCategory,
+    setLinksSelectedCategory: setSelectedCategory,
+  } = React.useContext(UiPersistContext);
   // ── Guestbook state ──
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [guestName, setGuestName] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [linksExpanded, setLinksExpanded] = useState(true);
-  const [guestbookExpanded, setGuestbookExpanded] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all', 'friend', 'tool', 'development', 'other'
 
   const [linksVisible, setLinksVisible] = useState(false);
   const [gbVisible, setGbVisible] = useState(false);
@@ -125,7 +131,11 @@ const About = () => {
         <div ref={linksRef} className={`${about.linksCard}${linksVisible ? ` ${about.cardVisible}` : ''}`}>
           <div className={about.cardHeader} onClick={() => setLinksExpanded(!linksExpanded)}>
             <h3 className={about.cardTitle}>Links</h3>
-            <span className={about.toggleIcon}>{linksExpanded ? '▼' : '▶'}</span>
+            <span className={about.toggleIcon} aria-hidden>
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.5 6L8 10.5L12.5 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
           </div>
           <div className={`${about.expandableContent} ${linksExpanded ? about.expanded : about.collapsed}`}>
             <div className={about.expandableContentInner}>
@@ -234,7 +244,11 @@ const About = () => {
         <div ref={gbRef} className={`${about.guestbookCard}${gbVisible ? ` ${about.cardVisible}` : ''}`}>
           <div className={about.cardHeader} onClick={() => setGuestbookExpanded(!guestbookExpanded)}>
             <h3 className={about.cardTitle}>Guestbook</h3>
-            <span className={about.toggleIcon}>{guestbookExpanded ? '▼' : '▶'}</span>
+            <span className={about.toggleIcon} aria-hidden>
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.5 6L8 10.5L12.5 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
           </div>
           <div className={`${about.expandableContent} ${guestbookExpanded ? about.expanded : about.collapsed}`}>
             <div className={about.expandableContentInner}>

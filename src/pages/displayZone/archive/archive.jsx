@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import archive from './archive.module.less';
 import { getArchiveData, getArchiveStats } from '../../../utils/archive';
 import { ArchiveListContext } from './context/archiveListContext';
+import { UiPersistContext } from '../context/uiPersistContext';
 
 const ArchiveItem = ({ item }) => {
   const { _id, type, title, createdAt, username } = item;
@@ -99,9 +100,13 @@ const ArchiveItem = ({ item }) => {
 
 const Archive = () => {
   const [archiveData, setArchiveData, stats, setStats, years, setYears] = useContext(ArchiveListContext);
+  const {
+    archiveSelectedType: selectedType,
+    setArchiveSelectedType: setSelectedType,
+    archiveSelectedYear: selectedYear,
+    setArchiveSelectedYear: setSelectedYear,
+  } = useContext(UiPersistContext);
   const [filteredData, setFilteredData] = useState([]);
-  const [selectedType, setSelectedType] = useState('all');
-  const [selectedYear, setSelectedYear] = useState('all');
   const [loading, setLoading] = useState(false);
   const yearsInitialized = useRef(false);
 

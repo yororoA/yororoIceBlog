@@ -3,8 +3,13 @@ const originFetch = window.fetch;
 
 window.fetch = async function (input, init) {
 	const url = input instanceof Request ? input.url : input;
+	const resolvedUrl = new URL(url, window.location.origin);
+	const backendOrigin = process.env.REACT_APP_SERVER_HOST
+		? new URL(process.env.REACT_APP_SERVER_HOST, window.location.origin).origin
+		: window.location.origin;
+	const isOwnApi = resolvedUrl.origin === window.location.origin || resolvedUrl.origin === backendOrigin;
 	// 账户路径下不拦截（例如登录/注册）
-	if (!window.location.pathname.includes('account')) {
+	if (!window.location.pathname.includes('account') && isOwnApi) {
 		// 合并 headers（兼容 Headers 对象与普通对象）
 		const baseHeaders = init?.headers instanceof Headers
 			? Object.fromEntries(init.headers.entries())
@@ -81,7 +86,7 @@ window.fetch = async function (input, init) {
 		}
 		return resp;
 	} else {
-		// 账户相关请求直接透传
+		// 账户相关请求、第三方请求直接透传（避免 CORS 预检被自定义头触发）
 		return await originFetch(url, init);
 	}
 }

@@ -17,6 +17,8 @@ import { MomentsListContext } from './moments/context/momentsListContext';
 import { KnowledgeListContext } from './knowledge/context/knowledgeListContext';
 import { ArchiveListContext } from './archive/context/archiveListContext';
 import { ScrollContainerContext } from './scrollContainerContext';
+import { UiPersistContext } from './context/uiPersistContext';
+import ProfileMiniCard from './shared/profileMiniCard';
 import { getUid, logout } from '../../utils/auth';
 
 const DisplayZone = () => {
@@ -39,6 +41,14 @@ const DisplayZone = () => {
 	const [archiveData, setArchiveData] = useState([]);
 	const [archiveStats, setArchiveStats] = useState({});
 	const [archiveYears, setArchiveYears] = useState(['all']);
+	// 页面级 UI 状态缓存：切路由不丢失
+	const [langViewMode, setLangViewMode] = useState('pie');
+	const [articlesSelectedCategory, setArticlesSelectedCategory] = useState('all');
+	const [archiveSelectedType, setArchiveSelectedType] = useState('all');
+	const [archiveSelectedYear, setArchiveSelectedYear] = useState('all');
+	const [linksExpanded, setLinksExpanded] = useState(true);
+	const [guestbookExpanded, setGuestbookExpanded] = useState(true);
+	const [linksSelectedCategory, setLinksSelectedCategory] = useState('all');
 	const [successList, setSuccessList] = useState([]);
 	const [failedList, setFailedList] = useState([]);
 	const [showConnectedBoard, setShowConnectedBoard] = useState(true);
@@ -70,7 +80,7 @@ const DisplayZone = () => {
 
 	// 公告状态管理：每个用户只弹出一次，关闭后不再主动弹出
 	const [showAnnouncement, setShowAnnouncement] = useState(false);
-	
+
 	// 首次进入时检查是否需要自动弹出公告
 	// 如果用户之前选择了"下次不再显示"，则不再弹出（向后兼容）
 	useEffect(() => {
@@ -80,13 +90,13 @@ const DisplayZone = () => {
 			setShowAnnouncement(true);
 		}
 	}, []);
-	
+
 	const handleCloseAnnouncement = useCallback((proceed) => {
 		setShowAnnouncement(false);
 		sessionStorage.setItem('welcomeAnnouncementSeen', '1');
 		if (typeof proceed === 'function') proceed();
 	}, []);
-	
+
 	// 手动打开公告（通过按钮）
 	const handleOpenAnnouncement = useCallback(() => {
 		setShowAnnouncement(true);
@@ -234,7 +244,7 @@ const DisplayZone = () => {
 							>
 								Home
 							</span>
-							{['moments', 'gallery', 'articles', 'archive', 'other'].map(name => (
+							{['moments', 'articles', 'gallery', 'archive', 'other'].map(name => (
 								<span
 									key={name}
 									id={name}
@@ -247,7 +257,7 @@ const DisplayZone = () => {
 						<div className={page.navRight}>
 							<span className={page.announcementBtn} onClick={handleOpenAnnouncement} title="查看公告">
 								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16ZM11 11H13V13H11V11ZM11 7H13V9H11V7Z" fill="currentColor"/>
+									<path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16ZM11 11H13V13H11V11ZM11 7H13V9H11V7Z" fill="currentColor" />
 								</svg>
 							</span>
 							<span className={page.linkLogout} onClick={handleLogout}>{'Log out'}</span>
@@ -256,17 +266,37 @@ const DisplayZone = () => {
 					</nav>
 				</div>
 				<main>
-					<ScrollContainerContext.Provider value={scrollContainerRef}>
-						<GalleryContext.Provider value={[galleryIvs, setGalleryIvs, galleryHasMore, setGalleryHasMore]}>
-							<MomentsListContext.Provider value={[momentsData, setMomentsData, likedMoments, setLikedMoments, momentsFilesCache, setMomentsFilesCache, deletingIds, markMomentDeleting, pendingNewMoments, loadPendingNewMoments]}>
-								<KnowledgeListContext.Provider value={[articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories]}>
-									<ArchiveListContext.Provider value={[archiveData, setArchiveData, archiveStats, setArchiveStats, archiveYears, setArchiveYears]}>
-										<Outlet />
-									</ArchiveListContext.Provider>
-								</KnowledgeListContext.Provider>
-							</MomentsListContext.Provider>
-						</GalleryContext.Provider>
-					</ScrollContainerContext.Provider>
+					<UiPersistContext.Provider
+						value={{
+							langViewMode,
+							setLangViewMode,
+							articlesSelectedCategory,
+							setArticlesSelectedCategory,
+							archiveSelectedType,
+							setArchiveSelectedType,
+							archiveSelectedYear,
+							setArchiveSelectedYear,
+							linksExpanded,
+							setLinksExpanded,
+							guestbookExpanded,
+							setGuestbookExpanded,
+							linksSelectedCategory,
+							setLinksSelectedCategory,
+						}}
+					>
+						<ProfileMiniCard visible={location.pathname.includes('/moments') || location.pathname.includes('/articles')} />
+						<ScrollContainerContext.Provider value={scrollContainerRef}>
+							<GalleryContext.Provider value={[galleryIvs, setGalleryIvs, galleryHasMore, setGalleryHasMore]}>
+								<MomentsListContext.Provider value={[momentsData, setMomentsData, likedMoments, setLikedMoments, momentsFilesCache, setMomentsFilesCache, deletingIds, markMomentDeleting, pendingNewMoments, loadPendingNewMoments]}>
+									<KnowledgeListContext.Provider value={[articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories]}>
+										<ArchiveListContext.Provider value={[archiveData, setArchiveData, archiveStats, setArchiveStats, archiveYears, setArchiveYears]}>
+											<Outlet />
+										</ArchiveListContext.Provider>
+									</KnowledgeListContext.Provider>
+								</MomentsListContext.Provider>
+							</GalleryContext.Provider>
+						</ScrollContainerContext.Provider>
+					</UiPersistContext.Provider>
 				</main>
 			</div>
 			{createPortal(

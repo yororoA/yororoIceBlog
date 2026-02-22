@@ -13,6 +13,7 @@ import { isGuest, getUid } from '../../../utils/auth';
 import { getKnowledgeArticles, createArticle, getCategories, getArticleLikesList, deleteArticle, incrementArticleView } from '../../../utils/knowledge';
 import { sendArticleLike } from '../../../utils/sendArticleLike';
 import { KnowledgeListContext } from './context/knowledgeListContext';
+import { UiPersistContext } from '../context/uiPersistContext';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 
@@ -342,8 +343,8 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
 
 const Knowledge = () => {
   const [articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories] = useContext(KnowledgeListContext);
+  const { articlesSelectedCategory: selectedCategory, setArticlesSelectedCategory: setSelectedCategory } = useContext(UiPersistContext);
   const [filteredArticles, setFilteredArticles] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [showNewForm, setShowNewForm] = useState(false);
   const [loading, setLoading] = useState(false);
