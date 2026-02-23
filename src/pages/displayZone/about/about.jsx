@@ -21,22 +21,26 @@ const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
 // 支持格式：
 // 1. 纯文字链接: { name: 'Example Blog', url: 'https://example.com', category: 'friend' }
 // 2. 带图片链接: { name: 'Example Blog', url: 'https://example.com', image: '/path/to/image.png', category: 'friend' }
-// 3. 工具链接: { name: 'Tool Name', url: 'https://tool.com', category: 'tool' }
-// 4. 开发相关: { name: 'Dev Link', url: 'https://dev.com', category: 'development' }
-// 5. 其他链接: { name: 'Other Link', url: 'https://other.com', category: 'other' }
+// 3. 可选 description: { name: '...', url: '...', description: '简短说明', category: '...' }
+// 4. 工具/开发/其他: category 为 'tool' | 'development' | 'other'
 // category: 'friend' | 'tool' | 'development' | 'other'，默认为 'friend'
 const LINKS = [
   // { name: 'Example Blog', url: 'https://example.com', category: 'friend' },
   // { name: 'Tech Corner', url: 'https://example2.com', image: '/path/to/logo.png', category: 'friend' },
   // { name: 'Useful Tool', url: 'https://tool.com', category: 'tool' },
   // { name: 'Other Link', url: 'https://other.com', category: 'other' },
-  {name: 'Vocu Ai', url:'https://www.vocu.ai', image: 'https://www.vocu.ai/favicon.ico', category: 'other'},
-  {name: 'Vercel', url:'https://vercel.com', image: 'https://www.vercel.com/favicon.ico', category: 'development'},
-  {name: 'Render', url:'https://render.com', image: 'https://ts3.tc.mm.bing.net/th/id/ODF.rtcYxUnBRdAMKi7zNULYxw?w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2', category: 'development'},
-  {name:'Cloudinary', image:'https://res.cloudinary.com/prod/image/upload/w_32/console/favicon.png', url:'https://cloudinary.com', category: 'development'},
-  {name:'Upstash', image:'https://console.upstash.com/static/icons/favicon-32x32.png', url:'https://upstash.com', category: 'development'},
-  {name:'MongoDB', image:'https://www.mongodb.com/favicon.ico', url:'https://www.mongodb.com', category: 'development'},
-  {name:'Cloudflare', image:'https://dash.cloudflare.com/c411dbca6e493cdb.svg', url:'https://developers.cloudflare.com', category: 'development'},
+  { name: 'Vocu Ai', description: '小样本语音克隆及音色转换', url: 'https://www.vocu.ai', image: 'https://www.vocu.ai/favicon.ico', category: 'other' },
+  { name: 'Vercel', description: '前端网站部署', url: 'https://vercel.com', image: 'https://www.vercel.com/favicon.ico', category: 'development' },
+  { name: 'Render', description: '后端网站部署', url: 'https://render.com', image: 'https://ts3.tc.mm.bing.net/th/id/ODF.rtcYxUnBRdAMKi7zNULYxw?w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2', category: 'development' },
+  { name: 'Cloudinary', description: '图片存储', image: 'https://res.cloudinary.com/prod/image/upload/w_32/console/favicon.png', url: 'https://cloudinary.com', category: 'development' },
+  { name: 'Upstash', description: 'redis缓存', image: 'https://console.upstash.com/static/icons/favicon-32x32.png', url: 'https://upstash.com', category: 'development' },
+  { name: 'MongoDB', description: '数据库', image: 'https://www.mongodb.com/favicon.ico', url: 'https://www.mongodb.com', category: 'development' },
+  { name: 'Cloudflare', description: 'CDN加速', image: 'https://dash.cloudflare.com/c411dbca6e493cdb.svg', url: 'https://developers.cloudflare.com', category: 'development' },
+  { name: 'SubExtractor', description: '视频硬编码字幕提取', url: 'https://subextractor.com', image: 'https://www.subextractor.com/logo.png', category: 'tool' },
+  { name: 'Split Image', description: '图片分割', url: 'https://splitimage.app/favicon.ico', iamge: 'https://splitimage.app/favicon.ico', category: 'tool' },
+  { name: 'IMGONLINE.TOOLS', description: '滤镜/图像转换/图像处理/删除颜色', url: 'https://imgonline.tools/zh/remove-color#google_vignette', image: 'https://imgonline.tools/icon.png', category: 'tool' },
+  {name:'Change Image Color', description:'图片颜色替换', url:'https://changeimagecolor.net/zh/color-replace', image:'https://changeimagecolor.net/logo.png',category:'tool'},
+  {name:'Vocal Remover', description:'去人声/音频分离/变调/音频剪辑/音频合并', url:'https://vocalremover.org/zh/', image:'https://vocalremover.org/favicon.ico', category:'tool'},
 ];
 
 const CATEGORY_ORDER = ['friend', 'tool', 'development', 'other'];
@@ -134,7 +138,7 @@ const About = () => {
     try {
       await navigator.clipboard.writeText(PROFILE.email);
       showSuccess(t(locale, 'copiedEmail'));
-    } catch (_) {}
+    } catch (_) { }
   }, [locale, showSuccess]);
 
   const handleCopySiteLink = useCallback(async (e) => {
@@ -143,7 +147,7 @@ const About = () => {
     try {
       await navigator.clipboard.writeText(siteUrl);
       showSuccess(t(locale, 'copiedSiteLink'));
-    } catch (_) {}
+    } catch (_) { }
   }, [locale, showSuccess]);
 
   const handlePostComment = useCallback(async () => {
@@ -191,7 +195,7 @@ const About = () => {
           </div>
           <div className={`${about.expandableContent} ${linksExpanded ? about.expanded : about.collapsed}`}>
             <div className={about.expandableContentInner}>
-            <p className={about.linkTip}>{t(locale, 'linksTip')}</p>
+              <p className={about.linkTip}>{t(locale, 'linksTip')}</p>
               {/* 分类标签 */}
               <div className={about.categoryTabs}>
                 <button
@@ -247,7 +251,14 @@ const About = () => {
                           }}
                         />
                       )}
-                      <span className={about.linkName}>{link.name}</span>
+                      {link.description ? (
+                        <span className={about.linkTextWrap}>
+                          <span className={about.linkName}>{link.name}</span>
+                          <span className={about.linkDescription}>{link.description}</span>
+                        </span>
+                      ) : (
+                        <span className={about.linkName}>{link.name}</span>
+                      )}
                     </a>
                   );
 

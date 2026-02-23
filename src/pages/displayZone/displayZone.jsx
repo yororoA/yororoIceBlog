@@ -79,6 +79,7 @@ const DisplayZone = () => {
 	}, []);
 	const navigate = useNavigate();
 	const location = useLocation();
+	const isHomeRoute = location.pathname === '/town' || location.pathname === '/town/';
 	const scrollContainerRef = useRef(null);
 	const localeMenuRef = useRef(null);
 
@@ -348,7 +349,7 @@ const DisplayZone = () => {
 					onRemoveFailed={removeFailed}
 				/>
 			)}
-			<div className={page.entire} ref={scrollContainerRef}>
+			<div className={`${page.entire}${isHomeRoute ? ` ${page.entireWide}` : ''}`} ref={scrollContainerRef}>
 				<div className={page.navBox}>
 					<nav>
 						<img src={logo} className={page.logo} alt="logo" onClick={() => navigate('/town')} style={{ cursor: 'pointer' }} />
