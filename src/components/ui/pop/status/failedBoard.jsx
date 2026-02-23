@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
-import CloseButton from '../../close/CloseButton';
 import styles from './board.module.less';
 
 /*
@@ -65,7 +64,6 @@ const FailedBoard = ({ content = 'Failed', duration = FAILED_DURATION, closeAt, 
 			<div className={styles.content}>
 				<p className={styles.message}>{content}</p>
 			</div>
-			<CloseButton onClick={startClose} className={styles.close}/>
 		</div>
 	);
 

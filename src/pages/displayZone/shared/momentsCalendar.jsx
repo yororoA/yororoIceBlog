@@ -23,14 +23,40 @@ const getItemDate = (item) => {
   return raw instanceof Date ? raw : new Date(raw);
 };
 
+const initialViewDate = () => new Date();
+
 const MomentsCalendar = ({ visible = true, mode = 'moments' }) => {
   const { locale } = useContext(UiPersistContext);
   const [momentsData] = useContext(MomentsListContext);
   const [articlesData] = useContext(KnowledgeListContext);
   const navigate = useNavigate();
-  const listData = mode === 'articles' ? (articlesData || []) : (momentsData || []);
-  const [viewDate, setViewDate] = useState(() => new Date());
-  const [selectedDateKey, setSelectedDateKey] = useState(null);
+  const listData = useMemo(
+    () => (mode === 'articles' ? (articlesData || []) : (momentsData || [])),
+    [mode, articlesData, momentsData]
+  );
+  // articles 与 moments 路由的日历视图、选中日期状态独立
+  const [viewDateByMode, setViewDateByMode] = useState(() => ({
+    moments: initialViewDate(),
+    articles: initialViewDate(),
+  }));
+  const [selectedDateKeyByMode, setSelectedDateKeyByMode] = useState({
+    moments: null,
+    articles: null,
+  });
+  const viewDate = viewDateByMode[mode];
+  const setViewDate = useCallback(
+    (updater) => {
+      setViewDateByMode((prev) => ({ ...prev, [mode]: typeof updater === 'function' ? updater(prev[mode]) : updater }));
+    },
+    [mode]
+  );
+  const selectedDateKey = selectedDateKeyByMode[mode];
+  const setSelectedDateKey = useCallback(
+    (value) => {
+      setSelectedDateKeyByMode((prev) => ({ ...prev, [mode]: value }));
+    },
+    [mode]
+  );
   const [isClosing, setIsClosing] = useState(false);
   const [isListOpen, setIsListOpen] = useState(false);
   const closeTimeoutRef = useRef(null);
@@ -117,7 +143,7 @@ const MomentsCalendar = ({ visible = true, mode = 'moments' }) => {
       setSelectedDateKey(cell.dateKey);
       setIsClosing(false);
     }
-  }, [selectedDateKey]);
+  }, [selectedDateKey, setSelectedDateKey]);
 
   const handleCloseDayList = useCallback(() => {
     setIsClosing(true);
@@ -141,7 +167,7 @@ const MomentsCalendar = ({ visible = true, mode = 'moments' }) => {
     return () => {
       if (closeTimeoutRef.current) window.clearTimeout(closeTimeoutRef.current);
     };
-  }, [isClosing]);
+  }, [isClosing, setSelectedDateKey]);
 
   const handleOpenItem = useCallback((id) => {
     if (mode === 'articles') {

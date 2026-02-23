@@ -34,7 +34,7 @@ const SwitchTheme = () => {
 			<label htmlFor="switchTheme" className={sT.track}>
 				<input type="checkbox" onChange={handleSwitch} id="switchTheme" checked={mode === 'dark'} className={sT.theme_checkbox} aria-label="切换深浅色主题"/>
 				<span className={sT.knob}>
-					{mode === 'dark' ? <MoonIcon /> : <SunIcon />}
+					{mode === 'dark' ? <SunIcon /> : <MoonIcon />}
 				</span>
 			</label>
 		</div>

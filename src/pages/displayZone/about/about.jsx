@@ -151,6 +151,15 @@ const About = () => {
     } catch (_) { }
   }, [locale, showSuccess]);
 
+  const SITE_ICON_URL = 'https://www.yororoice.top/favicon.png';
+  const handleCopySiteIcon = useCallback(async (e) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(SITE_ICON_URL);
+      showSuccess(t(locale, 'copiedSiteIcon'));
+    } catch (_) { }
+  }, [locale, showSuccess]);
+
   const handlePostComment = useCallback(async () => {
     if (!newComment.trim() || submitting) return;
     setSubmitting(true);
@@ -186,6 +195,7 @@ const About = () => {
               <div className={about.cardHeaderActions}>
                 <button type="button" className={about.headerActionBtn} onClick={handleCopyEmail}>{t(locale, 'copyEmail')}</button>
                 <button type="button" className={about.headerActionBtn} onClick={handleCopySiteLink}>{t(locale, 'copySiteLink')}</button>
+                <button type="button" className={about.headerActionBtn} onClick={handleCopySiteIcon}>{t(locale, 'copySiteIcon')}</button>
               </div>
             </div>
             <span className={about.toggleIcon} aria-hidden>

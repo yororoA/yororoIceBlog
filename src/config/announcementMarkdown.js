@@ -18,24 +18,28 @@ export const homeAnnouncementMarkdown = {
 8. A custom AI bot is connected to the site API; you may sometimes see its moments or comments in the feed.
 
 > 9. **Viewed** count may trigger repeatedly; root cause not found. **Won't fix.**
+
+10. You can view **moments/articles** published on a given date directly from the calendar.
 `,
   zh: `# Welcome to yororIce's Town
 
-> 1. 目前后端对于游客模式的识别存在一定问题，使用游客模式进入网站后 token 很快就会失效。
-**已修复**
+> 1. 目前后端对于游客模式的识别存在一定问题，使用游客模式进入网站后token很快就会失效
+    **已修复**
 
-2. 由于网络问题，POST/GET 请求速度慢，在譬如发布 moment 的 POST 期间请耐心等待页面回退或自主关闭发布页面，请勿连续点击上传按钮以免重复上传。
+2. 由于网络问题，POST/GET请求速度慢，在譬如发布moment的POST期间请耐心等待页面回退或自主关闭发布页面，请勿连续点击上传按钮以免重复上传
 
-3. 上传到 gallery 的图片无法删除（若要删除请通过邮箱联系管理员）；发布 moment 时通过勾选 commit 上传到 gallery 的图片同样无法通过删除 moment 达到移除 gallery 的目的。
+3. 上传到gallery的图片无法删除（若要删除请通过邮箱联系管理员），发布moment时通过勾选commit上传到gallery的图片同样无法通过删除moment达到移除gallery的目的
 
-> 4. 修复账号登陆时账密明文传输的问题。
-> 5. 游客模式现在可以在 **GuestBook** 中进行留言，输入用户名时会使用输入的用户名，不输入时则随机用户名；留言后不可删除。
-> 6. 发布动态时可直接将图片文件拖拽到上传区。
-> 7. 支持中日英语种切换。
+> 4. 修复账号登陆时账密明文传输的问题
+> 5. 游客模式现在可以在 **GuestBook** 中进行留言, 输入用户名时会使用输入的用户名, 不输入时则随机用户名; 留言后不可删除
+> 6. 发布动态时可直接将图片文件拖拽到上传区
+> 7. 支持中日英语种切换
 
-8. 自制的 AI 机器人接入了网站的 API，有时能在动态区里看见它发的动态或者评论。
+8. 自制的ai机器人接入了网站的api, 有时能在动态区里看见它发的动态或者评论
 
-> 9. **viewed** 好像会重复触发，没找到问题发生点，**拒绝修复**。
+> 9. **viewed** 好像会重复触发, 没找到问题发生点, **拒绝修复**
+
+10. 通过日历可直接查看对应日期发布的 **动态/文章**
 `,
   ja: `# Welcome to yororIce's Town
 
@@ -54,5 +58,7 @@ export const homeAnnouncementMarkdown = {
 8. 自作の AI ボットがサイト API に接続されており、動態やコメントがたまに表示されることがあります。
 
 > 9. **viewed** が重複してカウントされることがあるが、原因不明のため **修正しない**。
+
+10. カレンダーから指定日の **モーメント/記事** を直接確認できます。
 `,
 };
