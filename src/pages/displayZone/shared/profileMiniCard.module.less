@@ -140,12 +140,14 @@
   align-items: stretch;
   text-align: left;
   gap: 8px;
+  padding-bottom: 18px;
 }
 
 .statsHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   font-size: var(--h5-fontsize);
   color: var(--text-color);
   font-weight: 600;
@@ -154,7 +156,16 @@
     font-size: var(--h6-fontsize);
     color: var(--accent-color);
     text-decoration: none;
+    flex-shrink: 0;
   }
+}
+
+.statsHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .metrics {
@@ -164,17 +175,18 @@
 }
 
 .metricItem {
-  border: var(--nm-input-border);
-  border-radius: 8px;
-  background: var(--input-bgc);
-  padding: 6px 4px;
+  border: none;
+  border-radius: 10px;
+  background: var(--github-metric-bgc, rgba(0, 0, 0, 0.04));
+  padding: 8px 6px;
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 2px;
 
   strong {
-    font-size: var(--h5-fontsize);
+    font-size: var(--h4-fontsize);
+    font-weight: 700;
     color: var(--text-color);
     line-height: 1.2;
   }
@@ -182,6 +194,7 @@
   span {
     font-size: var(--h6-fontsize);
     color: var(--text-color-secondary);
+    opacity: 0.85;
     line-height: 1.2;
   }
 }
@@ -201,13 +214,11 @@
 
 .langViewToggle {
   display: inline-flex;
-  align-self: flex-start;
   gap: 4px;
   padding: 2px;
   border-radius: 999px;
   background: var(--input-bgc);
   border: var(--nm-input-border);
-  margin-bottom: 4px;
   flex-shrink: 0;
 }
 
@@ -279,6 +290,8 @@
 
 .pieSlice {
   cursor: pointer;
+  stroke: #fff;
+  stroke-width: 2px;
   transition: opacity var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
 
   &:hover {
@@ -286,31 +299,40 @@
   }
 }
 
-.pieGuide {
-  pointer-events: none;
+.donutCenterName {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--text-color);
+  dominant-baseline: middle;
+}
 
-  polyline {
-    fill: none;
-    stroke: var(--text-color-secondary);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0.96;
-  }
+.donutCenterPercent {
+  font-size: 14px;
+  font-weight: 700;
+  fill: var(--text-color);
+  dominant-baseline: middle;
+}
 
-  rect {
-    fill: var(--card-bgc);
-    stroke: var(--nm-input-border);
-    stroke-width: 1;
-    opacity: 0.98;
-  }
+.pieLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
 
-  text {
-    font-size: 13px;
-    font-weight: 700;
-    fill: var(--text-color);
-    letter-spacing: 0.1px;
-    dominant-baseline: middle;
+.pieLegendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
+
+  i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
 }
 
@@ -322,20 +344,20 @@
 
 .barRow {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 8px;
 }
 
-.barHead {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--text-color);
+.barLabel {
+  flex-shrink: 0;
+  width: 72px;
   font-size: var(--h6-fontsize);
+  color: var(--text-color);
 }
 
 .barTrack {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   height: 9px;
   border-radius: 999px;
   background: var(--input-bgc);
@@ -347,6 +369,14 @@
     border-radius: inherit;
     transition: width var(--transition-type);
   }
+}
+
+.barPercent {
+  flex-shrink: 0;
+  width: 36px;
+  text-align: right;
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
 }
 
 

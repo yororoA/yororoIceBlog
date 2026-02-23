@@ -19,7 +19,10 @@ import { KnowledgeListContext } from './knowledge/context/knowledgeListContext';
 import { ArchiveListContext } from './archive/context/archiveListContext';
 import { ScrollContainerContext } from './scrollContainerContext';
 import { UiPersistContext } from './context/uiPersistContext';
+import { useWheelInertia } from '../../hooks/useWheelInertia';
+import BackToTop from '../../components/backToTop/BackToTop';
 import ProfileMiniCard from './shared/profileMiniCard';
+import MomentsCalendar from './shared/momentsCalendar';
 import { getUid, logout } from '../../utils/auth';
 import { getMoments } from '../../utils/getMoments';
 import { getKnowledgeArticles } from '../../utils/knowledge';
@@ -82,6 +85,7 @@ const DisplayZone = () => {
 	const isHomeRoute = location.pathname === '/town' || location.pathname === '/town/';
 	const scrollContainerRef = useRef(null);
 	const localeMenuRef = useRef(null);
+	useWheelInertia(scrollContainerRef);
 
 	// 首次进入 DisplayZone 时拉取首页/列表所需数据，避免切到首页或 other 时重复请求
 	const initialLoadDoneRef = useRef(false);
@@ -441,23 +445,28 @@ const DisplayZone = () => {
 							setLinksSelectedCategory,
 						}}
 					>
-						<ProfileMiniCard visible={location.pathname.includes('/moments') || location.pathname.includes('/articles')} />
-						<ScrollContainerContext.Provider value={scrollContainerRef}>
-							<GalleryContext.Provider value={[galleryIvs, setGalleryIvs, galleryHasMore, setGalleryHasMore]}>
-								<MomentsListContext.Provider value={[momentsData, setMomentsData, likedMoments, setLikedMoments, momentsFilesCache, setMomentsFilesCache, deletingIds, markMomentDeleting, pendingNewMoments, loadPendingNewMoments]}>
-									<KnowledgeListContext.Provider value={[articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories, pendingNewArticles, loadPendingNewArticles, deletingArticleIds, markArticleDeleting]}>
+						<MomentsListContext.Provider value={[momentsData, setMomentsData, likedMoments, setLikedMoments, momentsFilesCache, setMomentsFilesCache, deletingIds, markMomentDeleting, pendingNewMoments, loadPendingNewMoments]}>
+							<KnowledgeListContext.Provider value={[articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories, pendingNewArticles, loadPendingNewArticles, deletingArticleIds, markArticleDeleting]}>
+								<ProfileMiniCard visible={location.pathname.includes('/moments') || location.pathname.includes('/articles')} />
+								<MomentsCalendar
+									visible={location.pathname.includes('/moments') || location.pathname.includes('/articles')}
+									mode={location.pathname.includes('/articles') ? 'articles' : 'moments'}
+								/>
+								<ScrollContainerContext.Provider value={scrollContainerRef}>
+									<GalleryContext.Provider value={[galleryIvs, setGalleryIvs, galleryHasMore, setGalleryHasMore]}>
 										<GuestbookContext.Provider value={[guestbookComments, setGuestbookComments]}>
 											<ArchiveListContext.Provider value={[archiveData, setArchiveData, archiveStats, setArchiveStats, archiveYears, setArchiveYears]}>
 												<Outlet />
 											</ArchiveListContext.Provider>
 										</GuestbookContext.Provider>
-									</KnowledgeListContext.Provider>
-								</MomentsListContext.Provider>
-							</GalleryContext.Provider>
-						</ScrollContainerContext.Provider>
+									</GalleryContext.Provider>
+								</ScrollContainerContext.Provider>
+							</KnowledgeListContext.Provider>
+						</MomentsListContext.Provider>
 					</UiPersistContext.Provider>
 				</main>
 			</div>
+			<BackToTop scrollContainerRef={scrollContainerRef} />
 			{createPortal(
 				<footer className={page.globalFooter}>
 					<p className={page.globalFooterCopyright}>© 2025 yororoIce. All rights reserved.</p>

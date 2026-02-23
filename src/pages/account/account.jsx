@@ -1,17 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import page from './page.module.less'
 import logo from '../../assets/images/logo.png'
 import SwitchTheme from "../../components/switchTheme/switchTheme";
-import {Outlet, useNavigate} from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import CommonBtn from "../../components/btn/commonBtn/commonBtn";
+import { useWheelInertia } from '../../hooks/useWheelInertia';
+import BackToTop from '../../components/backToTop/BackToTop';
 
 
 // account page, no access with no account
 const Account = () => {
-	// welcome text & btn display State
 	const [firstClick, setFirstClick] = useState(false);
-	// navigate to login, change the welcome text
 	const navigate = useNavigate();
+	const windowScrollRef = useRef(null);
+	useWheelInertia(windowScrollRef);
 	const handleFirstClick = () => {
 		setFirstClick(true);
 		navigate('./login');
@@ -36,12 +38,12 @@ const Account = () => {
 					{firstClick &&
 						<h3>{`${pathname === 'login' ? 'Login' : 'Register'} to Join My Town`}</h3>}
 					{!firstClick &&
-						// <button type={"button"} onClick={handleFirstClick}>{'Click to Login'}</button>}
 						<CommonBtn text={'Click to Login'} onClick={handleFirstClick}/>
 					}
 				</div>
 				<Outlet/>
 			</main>
+			<BackToTop scrollContainerRef={windowScrollRef} />
 		</div>
 	);
 };

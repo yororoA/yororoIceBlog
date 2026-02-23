@@ -37,10 +37,11 @@ const LINKS = [
   { name: 'MongoDB', description: '数据库', image: 'https://www.mongodb.com/favicon.ico', url: 'https://www.mongodb.com', category: 'development' },
   { name: 'Cloudflare', description: 'CDN加速', image: 'https://dash.cloudflare.com/c411dbca6e493cdb.svg', url: 'https://developers.cloudflare.com', category: 'development' },
   { name: 'SubExtractor', description: '视频硬编码字幕提取', url: 'https://subextractor.com', image: 'https://www.subextractor.com/logo.png', category: 'tool' },
-  { name: 'Split Image', description: '图片分割', url: 'https://splitimage.app/favicon.ico', iamge: 'https://splitimage.app/favicon.ico', category: 'tool' },
+  { name: 'Split Image', description: '图片分割 (广告太多了, 用着有点烦)', url: 'https://splitimage.app/favicon.ico', iamge: 'https://splitimage.app/favicon.ico', category: 'tool' },
   { name: 'IMGONLINE.TOOLS', description: '滤镜/图像转换/图像处理/删除颜色', url: 'https://imgonline.tools/zh/remove-color#google_vignette', image: 'https://imgonline.tools/icon.png', category: 'tool' },
-  {name:'Change Image Color', description:'图片颜色替换', url:'https://changeimagecolor.net/zh/color-replace', image:'https://changeimagecolor.net/logo.png',category:'tool'},
-  {name:'Vocal Remover', description:'去人声/音频分离/变调/音频剪辑/音频合并', url:'https://vocalremover.org/zh/', image:'https://vocalremover.org/favicon.ico', category:'tool'},
+  { name: 'Change Image Color', description: '图片颜色替换', url: 'https://changeimagecolor.net/zh/color-replace', image: 'https://changeimagecolor.net/logo.png', category: 'tool' },
+  { name: 'Vocal Remover', description: '去人声/音频分离/变调/音频剪辑/音频合并', url: 'https://vocalremover.org/zh/', image: 'https://vocalremover.org/favicon.ico', category: 'tool' },
+  { name: 'FreeConvert', description: '一个有好多种文件处理工具的网站', url: 'https://www.freeconvert.com/zh', image: 'https://www.freeconvert.com/favicon.ico', category: 'tool' },
 ];
 
 const CATEGORY_ORDER = ['friend', 'tool', 'development', 'other'];

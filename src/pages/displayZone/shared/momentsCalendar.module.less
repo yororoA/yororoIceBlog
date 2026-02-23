@@ -1,0 +1,396 @@
+.rightLane {
+  position: fixed;
+  right: 0;
+  top: calc(var(--logo-height) * 1.05 + 80px);
+  bottom: 40px;
+  width: 20vw;
+  min-width: 200px;
+  padding: 8px 20px 8px 14px;
+  box-sizing: border-box;
+  z-index: 4;
+  pointer-events: none;
+  overflow-y: auto;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.rightLaneHidden {
+  display: none;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: min-content;
+}
+
+.card {
+  border: var(--nm-input-border);
+  border-radius: 16px;
+  padding: 18px 16px;
+  background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  transition: box-shadow var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
+  pointer-events: auto;
+  min-width: 0;
+
+  &:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
+  }
+}
+
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.navBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--nm-input-border);
+  border-radius: 10px;
+  background: var(--input-bgc);
+  color: var(--text-color);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all var(--hover-duration) var(--hover-ease);
+
+  &:hover {
+    background: var(--accent-color-light);
+    border-color: var(--accent-color-border);
+    color: var(--accent-color);
+  }
+}
+
+.monthLabel {
+  font-size: var(--h5-fontsize);
+  font-weight: 600;
+  color: var(--text-color);
+  letter-spacing: 0.02em;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.weekday {
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
+  text-align: center;
+  font-weight: 500;
+}
+
+.weekdayWeekend {
+  color: var(--calendar-weekend-color);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--h6-fontsize);
+  border-radius: 50%;
+  transition: background-color var(--hover-duration) var(--hover-ease), color var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease), box-shadow var(--hover-duration) var(--hover-ease);
+
+  &.cellClickable {
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    cursor: pointer;
+  }
+}
+
+.cellDay {
+  color: var(--text-color);
+
+  &:hover {
+    background: var(--input-bgc);
+  }
+}
+
+/* 选中态：深蓝实心圆，唯一焦点；内边距让数字与圆边留出呼吸空间 */
+.cellSelected {
+  background: var(--accent-color) !important;
+  color: #fff !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 6px;
+
+  .cellDot {
+    display: none;
+  }
+
+  &:hover {
+    background: var(--accent-color) !important;
+    transform: scale(1.06);
+  }
+}
+
+/* 今天但未选中：细描边、与选中态同尺寸 */
+.cellTodayRing {
+  color: var(--accent-color);
+  font-weight: 600;
+  background: transparent !important;
+  box-shadow: 0 0 0 1px var(--accent-color);
+
+  &.cellHasMoment .cellDot {
+    display: none;
+  }
+}
+
+/* 有动态未选中：数字与圆点分行，留出垂直间距 */
+.cellHasMoment {
+  color: var(--text-color);
+
+  .cellInner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .cellNum {
+    line-height: 1;
+  }
+
+  .cellDot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: var(--input-bgc);
+    color: var(--accent-color);
+  }
+}
+
+.dayListWrap {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.32s cubic-bezier(0.32, 0.72, 0.38, 1);
+  width: 100%;
+  min-width: 0;
+}
+
+.dayListWrapOpen {
+  max-height: 320px;
+}
+
+.dayListWrapLeave {
+  max-height: 0;
+  transition-duration: 0.26s;
+  transition-timing-function: cubic-bezier(0.5, 0, 0.75, 0);
+}
+
+.dayList {
+  width: 100%;
+  min-width: 0;
+  margin-top: 10px;
+  padding: 12px 16px 12px 14px;
+  border: var(--nm-input-border);
+  border-radius: 12px;
+  background: var(--input-bgc);
+  text-align: left;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+}
+
+.dayListEnter {
+  animation: dayListEnter 0.28s cubic-bezier(0.32, 0.72, 0.38, 1) forwards;
+}
+
+.dayListLeave {
+  animation: dayListLeave 0.2s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+
+@keyframes dayListEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dayListLeave {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.dayListHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.dayListTitle {
+  font-size: var(--h6-fontsize);
+  font-weight: 600;
+  color: var(--text-color);
+  flex: 1;
+  min-width: 0;
+}
+
+.dayListClose {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-color-secondary);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--hover-duration) var(--hover-ease), background-color var(--hover-duration) var(--hover-ease);
+
+  &:hover {
+    color: var(--text-color);
+    background: rgba(0, 0, 0, 0.08);
+  }
+}
+
+.dayListEmpty {
+  margin: 0;
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
+}
+
+.dayListUl {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.dayListItem {
+  margin: 0;
+  border-bottom: 1px solid var(--nm-input-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.dayListLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  text-align: left;
+  padding: 10px 12px 10px 10px;
+  border: none;
+  border-radius: 8px;
+  background: var(--daylist-row-bgc, transparent);
+  color: var(--text-color);
+  font-size: var(--h6-fontsize);
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background-color var(--hover-duration) var(--hover-ease), color var(--hover-duration) var(--hover-ease);
+
+  &:hover {
+    background: var(--accent-color-light);
+    color: var(--accent-color);
+
+    .dayListAuthor {
+      color: var(--accent-color);
+    }
+
+    .dayListArrow {
+      opacity: 1;
+      transform: translateX(2px);
+    }
+  }
+}
+
+.dayListMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dayListArrow {
+  font-size: 14px;
+  color: var(--accent-color);
+  opacity: 0.7;
+  transition: opacity var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
+}
+
+.dayListTitleText {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dayListAuthor {
+  flex-shrink: 0;
+  max-width: 88px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-color-secondary);
+  font-size: var(--h6-fontsize);
+  opacity: 0.88;
+}
+
+@media (max-width: 1024px) {
+  .rightLane {
+    display: none;
+  }
+}

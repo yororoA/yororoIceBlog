@@ -20,10 +20,13 @@
     --text-color: rgba(15, 23, 42, 0.95);
     --heading-color: rgba(15, 23, 42, 1);
     --text-color-secondary: rgba(100, 116, 139, 0.85);
+    --calendar-weekend-color: rgba(255, 107, 107, 0.82);
+    --daylist-row-bgc: rgba(0, 0, 0, 0.02);
 
     /* 卡片 / 输入框 / 代码块背景 */
     --card-bgc: rgba(255, 255, 255, 0.7);
     --input-bgc: rgba(245, 245, 245, 0.8);
+    --github-metric-bgc: rgba(0, 0, 0, 0.04);
     --code-bgc: rgba(0, 0, 0, 0.06);
     --tag-bgc: rgba(0, 0, 0, 0.05);
     /* Links 条目图标区域背景，保证浅色图标可见 */
@@ -151,11 +154,14 @@
     --text-color: rgba(243, 244, 246, 0.95);
     --heading-color: rgba(248, 250, 252, 1);
     --text-color-secondary: rgba(209, 213, 219, 0.7);
+    --calendar-weekend-color: rgba(252, 165, 165, 0.9);
+    --daylist-row-bgc: rgba(255, 255, 255, 0.04);
     --moments-meta-text-color: rgba(209, 213, 219, 0.8);
 
     /* 卡片 / 输入框 / 代码块背景（深色） */
     --card-bgc: rgba(24, 25, 28, 1);
     --input-bgc: rgba(38, 39, 43, 0.9);
+    --github-metric-bgc: rgba(255, 255, 255, 0.06);
     --code-bgc: rgba(255, 255, 255, 0.06);
     --tag-bgc: rgba(255, 255, 255, 0.06);
     --link-icon-bgc: rgba(255, 255, 255, 0.1);
