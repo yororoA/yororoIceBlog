@@ -77,13 +77,6 @@ const polarToCartesian = (cx, cy, r, angleDeg) => {
   return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
 };
 
-const describeArc = (cx, cy, r, startDeg, endDeg) => {
-  const start = polarToCartesian(cx, cy, r, endDeg);
-  const end = polarToCartesian(cx, cy, r, startDeg);
-  const largeArcFlag = endDeg - startDeg <= 180 ? '0' : '1';
-  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y} Z`;
-};
-
 const PIE_CX = 130;
 const PIE_CY = 66;
 const PIE_R = 74;
