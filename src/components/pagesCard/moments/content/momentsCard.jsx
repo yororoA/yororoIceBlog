@@ -107,8 +107,8 @@ const MomentsCard = ({ liked, preview, onOpenDetails, onRequestDetail, isActiveD
 	}, [_id, showSuccess]);
 
 
-	// 展示时间：优先使用 updatedAt，没有则回退到 createdAt
-	const displayTime = formatDateTime(updatedAt || createdAt);
+	// 展示时间：与日历一致，统一使用 createdAt（创建/发布时间）
+	const displayTime = formatDateTime(createdAt);
 
 	const currentUid = getUid();
 	const canDelete = !isGuest() && (currentUid === uid || admin.includes(currentUid));
