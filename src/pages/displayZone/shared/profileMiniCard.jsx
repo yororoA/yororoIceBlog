@@ -45,7 +45,8 @@ const PIE_CX = 130;
 const PIE_CY = 66;
 const PIE_R = 74;
 const PIE_VIEWBOX_W = 260;
-const PIE_VIEWBOX_H = 146;
+const PIE_VIEWBOX_Y = -12; // 圆顶约 66-74=-8，留边距避免裁切
+const PIE_VIEWBOX_H = 170; // 原 146 导致顶部被裁，改为包含整圆
 
 const ProfileMiniCard = ({ visible = true }) => {
   const [loading, setLoading] = useState(true);
@@ -132,14 +133,24 @@ const ProfileMiniCard = ({ visible = true }) => {
 
   const topLanguages = useMemo(() => stats.languages, [stats.languages]);
   const pieSegments = useMemo(() => {
-    let cursor = -90;
+    if (topLanguages.length === 0) return [];
+    const total = topLanguages.reduce((sum, lang) => sum + Number(lang.percent || 0), 0);
+    const scale = total > 0 ? 100 / total : 0;
+    const startAngle = -90;
+    const fullCircle = startAngle + 360;
+    let cursor = startAngle;
     return topLanguages.map((lang, idx) => {
-      const angle = (Number(lang.percent || 0) / 100) * 360;
+      const rawPercent = Number(lang.percent || 0);
+      const percent = scale > 0 ? rawPercent * scale : 0;
+      const angle = (percent / 100) * 360;
       const start = cursor;
-      const end = cursor + angle;
+      const isLast = idx === topLanguages.length - 1;
+      const nextCursor = cursor + angle;
+      const end = isLast ? Math.max(nextCursor, fullCircle) : nextCursor;
       cursor = end;
       return {
         ...lang,
+        percent,
         color: PIE_COLORS[idx % PIE_COLORS.length],
         start,
         end,
@@ -152,13 +163,14 @@ const ProfileMiniCard = ({ visible = true }) => {
     const p1 = polarToCartesian(PIE_CX, PIE_CY, PIE_R + 2, mid);
     const p2 = polarToCartesian(PIE_CX, PIE_CY, PIE_R + 12, mid);
     const isRight = Math.cos((Math.PI / 180) * mid) >= 0;
-    const y = Math.max(14, Math.min(PIE_VIEWBOX_H - 14, p2.y));
+    const vbMaxY = PIE_VIEWBOX_Y + PIE_VIEWBOX_H;
+    const y = Math.max(14, Math.min(vbMaxY - 14, p2.y));
     const p3 = { x: isRight ? 246 : 14, y };
     const label = `${hoveredLang.name} ${Number(hoveredLang.percent || 0).toFixed(1)}%`;
     const boxW = Math.max(72, Math.ceil(label.length * 7.2 + 14));
     const rawBoxX = isRight ? p3.x + 6 : p3.x - boxW - 6;
     const boxX = Math.max(4, Math.min(PIE_VIEWBOX_W - boxW - 4, rawBoxX));
-    const boxY = Math.max(4, Math.min(PIE_VIEWBOX_H - 24, y - 12));
+    const boxY = Math.max(4, Math.min(vbMaxY - 24, y - 12));
     const labelX = boxX + boxW / 2;
     const labelY = boxY + 12;
     return {
@@ -265,7 +277,7 @@ const ProfileMiniCard = ({ visible = true }) => {
                       aria-hidden={langViewMode !== 'pie'}
                     >
                       <div className={styles.pieWrap}>
-                        <svg viewBox={`0 0 ${PIE_VIEWBOX_W} ${PIE_VIEWBOX_H}`} className={styles.pieSvg} role="img" aria-label="GitHub language distribution pie chart">
+                        <svg viewBox={`0 ${PIE_VIEWBOX_Y} ${PIE_VIEWBOX_W} ${PIE_VIEWBOX_H}`} className={styles.pieSvg} role="img" aria-label="GitHub language distribution pie chart">
                           {pieSegments.length === 1 ? (
                             <circle
                               cx={PIE_CX}

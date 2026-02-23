@@ -23,7 +23,7 @@ import binesImg from '../../../assets/images/bines.png';
 import { t } from "../../../i18n/uiText";
 
 
-const MomentItem = ({data, liked, onOpenDetails, onRequestDetail, isDeleting}) => {
+const MomentItem = ({ data, liked, onOpenDetails, onRequestDetail, isDeleting, isActiveDetail }) => {
 	const [dt, setDt] = useState(data);
 	const [visible, setVisible] = useState(false);
 	const [animFinished, setAnimFinished] = useState(false);
@@ -76,6 +76,7 @@ const MomentItem = ({data, liked, onOpenDetails, onRequestDetail, isDeleting}) =
 					preview={true}
 					onOpenDetails={onOpenDetails}
 					onRequestDetail={onRequestDetail}
+					isActiveDetail={isActiveDetail}
 				/>
 			</div>
 		</MomentIdContext>
@@ -265,6 +266,7 @@ const Moments = () => {
 				onOpenDetails={onOpenDetails}
 				onRequestDetail={handleRequestDetail}
 				isDeleting={deletingIds.includes(item._id)}
+				isActiveDetail={detailMomentId === item._id}
 			/>
 		));
 	const elements = listContent;

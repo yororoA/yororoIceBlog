@@ -3,6 +3,27 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* 新文章提示横幅：点击加载 */
+.newBanner {
+  display: block;
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 12px 20px;
+  border: var(--nm-input-border);
+  border-radius: var(--btn-border-radius-normal);
+  background: var(--nm-iv-label-hover-bgc);
+  color: var(--text-color);
+  font-size: var(--p-fontsize);
+  cursor: pointer;
+  transition: background-color var(--transition-type), box-shadow var(--transition-type), transform var(--hover-duration) var(--hover-ease);
+
+  &:hover {
+    background: var(--nm-iv-label-color);
+    box-shadow: 0 2rem 8rem rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+  }
+}
+
 .controls {
   margin-bottom: 28px;
   display: flex;
@@ -104,6 +125,12 @@
 
 .cardEnterAnim {
   animation: enterFadeInUp 0.45s var(--enter-ease) backwards;
+}
+
+.cardDeleting {
+  opacity: 0 !important;
+  pointer-events: none;
+  transition: opacity 0.45s ease-out !important;
 }
 
 .card:hover {

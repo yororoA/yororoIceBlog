@@ -40,7 +40,7 @@ function getFirstImageAsCover(markdown) {
   return { coverUrl, contentWithoutFirstImage };
 }
 
-const KnowledgeCard = ({ article, liked, onOpenDetail, locale }) => {
+const KnowledgeCard = ({ article, liked, onOpenDetail, locale, isDeleting = false }) => {
   const { title, category, tags, content, createdAt, updatedAt, likes = 0, views = 0 } = article;
   const { coverUrl, contentWithoutFirstImage } = getFirstImageAsCover(content || '');
   const hasCover = Boolean(coverUrl);
@@ -77,7 +77,7 @@ const KnowledgeCard = ({ article, liked, onOpenDetail, locale }) => {
   return (
     <div 
       ref={ref} 
-      className={`${knowledge.card}${visible ? ` ${knowledge.cardVisible}` : ''}${visible && !animFinished ? ` ${knowledge.cardEnterAnim}` : ''}`} 
+      className={`${knowledge.card}${visible ? ` ${knowledge.cardVisible}` : ''}${visible && !animFinished ? ` ${knowledge.cardEnterAnim}` : ''}${isDeleting ? ` ${knowledge.cardDeleting}` : ''}`} 
       onClick={() => onOpenDetail(article)}
       onAnimationEnd={() => setAnimFinished(true)}
       onMouseEnter={() => setAnimFinished(true)}
@@ -366,7 +366,10 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
 };
 
 const Knowledge = () => {
-  const [articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories] = useContext(KnowledgeListContext);
+  const [
+    articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories,
+    pendingNewArticles, loadPendingNewArticles, deletingArticleIds, markArticleDeleting,
+  ] = useContext(KnowledgeListContext);
   const { locale, articlesSelectedCategory: selectedCategory, setArticlesSelectedCategory: setSelectedCategory } = useContext(UiPersistContext);
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -428,11 +431,16 @@ const Knowledge = () => {
   }, [selectedCategory, searchKeyword, categories.length, likedArticles.length, setArticlesData, setCategories, setLikedArticles]);
 
   useEffect(() => {
-    // 只在首次加载或数据为空时请求
     if (articlesData.length === 0) {
       fetchArticles();
     }
   }, [articlesData.length, fetchArticles]);
+
+  // 从首页等带着 articlesData 进入时，分类尚未加载，需单独拉取
+  useEffect(() => {
+    if (categories.length > 0) return;
+    getCategories().then(cats => setCategories(['all', ...cats])).catch(() => {});
+  }, [categories.length, setCategories]);
 
   // 通过 URL kid 参数自动打开文章详情（仅在 kid 变化时触发一次）
   const autoOpenedKidRef = useRef(null);
@@ -456,10 +464,10 @@ const Knowledge = () => {
     if (autoOpenedKidRef.current === kidFromQuery) return;
     const target = articlesData.find(a => a._id === kidFromQuery);
     if (target) {
+      const isNewOpen = !detailArticle || detailArticle._id !== kidFromQuery;
       autoOpenedKidRef.current = kidFromQuery;
       setDetailArticle(target);
-      // 查看详情 → views +1
-      incrementArticleView(target._id);
+      if (isNewOpen) incrementArticleView(target._id);
     }
   }, [kidFromQuery, articlesData, detailArticle]);
 
@@ -565,14 +573,14 @@ const Knowledge = () => {
     if (!detailArticle) return;
     try {
       await deleteArticle(detailArticle._id);
-      setArticlesData(prev => prev.filter(a => a._id !== detailArticle._id));
+      markArticleDeleting(detailArticle._id);
       setDetailArticle(null);
       onCloseDetails();
       showSuccess('Deleted');
     } catch (err) {
       showFailed(err.message || 'Delete failed');
     }
-  }, [detailArticle, onCloseDetails, showSuccess, showFailed, setArticlesData]);
+  }, [detailArticle, onCloseDetails, showSuccess, showFailed, markArticleDeleting]);
 
   const detailNavList = filteredArticles.some(a => a._id === detailArticle?._id) ? filteredArticles : articlesData;
   const detailIndex = detailArticle ? detailNavList.findIndex(a => a._id === detailArticle._id) : -1;
@@ -624,6 +632,11 @@ const Knowledge = () => {
           ))}
         </div>
         </div>
+        {pendingNewArticles.length > 0 && (
+          <button type="button" className={knowledge.newBanner} onClick={loadPendingNewArticles}>
+            {t(locale, 'pendingArticlesBanner', pendingNewArticles.length)}
+          </button>
+        )}
 
         <div className={knowledge.articleList}>
         {loading ? (
@@ -641,6 +654,7 @@ const Knowledge = () => {
               liked={likedArticles.includes(article._id)}
               onOpenDetail={handleOpenDetail}
               locale={locale}
+              isDeleting={deletingArticleIds.includes(article._id)}
             />
           ))
         )}

@@ -20,7 +20,7 @@ import { t } from "../../../../i18n/uiText";
 // context of moment details
 export const MomentDetailsCtx = createContext({});
 
-const MomentsCard = ({liked, preview, onOpenDetails, onRequestDetail}) => {
+const MomentsCard = ({ liked, preview, onOpenDetails, onRequestDetail, isActiveDetail = false }) => {
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames, updatedAt}
 	const {momentItem} = useContext(MomentIdContext);
 	const { locale } = useContext(UiPersistContext);
@@ -141,9 +141,11 @@ const MomentsCard = ({liked, preview, onOpenDetails, onRequestDetail}) => {
 		<>
 			<div className={card.entire} onClick={preview ? () => { 
 				onRequestDetail?.(momentItem);
-				onOpenDetails?.(_id); 
-				incrementMomentView(_id); 
-				setViewCount(prev => prev + 1); 
+				onOpenDetails?.(_id);
+				if (!isActiveDetail) {
+					incrementMomentView(_id);
+					setViewCount(prev => prev + 1);
+				}
 			} : undefined}>
 				<div className={card.content}>
 					{/* alt=username */}

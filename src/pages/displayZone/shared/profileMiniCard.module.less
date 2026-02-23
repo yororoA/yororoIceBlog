@@ -207,6 +207,8 @@
   border-radius: 999px;
   background: var(--input-bgc);
   border: var(--nm-input-border);
+  margin-bottom: 4px;
+  flex-shrink: 0;
 }
 
 .langViewBtn {
@@ -228,7 +230,10 @@
 
 .langViewStage {
   position: relative;
-  min-height: 146px;
+  min-height: 170px;
+  width: 100%;
+  overflow: visible;
+  padding-top: 6px;
 }
 
 .langPane {
@@ -259,13 +264,17 @@
   justify-content: center;
   align-items: center;
   padding: 0;
+  margin-top: 2px;
+  min-height: 170px;
 }
 
 .pieSvg {
   width: 100%;
-  max-width: 260px;
-  height: 146px;
+  max-width: min(260px, 100%);
+  height: auto;
+  min-height: 146px;
   display: block;
+  vertical-align: middle;
 }
 
 .pieSlice {

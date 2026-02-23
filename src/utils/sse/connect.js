@@ -94,6 +94,14 @@ function handleEvent(eventName, payload, dispatch) {
 			// payload: { type: 'comment.like', data: { commentId, likes, uid } }
 			dispatch(payload);
 			break;
+		case 'article':
+			// payload: { type: 'article.new'|'article.delete', data: ... }
+			dispatch(payload);
+			break;
+		case 'guestbook':
+			// payload: { type: 'guestbook.new', data: entry }
+			dispatch(payload);
+			break;
 		case 'token':
 			// payload: { type: 'token.refresh', data: { token, expiresAt, refreshUtil} }
 			// 按当前登录类型更新对应 key，避免 guest 与正式账号混用

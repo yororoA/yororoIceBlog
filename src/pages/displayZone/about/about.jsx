@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import about from './about.module.less';
 import adminImg from '../../../assets/images/admin.png';
 import binesImg from '../../../assets/images/bines.png';
-import { getGuestbookComments, postGuestbookComment } from '../../../utils/guestbook';
+import { postGuestbookComment } from '../../../utils/guestbook';
+import { GuestbookContext } from '../context/guestbookContext';
 import { isGuest } from '../../../utils/auth';
 import { getAvatarColor } from '../../../utils/avatarColor';
 import { formatDateTime } from '../../../utils/formatDateTime';
@@ -62,16 +64,30 @@ const About = () => {
     development: t(locale, 'development'),
     other: t(locale, 'other'),
   };
-  // ── Guestbook state ──
-  const [comments, setComments] = useState([]);
+  // ── Guestbook：列表来自 Context（DisplayZone 初始拉取 + SSE 更新），本地只管表单与提交
+  const [comments, setGuestbookComments] = useContext(GuestbookContext);
   const [newComment, setNewComment] = useState('');
   const [guestName, setGuestName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [fadeInId, setFadeInId] = useState(null);
+  const prevCommentsLenRef = useRef(comments.length);
 
   const [linksVisible, setLinksVisible] = useState(false);
   const [gbVisible, setGbVisible] = useState(false);
   const linksRef = useRef(null);
   const gbRef = useRef(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('scroll') !== 'guestbook') return;
+    const t = setTimeout(() => {
+      gbRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const next = new URLSearchParams(searchParams);
+      next.delete('scroll');
+      setSearchParams(next, { replace: true });
+    }, 100);
+    return () => clearTimeout(t);
+  }, [searchParams, setSearchParams]);
 
   useLayoutEffect(() => {
     const pairs = [
@@ -101,9 +117,16 @@ const About = () => {
     return () => observers.forEach(o => o.disconnect());
   }, []);
 
+  const firstCommentId = comments[0]?._id;
   useEffect(() => {
-    getGuestbookComments().then(setComments).catch(() => {});
-  }, []);
+    if (comments.length > prevCommentsLenRef.current && firstCommentId) {
+      setFadeInId(firstCommentId);
+      prevCommentsLenRef.current = comments.length;
+      const t = setTimeout(() => setFadeInId(null), 600);
+      return () => clearTimeout(t);
+    }
+    prevCommentsLenRef.current = comments.length;
+  }, [comments.length, firstCommentId]);
 
   const handleCopyEmail = useCallback(async (e) => {
     e.stopPropagation();
@@ -133,7 +156,7 @@ const About = () => {
         : undefined;
       const result = await postGuestbookComment(newComment.trim(), username);
       if (result.success && result.data) {
-        setComments(prev => [result.data, ...prev]);
+        setGuestbookComments(prev => [result.data, ...prev]);
         setNewComment('');
         setGuestName(''); // 清空游客名称
       }
@@ -142,7 +165,7 @@ const About = () => {
     } finally {
       setSubmitting(false);
     }
-  }, [newComment, guestName, submitting]);
+  }, [newComment, guestName, submitting, setGuestbookComments]);
 
   return (
     <div className="page-enter">
@@ -309,7 +332,10 @@ const About = () => {
                   <p className={about.guestbookEmpty}>{t(locale, 'noMessagesYet')}</p>
                 ) : (
                   comments.map(c => (
-                    <div key={c._id} className={about.guestbookItem}>
+                    <div
+                      key={c._id}
+                      className={`${about.guestbookItem}${fadeInId === c._id ? ` ${about.guestbookItemFadeIn}` : ''}`}
+                    >
                       {ADMIN_UIDS.includes(c.uid) ? (
                         <img src={adminImg} alt={c.username} className={about.guestbookAvatarImg} />
                       ) : c.uid === BINES_UID ? (

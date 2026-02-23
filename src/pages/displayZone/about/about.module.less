@@ -704,9 +704,24 @@
   gap: 8px;
   padding: 8px 0;
   border-bottom: var(--nm-input-border);
+  transition: opacity 0.4s ease, transform 0.35s ease;
 
   &:last-child {
     border-bottom: none;
+  }
+}
+
+// 新留言：从透明缓慢浮现；原有留言因列表变化缓慢下移（由 transition 提供）
+.guestbookItemFadeIn {
+  animation: guestbookFadeIn 0.5s ease forwards;
+}
+
+@keyframes guestbookFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

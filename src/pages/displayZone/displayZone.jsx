@@ -21,6 +21,10 @@ import { ScrollContainerContext } from './scrollContainerContext';
 import { UiPersistContext } from './context/uiPersistContext';
 import ProfileMiniCard from './shared/profileMiniCard';
 import { getUid, logout } from '../../utils/auth';
+import { getMoments } from '../../utils/getMoments';
+import { getKnowledgeArticles } from '../../utils/knowledge';
+import { getGuestbookComments } from '../../utils/guestbook';
+import { GuestbookContext } from './context/guestbookContext';
 
 const LOCALE_ORDER = ['en', 'zh', 'ja'];
 
@@ -36,10 +40,14 @@ const DisplayZone = () => {
 	const [deletingIds, setDeletingIds] = useState([]);
 	// 累计收到的 moment.new 的 _id（及完整数据），moment.delete 时从其中移除；点击加载后按顺序写入列表并清空
 	const [pendingNewMoments, setPendingNewMoments] = useState([]);
-	// knowledge 列表、已点赞 id、分类列表放在 DisplayZone，避免切换路由后重复加载
+	// knowledge 列表、已点赞 id、分类列表、pending 新文章、删除中 id 放在 DisplayZone
 	const [articlesData, setArticlesData] = useState([]);
 	const [likedArticles, setLikedArticles] = useState([]);
 	const [categories, setCategories] = useState([]);
+	const [pendingNewArticles, setPendingNewArticles] = useState([]);
+	const [deletingArticleIds, setDeletingArticleIds] = useState([]);
+	// 留言板列表：DisplayZone 初始拉取，SSE guestbook.new 时更新
+	const [guestbookComments, setGuestbookComments] = useState([]);
 	// archive 列表、统计信息、年份列表放在 DisplayZone，避免切换路由后重复加载
 	const [archiveData, setArchiveData] = useState([]);
 	const [archiveStats, setArchiveStats] = useState({});
@@ -73,6 +81,22 @@ const DisplayZone = () => {
 	const location = useLocation();
 	const scrollContainerRef = useRef(null);
 	const localeMenuRef = useRef(null);
+
+	// 首次进入 DisplayZone 时拉取首页/列表所需数据，避免切到首页或 other 时重复请求
+	const initialLoadDoneRef = useRef(false);
+	useEffect(() => {
+		if (initialLoadDoneRef.current) return;
+		initialLoadDoneRef.current = true;
+		getMoments().then(list => {
+			if (Array.isArray(list) && list.length > 0) setMomentsData(list);
+		}).catch(() => {});
+		getKnowledgeArticles({ page: 1, limit: 20 }).then(list => {
+			if (Array.isArray(list) && list.length > 0) setArticlesData(list);
+		}).catch(() => {});
+		getGuestbookComments().then(list => {
+			if (Array.isArray(list)) setGuestbookComments(list);
+		}).catch(() => {});
+	}, []);
 
 	// 若有 mid 查询参数，则跳到 moments 页并用现有逻辑展示对应 moment
 	useEffect(() => {
@@ -151,7 +175,6 @@ const DisplayZone = () => {
 	// 标记 moment 为删除中：先淡出，动画结束后再从列表与缓存移除
 	const DELETE_ANIM_MS = 450;
 	const markMomentDeleting = useCallback((id) => {
-		// 双 rAF：先等一帧绘制出 opacity:1，下一帧再加 deleting，transition 才能从 1→0 正常播放
 		let rafId2;
 		const rafId1 = requestAnimationFrame(() => {
 			rafId2 = requestAnimationFrame(() => {
@@ -171,6 +194,24 @@ const DisplayZone = () => {
 			cancelAnimationFrame(rafId1);
 			if (rafId2 != null) cancelAnimationFrame(rafId2);
 			clearTimeout(t);
+		};
+	}, []);
+
+	const markArticleDeleting = useCallback((id) => {
+		let rafId2;
+		const rafId1 = requestAnimationFrame(() => {
+			rafId2 = requestAnimationFrame(() => {
+				setDeletingArticleIds(prev => (prev.includes(id) ? prev : [...prev, id]));
+			});
+		});
+		const timeout = setTimeout(() => {
+			setArticlesData(prev => prev.filter(a => a._id !== id));
+			setDeletingArticleIds(prev => prev.filter(x => x !== id));
+		}, DELETE_ANIM_MS);
+		return () => {
+			cancelAnimationFrame(rafId1);
+			if (rafId2 != null) cancelAnimationFrame(rafId2);
+			clearTimeout(timeout);
 		};
 	}, []);
 
@@ -195,30 +236,73 @@ const DisplayZone = () => {
 		setPendingNewMoments([]);
 	}, [pendingNewMoments]);
 
-	// store新状态派发器 + moment.new 计入 pending，moment.delete 从 pending 移除并走删除过渡
+	const loadPendingNewArticles = useCallback(() => {
+		if (pendingNewArticles.length === 0) return;
+		setArticlesData(prev => [...pendingNewArticles, ...prev]);
+		setPendingNewArticles([]);
+	}, [pendingNewArticles]);
+
+	// 将 SSE 的 article 规范成与列表一致的结构
+	const normalizeArticle = useCallback((d) => {
+		if (!d || !d._id) return null;
+		return {
+			...d,
+			_id: String(d._id),
+			createdAt: d.createdAt ? new Date(d.createdAt) : new Date(),
+			updatedAt: d.updatedAt ? new Date(d.updatedAt) : new Date(),
+		};
+	}, []);
+
+	// store新状态派发器 + moment.new/article.new 计入 pending 或直接插入，delete 走删除过渡；状态区提示
 	const dispatch = useDispatch();
 	const dispatchFn = useCallback((payload) => {
 		const { commentNew } = updatedCommentSlice.actions;
 		const { momentLikesUpdated } = updatedMomentLikesSlice.actions;
 		const { type, data } = payload;
-		// moment.delete：从 pending 中移除该 _id；若已在列表中则标记删除中
+		// moment.delete
 		if (type === 'moment.delete' && data?._id) {
 			setPendingNewMoments(prev => prev.filter(m => m._id !== data._id));
 			markMomentDeleting(data._id);
 			return;
 		}
-		// moment.new：当前用户发的直接插入列表，其他人的计入 pending
+		// moment.new：当前用户发的直接插入并提示（去重），其他人的计入 pending
 		if (type === 'moment.new' && data?._id) {
 			const norm = normalizeMoment(data);
-			if (!norm) return;
-			if (data.uid === uid) {
-				setMomentsData(prev => [norm, ...prev]);
-			} else {
-				setPendingNewMoments(prev => [...prev, norm]);
+			if (norm) {
+				if (data.uid === uid) {
+					setMomentsData(prev => prev.some(m => m._id === norm._id) ? prev : [norm, ...prev]);
+					showSuccess(t(locale, 'newMoment'));
+				} else {
+					setPendingNewMoments(prev => [...prev, norm]);
+				}
 			}
 			return;
 		}
-		if (data.uid === uid) return;
+		// article.delete：与 moment.delete 一致
+		if (type === 'article.delete' && data?._id) {
+			setPendingNewArticles(prev => prev.filter(a => a._id !== data._id));
+			markArticleDeleting(data._id);
+			return;
+		}
+		// article.new：当前用户发的直接插入并提示（去重），其他人的计入 pending
+		if (type === 'article.new' && data?._id) {
+			const norm = normalizeArticle(data);
+			if (norm) {
+				if (data.uid === uid) {
+					setArticlesData(prev => prev.some(a => a._id === norm._id) ? prev : [norm, ...prev]);
+					showSuccess(t(locale, 'newArticle'));
+				} else {
+					setPendingNewArticles(prev => [...prev, norm]);
+				}
+			}
+			return;
+		}
+		// guestbook.new：追加到留言列表（新留言从顶部插入，由 About 做浮现动画）
+		if (type === 'guestbook.new' && data?._id) {
+			setGuestbookComments(prev => [data, ...prev]);
+			return;
+		}
+		if (data?.uid === uid) return;
 		switch (type) {
 			case 'comment.new':
 				dispatch(commentNew(data));
@@ -229,7 +313,7 @@ const DisplayZone = () => {
 			default:
 				break;
 		}
-	}, [dispatch, uid, markMomentDeleting, normalizeMoment]);
+	}, [dispatch, uid, locale, showSuccess, markMomentDeleting, markArticleDeleting, normalizeMoment, normalizeArticle]);
 	// sse连接
 	const [connect, setConnect] = useState(false);
 	useEffect(() => {
@@ -360,10 +444,12 @@ const DisplayZone = () => {
 						<ScrollContainerContext.Provider value={scrollContainerRef}>
 							<GalleryContext.Provider value={[galleryIvs, setGalleryIvs, galleryHasMore, setGalleryHasMore]}>
 								<MomentsListContext.Provider value={[momentsData, setMomentsData, likedMoments, setLikedMoments, momentsFilesCache, setMomentsFilesCache, deletingIds, markMomentDeleting, pendingNewMoments, loadPendingNewMoments]}>
-									<KnowledgeListContext.Provider value={[articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories]}>
-										<ArchiveListContext.Provider value={[archiveData, setArchiveData, archiveStats, setArchiveStats, archiveYears, setArchiveYears]}>
-											<Outlet />
-										</ArchiveListContext.Provider>
+									<KnowledgeListContext.Provider value={[articlesData, setArticlesData, likedArticles, setLikedArticles, categories, setCategories, pendingNewArticles, loadPendingNewArticles, deletingArticleIds, markArticleDeleting]}>
+										<GuestbookContext.Provider value={[guestbookComments, setGuestbookComments]}>
+											<ArchiveListContext.Provider value={[archiveData, setArchiveData, archiveStats, setArchiveStats, archiveYears, setArchiveYears]}>
+												<Outlet />
+											</ArchiveListContext.Provider>
+										</GuestbookContext.Provider>
 									</KnowledgeListContext.Provider>
 								</MomentsListContext.Provider>
 							</GalleryContext.Provider>
