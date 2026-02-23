@@ -26,7 +26,7 @@ const MomentsCard = ({ liked, preview, onOpenDetails, onRequestDetail, isActiveD
 	const { locale } = useContext(UiPersistContext);
 	const [, , , , momentsFilesCache, setMomentsFilesCache, , markMomentDeleting] = useContext(MomentsListContext);
 	const { showSuccess, showFailed } = useContext(SuccessBoardContext);
-	const {uid, username, content, title, createdAt, updatedAt, _id, likes, filenames} = momentItem;
+	const {uid, username, content, title, createdAt, _id, likes, filenames} = momentItem;
 	const admin = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 	const bines = 'u_mlkpl8fl_52a3d8c2068b281a';
 	const headshotType = admin.includes(uid) ? adminImg : bines === uid ? binesImg : null;
