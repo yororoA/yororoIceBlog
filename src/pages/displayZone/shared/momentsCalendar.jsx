@@ -25,6 +25,9 @@ const getItemDate = (item) => {
 
 const initialViewDate = () => new Date();
 
+// 涂鸦路径：从左上往右下的“之”字形，stroke-width 会让它变成色块
+const SCRIBBLE_PATH_D = "M 20,25 Q 55,20 85,25 L 15,45 L 85,55 L 15,70 L 80,80";
+
 const MomentsCalendar = ({ visible = true, mode = 'moments' }) => {
   const { locale } = useContext(UiPersistContext);
   const [momentsData] = useContext(MomentsListContext);
@@ -40,8 +43,8 @@ const MomentsCalendar = ({ visible = true, mode = 'moments' }) => {
     articles: initialViewDate(),
   }));
   const [selectedDateKeyByMode, setSelectedDateKeyByMode] = useState({
-    moments: null,
-    articles: null,
+    moments: toDateKey(initialViewDate()), // Default to current date
+    articles: toDateKey(initialViewDate()), // Default to current date
   });
   const viewDate = viewDateByMode[mode];
   const setViewDate = useCallback(
@@ -105,10 +108,18 @@ const MomentsCalendar = ({ visible = true, mode = 'moments' }) => {
     for (let i = 0; i < startOffset; i++) list.push({ empty: true });
     for (let d = 1; d <= daysInMonth; d++) {
       const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      list.push({ day: d, isToday: d === today, hasItem: daysWithItems.has(dateKey), dateKey });
+      const isToday = dateKey === todayDateKey;
+      const hasItem = daysWithItems.has(dateKey);
+      list.push({
+        day: d,
+        dateKey,
+        isToday,
+        hasItem,
+        empty: false,
+      });
     }
     return list;
-  }, [startOffset, daysInMonth, today, year, month, daysWithItems]);
+  }, [startOffset, daysInMonth, todayDateKey, daysWithItems, month, year]);
 
   const itemsOnSelectedDate = useMemo(() => {
     if (!selectedDateKey || !listData.length) return [];
@@ -138,7 +149,7 @@ const MomentsCalendar = ({ visible = true, mode = 'moments' }) => {
   const handleCellClick = useCallback((cell) => {
     if (!cell.hasItem) return;
     if (selectedDateKey === cell.dateKey) {
-      setIsClosing(true);
+      setSelectedDateKey(null);
     } else {
       setSelectedDateKey(cell.dateKey);
       setIsClosing(false);
@@ -202,30 +213,66 @@ const MomentsCalendar = ({ visible = true, mode = 'moments' }) => {
             {cells.map((cell, idx) => {
               const isSelected = selectedDateKey === cell.dateKey;
               const isTodayOnly = cell.isToday && todayDateKey && !isSelected;
+
               if (cell.empty) {
                 return <span key={`e-${idx}`} className={styles.cell} />;
               }
+
+              const renderCellContent = () => (
+                <span className={styles.cellInner}>
+                  <span className={styles.cellNum}>{cell.day}</span>
+                  {!isSelected && <span className={styles.cellDot} aria-hidden />}
+                </span>
+              );
+
               if (cell.hasItem) {
                 return (
                   <button
                     key={cell.day}
                     type="button"
                     onClick={() => handleCellClick(cell)}
-                    className={`${styles.cell} ${styles.cellDay} ${styles.cellClickable}${isSelected ? ` ${styles.cellSelected}` : ''}${isTodayOnly ? ` ${styles.cellTodayRing}` : ''} ${styles.cellHasMoment}`}
+                    className={`
+                      ${styles.cell} ${styles.cellDay} ${styles.cellClickable}
+                      ${isSelected ? ` ${styles.cellSelected}` : ''}
+                      ${isTodayOnly ? ` ${styles.cellTodayRing}` : ''} 
+                      ${styles.cellHasMoment}
+                    `}
                   >
-                    <span className={styles.cellInner}>
-                      <span className={styles.cellNum}>{cell.day}</span>
-                      <span className={styles.cellDot} aria-hidden />
-                    </span>
+                    {isSelected && (
+                      <svg className={styles.animeScribble} viewBox="0 0 100 100" fill="none">
+                        <path className={styles.scribblePath} d={SCRIBBLE_PATH_D} />
+                      </svg>
+                    )}
+                    {isTodayOnly && !isSelected && (
+                      <svg className={styles.animeScribble} viewBox="0 0 100 100" fill="none">
+                        <path className={styles.scribblePathToday} d={SCRIBBLE_PATH_D} />
+                      </svg>
+                    )}
+                    {renderCellContent()}
                   </button>
                 );
               }
+
               return (
                 <span
                   key={cell.day}
-                  className={`${styles.cell} ${styles.cellDay}${isSelected ? ` ${styles.cellSelected}` : ''}${isTodayOnly ? ` ${styles.cellTodayRing}` : ''}`}
+                  className={`
+                    ${styles.cell} ${styles.cellDay}
+                    ${isSelected ? ` ${styles.cellSelected}` : ''}
+                    ${isTodayOnly ? ` ${styles.cellTodayRing}` : ''}
+                  `}
                 >
-                  {cell.day}
+                  {isSelected && (
+                    <svg className={styles.animeScribble} viewBox="0 0 100 100" fill="none">
+                      <path className={styles.scribblePath} d={SCRIBBLE_PATH_D} />
+                    </svg>
+                  )}
+                  {isTodayOnly && !isSelected && (
+                    <svg className={styles.animeScribble} viewBox="0 0 100 100" fill="none">
+                      <path className={styles.scribblePathToday} d={SCRIBBLE_PATH_D} />
+                    </svg>
+                  )}
+                  {isSelected ? <span className={styles.cellInner}>{cell.day}</span> : cell.day}
                 </span>
               );
             })}

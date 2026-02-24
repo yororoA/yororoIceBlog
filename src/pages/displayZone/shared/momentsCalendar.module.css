@@ -1,4 +1,4 @@
-/* 右侧栏：用 clamp 限制宽度范围，窄屏下可收缩，避免与中间栏争空间导致整页溢出 */
+/* 右侧栏：用 clamp 限制宽度范围，窄屏下可收缩 */
 .rightLane {
   position: fixed;
   right: 0;
@@ -97,7 +97,8 @@
   font-weight: 500;
 }
 .weekdayWeekend {
-  color: var(--calendar-weekend-color);
+  color: #ff6b6b;
+  /* 周末柔和红 */
 }
 .grid {
   display: grid;
@@ -115,7 +116,8 @@
   justify-content: center;
   font-size: var(--h6-fontsize);
   border-radius: 50%;
-  transition: background-color var(--hover-duration) var(--hover-ease), color var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease), box-shadow var(--hover-duration) var(--hover-ease);
+  position: relative;
+  transition: background-color var(--hover-duration) var(--hover-ease), color var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
 }
 .cell.cellClickable {
   border: none;
@@ -132,32 +134,115 @@
 .cellDay:hover {
   background: var(--input-bgc);
 }
-/* 选中态：深蓝实心圆，唯一焦点；内边距让数字与圆边留出呼吸空间 */
+/* --- 核心动画 Keyframes --- */
+@keyframes scribbleDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+/* --- 选中态：涂鸦色块风格 --- */
 .cellSelected {
-  background: var(--accent-color) !important;
-  color: #fff !important;
+  background: transparent !important;
+  color: var(--accent-color) !important;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   padding: 6px;
+  z-index: 2;
+  /* 提升文字层级，浮在色块上 */
 }
 .cellSelected .cellDot {
   display: none;
 }
+.cellSelected .cellInner,
+.cellSelected .cellNum {
+  position: relative;
+  z-index: 5;
+}
 .cellSelected:hover {
-  background: var(--accent-color) !important;
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
-/* 今天但未选中：细描边、与选中态同尺寸 */
+/* 今天态的涂鸦路径动画（更浅） */
+.scribblePathToday {
+  fill: none;
+  stroke: var(--accent-color);
+  /* 统一用基础颜色，避免找不到变量 */
+  stroke-width: 22;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.08;
+  /* 比选中态更浅 */
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: scribbleDraw 0.4s ease-out forwards;
+}
+/* --- 今天态：浅色涂鸦，文字不透明 --- */
 .cellTodayRing {
-  color: var(--accent-color);
-  font-weight: 600;
+  position: relative;
   background: transparent !important;
-  box-shadow: 0 0 0 1px var(--accent-color);
+  color: var(--accent-color) !important;
+  font-weight: 700;
+  padding: 6px;
+  z-index: 2;
 }
-.cellTodayRing.cellHasMoment .cellDot {
+.cellTodayRing .cellDot {
   display: none;
 }
-/* 有动态未选中：数字与圆点分行，留出垂直间距 */
+.cellTodayRing .cellInner,
+.cellTodayRing .cellNum {
+  position: relative;
+  z-index: 5;
+  /* 浮在涂鸦上层 */
+}
+.cellTodayRing:hover {
+  transform: scale(1.05);
+}
+/* 涂鸦容器 */
+.animeScribble {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  transform: translate(-50%, -50%) rotate(-5deg);
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+/* 涂鸦路径动画 */
+.scribblePath {
+  fill: none;
+  stroke: var(--accent-color);
+  stroke-width: 22;
+  /* 粗笔触模拟色块 */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.25;
+  /* 半透明 */
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: scribbleDraw 0.4s ease-out forwards;
+}
+.animeCircle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 130%;
+  height: 130%;
+  transform: translate(-50%, -50%) rotate(-10deg);
+  z-index: 0;
+  pointer-events: none;
+}
+.animeCircleTodayPath {
+  fill: none;
+  stroke: var(--accent-color);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.6;
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: scribbleDraw 0.6s ease-out forwards;
+}
+/* --- 有动态但未选中 --- */
 .cellHasMoment {
   color: var(--text-color);
 }
@@ -166,7 +251,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
 }
 .cellHasMoment .cellNum {
   line-height: 1;
@@ -174,14 +261,17 @@
 .cellHasMoment .cellDot {
   width: 4px;
   height: 4px;
-  border-radius: 50%;
   background: var(--accent-color);
   flex-shrink: 0;
+  border-radius: 55% 45% 60% 40% / 50% 60% 40% 60%;
+  /* 不规则小圆点 */
+  transform: rotate(45deg);
 }
 .cellHasMoment:hover {
   background: var(--input-bgc);
   color: var(--accent-color);
 }
+/* --- Day List 列表展开部分 --- */
 .dayListWrap {
   overflow: hidden;
   max-height: 0;
@@ -189,10 +279,10 @@
   width: 100%;
   min-width: 0;
 }
-.dayListWrapOpen {
+.dayListWrap.dayListWrapOpen {
   max-height: 320px;
 }
-.dayListWrapLeave {
+.dayListWrap.dayListWrapLeave {
   max-height: 0;
   transition-duration: 0.26s;
   transition-timing-function: cubic-bezier(0.5, 0, 0.75, 0);
@@ -209,10 +299,10 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
 }
-.dayListEnter {
+.dayList.dayListEnter {
   animation: dayListEnter 0.28s cubic-bezier(0.32, 0.72, 0.38, 1) forwards;
 }
-.dayListLeave {
+.dayList.dayListLeave {
   animation: dayListLeave 0.2s cubic-bezier(0.5, 0, 0.75, 0) forwards;
 }
 @keyframes dayListEnter {
@@ -346,7 +436,7 @@
   font-size: var(--h6-fontsize);
   opacity: 0.88;
 }
-/* 中等视口（如 14 寸 100%）：略微收紧日历内边距与格子间距，避免栏宽被压缩时错位或溢出 */
+/* 响应式媒体查询 */
 @media (max-width: 1600px) {
   .rightLane {
     width: clamp(160px, 18vw, 300px);
