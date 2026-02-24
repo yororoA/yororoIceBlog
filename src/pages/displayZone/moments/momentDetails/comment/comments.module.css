@@ -1,0 +1,147 @@
+.entire {
+  --header-height: calc(var(--h3-fontsize) * 1.4);
+  --footer-height: 28rem;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: 1fr var(--footer-height);
+  background-color: var(--moments-card-bgc);
+}
+@media (min-width: 900px) {
+  .entire .main {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .entire .main::-webkit-scrollbar {
+    display: none;
+  }
+}
+.entire .main {
+  position: relative;
+  display: grid;
+  grid-template-rows: var(--header-height) 1fr;
+  gap: var(--moments-zone-gap);
+  padding: calc(var(--moments-zone-gap) * 2);
+  padding-bottom: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  min-width: 0;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  transform: translateZ(0);
+}
+.entire .main > h3 {
+  font-size: var(--h3-fontsize);
+  font-weight: 600;
+  color: var(--heading-color);
+  margin: 0;
+  padding-bottom: calc(var(--moments-zone-gap) * 0.5);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.entire .main section.body {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--moments-zone-gap) * 1.2);
+}
+.entire .main .commentNode {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--moments-zone-gap) * 0.6);
+}
+.entire .main .commentChildren {
+  margin-left: calc(var(--moments-headshot-width) + var(--moments-zone-gap));
+  padding-left: calc(var(--moments-zone-gap) * 1.2);
+  border-left: 2px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--moments-zone-gap) * 0.6);
+}
+.entire div.cAll {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--moments-zone-gap) * 1);
+  padding: calc(var(--moments-zone-gap) * 1) calc(var(--moments-zone-gap) * 1.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(0, 0, 0, 0.02);
+}
+@media (max-width: 900px) {
+  .entire div.cAll {
+    position: sticky;
+    bottom: 0;
+    backdrop-filter: blur(8px);
+  }
+}
+.entire div.cAll input,
+.entire div.cAll textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 32px;
+  height: auto;
+  box-sizing: border-box;
+  padding: 6px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: var(--input-bgc);
+  color: var(--text-color);
+  font-size: var(--h4-fontsize);
+  outline: none;
+  transition: border-color var(--transition-type), box-shadow var(--transition-type);
+}
+.entire div.cAll input::placeholder,
+.entire div.cAll textarea::placeholder {
+  color: var(--text-color-secondary);
+}
+.entire div.cAll input:focus,
+.entire div.cAll textarea:focus {
+  border-color: var(--accent-color-border);
+  box-shadow: 0 0 0 2px var(--accent-color-lighter);
+}
+.entire div.cAll input ~ label,
+.entire div.cAll textarea ~ label {
+  display: none;
+}
+.entire div.cAll textarea {
+  resize: vertical;
+  padding: 8px 12px;
+}
+.entire div.cAll button {
+  height: 32px;
+  padding: 0 14px;
+  font-size: var(--h4-fontsize);
+  font-weight: 500;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: filter var(--transition-type);
+}
+.entire div.cAll button.btnInacitive,
+.entire div.cAll button.btnInactive {
+  display: none;
+  width: 0;
+}
+.entire div.cAll button.btnActive {
+  display: inline-flex;
+  background: var(--addCommentBtn-bgc);
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  animation: forwards btnScale 0.3s ease;
+}
+.entire div.cAll button.btnActive:hover {
+  filter: brightness(1.05);
+}
+.entire div.cAll button.btnActive:active {
+  transform: scale(0.98);
+}
+@keyframes btnScale {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 40rem;
+    opacity: 1;
+  }
+}

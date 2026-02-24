@@ -1,21 +1,21 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import comment from './comment.module.less';
-import {getAvatarColor} from '../../../../../utils/avatarColor';
-// import IvPreview from "../../../../../components/ui/image_video_preview/ivPreview";
+import { getAvatarColor } from '../../../../../utils/avatarColor';
 import Like from "../../../../../components/ui/feedback/like";
-import {CommentsLikedContext} from "../../context/commentsLikedContext";
-// import LittlePop from "../../../../../components/ui/pop/littlePop/littlePop";
+import { CommentsLikedContext } from "../../context/commentsLikedContext";
 import CommentBelong from "../../../../../components/ui/pop/littlePop/commentBelong/commentBelong";
-import {sendCommentLike} from "../../../../../utils/sendCommentLike";
-import {formatDateTime} from "../../../../../utils/formatDateTime";
+import { sendCommentLike } from "../../../../../utils/sendCommentLike";
+import { formatDateTime } from "../../../../../utils/formatDateTime";
 import { SuccessBoardContext } from "../../../../../components/ui/pop/status/successBoardContext";
 import { isGuest } from "../../../../../utils/auth";
+import { MomentDetailsCtx } from "../../../../../components/pagesCard/moments/content/momentsCard";
 import adminImg from '../../../../../assets/images/admin.png';
 import binesImg from '../../../../../assets/images/bines.png';
 
-const CommentCard = ({infos}) => {
-	// {content, createdAt, likes, momentId, uid, username, _id}
-	const {content, createdAt, uid, username, likes, _id} = infos;
+const CommentCard = ({ infos }) => {
+	// {content, createdAt, likes, momentId, uid, username, _id, belong}
+	const { content, createdAt, uid, username, likes, _id } = infos;
+	const { momentItem, setCommentToDt } = useContext(MomentDetailsCtx);
 	const admin = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 	const bines = 'u_mlkpl8fl_52a3d8c2068b281a';
 	const headshotType = admin.includes(uid) ? adminImg : bines === uid ? binesImg : null;
@@ -56,12 +56,8 @@ const CommentCard = ({infos}) => {
 		}
 	}
 
-	// todo 评论回复
-	// reply logic
 	const [onReply, setOR] = useState(false);
 	const endReply = () => setOR(false);
-
-	// todo 评论点赞, 评论嵌套
 
 	const createdTimeForDisplay = formatDateTime(createdAt);
 	return (
@@ -84,14 +80,22 @@ const CommentCard = ({infos}) => {
 					<p className={comment.text}>{content}</p>
 				</div>
 				<div className={comment.right}>
-					<Like type={'comment'} _id={_id} likes={likeCount} onChange={onChange} checked={isLiked} disabled={isGuest()}/>
-					<p className={comment.reply} onClick={() => setOR(true)}>{'reply'}</p>
+					<Like type={'comment'} _id={_id} likes={likeCount} onChange={onChange} checked={isLiked} disabled={isGuest()} />
+					{!isGuest() && (
+						<p className={comment.reply} onClick={() => setOR(true)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setOR(true)}>{'reply'}</p>
+					)}
 				</div>
-				{/*<div className={comment.imgPre}>*/}
-				{/*	<IvPreview items={testimgs.map(item=>[item, 'image'])} prefix={'av'}/>*/}
-				{/*</div>*/}
 			</div>
-			{onReply && <CommentBelong belongUser={username} belongMSG={content} belongId={_id} onEnd={endReply}/>}
+			{onReply && momentItem && setCommentToDt && (
+				<CommentBelong
+					belongUser={username}
+					belongMSG={content}
+					belongId={_id}
+					momentId={momentItem._id}
+					setCommentToDt={setCommentToDt}
+					onEnd={endReply}
+				/>
+			)}
 		</div>
 	);
 };

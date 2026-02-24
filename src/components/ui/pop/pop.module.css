@@ -9,9 +9,99 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  animation: fadeIn 0.2s ease-out;
+}
+.entire.closing {
+  animation: fadeOut 0.2s ease-out;
 }
 .entire .item {
-  border-radius: var(--moments-headshot-borderRadius);
+  position: relative;
+  border-radius: 14px;
   background-color: var(--pop-bgc);
-  overflow: hidden;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease-out;
+  transform-origin: center;
+}
+.entire .item::-webkit-scrollbar {
+  display: none;
+}
+.entire .item.itemClosing {
+  animation: slideDown 0.3s ease-out;
+}
+.entire .closeBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--pop-bgc);
+  color: currentColor;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+.entire .closeBtn::before,
+.entire .closeBtn::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 2px;
+  margin: -1px 0 0 -8px;
+  background: currentColor;
+}
+.entire .closeBtn::before {
+  transform: rotate(45deg);
+}
+.entire .closeBtn::after {
+  transform: rotate(-45deg);
+}
+.entire .closeBtn:hover {
+  opacity: 1;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes slideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
 }

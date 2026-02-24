@@ -1,0 +1,94 @@
+.item {
+  min-height: 20rem;
+  max-height: fit-content;
+  display: grid;
+  grid-template-columns: var(--moments-headshot-width) 1fr;
+  gap: calc(var(--moments-zone-gap) * 1.2);
+  padding: calc(var(--moments-zone-gap) * 1) 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  transition: background-color var(--transition-type), color var(--transition-type);
+}
+.item:last-child {
+  border-bottom: none;
+}
+.item img.headshot {
+  width: var(--moments-headshot-width);
+  height: var(--moments-headshot-width);
+  object-fit: cover;
+  border-radius: 10px;
+}
+.item .avatarInitial {
+  width: var(--moments-headshot-width);
+  height: var(--moments-headshot-width);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  user-select: none;
+  flex-shrink: 0;
+}
+.item div.content {
+  display: flex;
+  min-width: 0;
+}
+.item div.content .left {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--moments-zone-gap) * 0.6);
+}
+.item div.content .left .meta {
+  display: flex;
+  align-items: baseline;
+  gap: 6rem;
+}
+.item div.content .left .meta h4 {
+  margin: 0;
+  font-size: var(--h4-fontsize);
+  font-weight: 600;
+  color: var(--heading-color);
+}
+.item div.content .left .meta .date {
+  font-size: var(--moments-meta-fontsize);
+  color: var(--text-color-secondary);
+}
+.item div.content .left p.text {
+  margin: 0;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+  color: var(--text-color);
+  font-size: var(--p-fontsize);
+}
+.item div.content .left div.imgPre {
+  max-width: 100%;
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--moments-content-liveGap);
+}
+.item div.content .right {
+  width: var(--comment-feedback-width);
+  display: flex;
+  flex-direction: column;
+  gap: 6rem;
+  height: fit-content;
+  border-left: 1px solid rgba(0, 0, 0, 0.06);
+  padding-left: 8rem;
+  flex-shrink: 0;
+}
+.item div.content .right p.reply {
+  margin: 0;
+  font-size: var(--moments-meta-fontsize);
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  cursor: pointer;
+  transition: color var(--transition-type);
+}
+.item div.content .right p.reply:hover {
+  color: var(--accent-color);
+}

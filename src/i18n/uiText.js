@@ -110,6 +110,8 @@ export const UI_TEXT = {
     shortcutViewArticles: 'View Articles',
     shortcutViewGallery: 'View Gallery',
     shortcutUsefulTools: 'Useful tools',
+    momentDetailLayoutToSingle: 'Switch to single column',
+    momentDetailLayoutToTwo: 'Switch to two columns',
   },
   zh: {
     navHome: '首页',
@@ -222,6 +224,8 @@ export const UI_TEXT = {
     shortcutViewArticles: '查看文章',
     shortcutViewGallery: '查看画廊',
     shortcutUsefulTools: '有用的工具',
+    momentDetailLayoutToSingle: '切换为单列布局',
+    momentDetailLayoutToTwo: '切换为两列布局',
   },
   ja: {
     navHome: 'ホーム',
@@ -334,6 +338,8 @@ export const UI_TEXT = {
     shortcutViewArticles: '記事を見る',
     shortcutViewGallery: 'ギャラリーを見る',
     shortcutUsefulTools: '便利なツール',
+    momentDetailLayoutToSingle: '1カラムに切り替え',
+    momentDetailLayoutToTwo: '2カラムに切り替え',
   },
 };
 

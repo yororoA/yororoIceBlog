@@ -1,19 +1,13 @@
 .entire {
-  --header-height: var(--h3-fontsize);
-  --footer-height: 26rem;
-  /* 增高底栏以匹配更高的输入与按钮 */
-
-  //width: 50%;
-  //min-height: 145rem;
+  --header-height: calc(var(--h3-fontsize) * 1.4);
+  --footer-height: 28rem;
 
   @media (min-width: 900px) {
-    overflow: auto;
-    /* 隐藏桌面端评论区滚动条，保留滚动功能 */
     .main {
-      scrollbar-width: none;        /* Firefox */
-      -ms-overflow-style: none;     /* IE/Edge */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
-    .main::-webkit-scrollbar {      /* Chrome/Safari */
+    .main::-webkit-scrollbar {
       display: none;
     }
   }
@@ -28,59 +22,84 @@
     display: grid;
     grid-template-rows: var(--header-height) 1fr;
     gap: var(--moments-zone-gap);
-    padding: calc(var(--moments-zone-gap) * 1.5);
+    padding: calc(var(--moments-zone-gap) * 2);
     padding-bottom: 0;
     max-height: 100%;
     overflow-y: auto;
-    // overflow: hidden;
+    min-width: 0;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    transform: translateZ(0);
+
+    > h3 {
+      font-size: var(--h3-fontsize);
+      font-weight: 600;
+      color: var(--heading-color);
+      margin: 0;
+      padding-bottom: calc(var(--moments-zone-gap) * 0.5);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
 
     section.body {
       display: flex;
       flex-direction: column;
-      gap: calc(var(--moments-zone-gap) * 1.5);
+      gap: calc(var(--moments-zone-gap) * 1.2);
+    }
+
+    .commentNode {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--moments-zone-gap) * 0.6);
+    }
+
+    .commentChildren {
+      margin-left: calc(var(--moments-headshot-width) + var(--moments-zone-gap));
+      padding-left: calc(var(--moments-zone-gap) * 1.2);
+      border-left: 2px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--moments-zone-gap) * 0.6);
     }
   }
 
-
   div.cAll {
-    --ctrl-h: calc(var(--h4-fontsize) * 1.8);
-    /* 统一输入与按钮高度（更高） */
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: calc(var(--moments-zone-gap) * .75);
-    //background-color: rgba(255, 255, 255, .8);
-    padding: calc(var(--moments-zone-gap) * .5) calc(var(--moments-zone-gap) * 1);
-    color: rgba(125, 125, 125, 0.9);
-    transition: var(--transition-type);
-    border-top: var(--moments-card-content_footer-SeperatorLine);
+    gap: calc(var(--moments-zone-gap) * 1);
+    padding: calc(var(--moments-zone-gap) * 1) calc(var(--moments-zone-gap) * 1.5);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    background: rgba(0, 0, 0, 0.02);
 
-    @media(max-width: 900px){
+    @media (max-width: 900px) {
       position: sticky;
       bottom: 0;
-      backdrop-filter: blur(10000rem);
+      backdrop-filter: blur(8px);
     }
 
-
-    input {
+    input,
+    textarea {
       flex: 1;
-      // height: var(--ctrl-h);
-      height: 100%;
+      min-width: 0;
+      min-height: 32px;
+      height: auto;
       box-sizing: border-box;
-      padding: calc(var(--nm-input-padding-y) * .5) calc(var(--nm-input-padding-x) * .8);
-      border: var(--nm-input-border);
-      border-radius: var(--nm-input-radius);
-      background-color: rgba(0, 0, 0, .03);
-      color: inherit;
+      padding: 6px 12px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      background-color: var(--input-bgc);
+      color: var(--text-color);
       font-size: var(--h4-fontsize);
       outline: none;
+      transition: border-color var(--transition-type), box-shadow var(--transition-type);
 
       &::placeholder {
-        color: rgba(125, 125, 125, .7);
+        color: var(--text-color-secondary);
       }
 
-      &:hover {
-        background-color: rgba(226, 226, 226, 0.8);
+      &:focus {
+        border-color: var(--accent-color-border);
+        box-shadow: 0 0 0 2px var(--accent-color-lighter);
       }
 
       & ~ label {
@@ -88,44 +107,44 @@
       }
     }
 
+    textarea {
+      resize: vertical;
+      padding: 8px 12px;
+    }
+
     button {
-      // height: var(--ctrl-h);
-      height: 100%;
-      padding: 0 calc(var(--h4-fontsize) * .9);
+      height: 32px;
+      padding: 0 14px;
       font-size: var(--h4-fontsize);
+      font-weight: 500;
       display: inline-flex;
       justify-content: center;
       align-items: center;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: filter var(--transition-type);
 
-      /* 兼容现有类名（拼写保持不变） */
-
-      &.btnInacitive {
-        /* 未激活：隐藏 */
-        display: none;
-        width: 0;
-      }
-
+      &.btnInacitive,
       &.btnInactive {
-        /* 若后续修正拼写，可兼容此类名 */
         display: none;
         width: 0;
       }
 
       &.btnActive {
         display: inline-flex;
-        background-color: var(--addCommentBtn-bgc);
+        background: var(--addCommentBtn-bgc);
         color: #fff;
-        box-shadow: 0 2rem 6rem rgba(0, 0, 0, .08);
-        border-color: transparent;
-        animation: forwards btnScale .3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        animation: forwards btnScale 0.3s ease;
       }
 
       &.btnActive:hover {
-        filter: brightness(1.03);
+        filter: brightness(1.05);
       }
 
       &.btnActive:active {
-        transform: translateY(1rem);
+        transform: scale(0.98);
       }
     }
   }

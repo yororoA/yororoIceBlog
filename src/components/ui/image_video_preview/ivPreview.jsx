@@ -8,35 +8,44 @@ import { t } from '../../../i18n/uiText';
 /* 图片预览
 * @items: 每项为 [url, type] 或 [url, type, uploaderUsername]
 * - url, type 必选；第三项可选，放大时在图片底部显示上传者（如 gallery 从 context 的 iv.username 传入）
-* @prefix: 任意不与其他`IvPreview`组件重复的string,用于绑定key */
-const IvPreview = ({items, prefix}) => {
+* @prefix: 任意不与其他`IvPreview`组件重复的string,用于绑定key
+* @showThumbnails: 是否渲染缩略图条（默认 true）；为 false 时仅提供放大层，由外部控制打开（如 article 详情内嵌图）
+* @enlargedIndex: 受控模式下当前放大下标，null 为关闭
+* @onEnlargedIndexChange: 受控模式下关闭/切换时回调 */
+const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: controlledIndex, onEnlargedIndexChange }) => {
 	const { locale } = useContext(UiPersistContext);
-	// 当前放大预览的下标: null 表示未打开
-	const [enlargedIndex, setEnlargedIndex] = useState(null);
+	const [internalIndex, setInternalIndex] = useState(null);
+	const isControlled = controlledIndex !== undefined && onEnlargedIndexChange != null;
+	const enlargedIndex = isControlled ? controlledIndex : internalIndex;
+	const setEnlargedIndex = useCallback((v) => {
+		const next = typeof v === 'function' ? v(enlargedIndex) : v;
+		if (isControlled) onEnlargedIndexChange(next);
+		else setInternalIndex(next);
+	}, [isControlled, onEnlargedIndexChange, enlargedIndex]);
 	const total = items.length;
 	const thumbStripRef = useRef(null);
 
 	const viewIv = useCallback((e, index) => {
 		e.stopPropagation();
 		if (items[index]) setEnlargedIndex(index);
-	}, [items]);
+	}, [items, setEnlargedIndex]);
 
 	const closeEnlarged = useCallback((e) => {
 		e?.stopPropagation?.();
 		setEnlargedIndex(null);
-	}, []);
+	}, [setEnlargedIndex]);
 
 	const goPrev = useCallback((e) => {
 		e?.stopPropagation?.();
 		if (total <= 1) return;
 		setEnlargedIndex((i) => (i - 1 + total) % total);
-	}, [total]);
+	}, [total, setEnlargedIndex]);
 
 	const goNext = useCallback((e) => {
 		e?.stopPropagation?.();
 		if (total <= 1) return;
 		setEnlargedIndex((i) => (i + 1) % total);
-	}, [total]);
+	}, [total, setEnlargedIndex]);
 
 	// 键盘：左右切换、Esc 关闭
 	useEffect(() => {
@@ -87,7 +96,7 @@ const IvPreview = ({items, prefix}) => {
 
 	return (
 		<>
-			{items.map((item, index) =>
+			{showThumbnails && items.map((item, index) =>
 				<div className={preview.iv} key={prefix + index} onClick={(e) => viewIv(e, index)}>
 					{
 						item[1] === 'image' ? <img src={item[0]} alt="" id={`${prefix}-${index}`}/> :

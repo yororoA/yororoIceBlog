@@ -1,19 +1,21 @@
 import { useEffect, useRef } from 'react';
 
-const DAMPING = 0.77;
+const DAMPING = 0.88;
 const VELOCITY_THRESHOLD = 0.5;
-const MAX_VELOCITY = 65;
+const MAX_VELOCITY = 38;
 
 /**
  * 为滚动容器绑定滚轮惯性：松手后按当前速度继续滚动一段距离，阻尼减速至停止。
  * @param {React.RefObject<HTMLElement | null>} scrollContainerRef - 滚动容器 ref；为 null 或 current 为 null 时使用 window（document.documentElement）
+ * @param {boolean} [enabled=true] - 为 false 时不绑定惯性滚动
  */
-export function useWheelInertia(scrollContainerRef) {
+export function useWheelInertia(scrollContainerRef, enabled = true) {
 	const velocityRef = useRef(0);
 	const rafIdRef = useRef(null);
 	const listenerTargetRef = useRef(null);
 
 	useEffect(() => {
+		if (!enabled) return;
 		const getScrollElement = () => {
 			const el = scrollContainerRef?.current;
 			return el && el.nodeType === 1 ? el : document.documentElement;
@@ -85,5 +87,5 @@ export function useWheelInertia(scrollContainerRef) {
 			rafIdRef.current = null;
 			velocityRef.current = 0;
 		};
-	}, [scrollContainerRef]);
+	}, [scrollContainerRef, enabled]);
 }

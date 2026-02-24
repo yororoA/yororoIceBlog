@@ -1,15 +1,17 @@
+/* 右侧栏：用 clamp 限制宽度范围，窄屏下可收缩，避免与中间栏争空间导致整页溢出 */
 .rightLane {
   position: fixed;
   right: 0;
   top: calc(var(--logo-height) * 1.05 + 80px);
   bottom: 40px;
-  width: 20vw;
-  min-width: 200px;
-  padding: 8px 20px 8px 14px;
+  width: clamp(180px, 20vw, 320px);
+  min-width: 0;
+  padding: 8px 12px 8px 10px;
   box-sizing: border-box;
   z-index: 4;
   pointer-events: none;
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: none;
   overscroll-behavior: contain;
 
@@ -27,6 +29,7 @@
   flex-direction: column;
   gap: 12px;
   min-height: min-content;
+  min-width: 0;
 }
 
 .card {
@@ -43,6 +46,8 @@
   transition: box-shadow var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
   pointer-events: auto;
   min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 
   &:hover {
     box-shadow: var(--card-shadow-hover);
@@ -90,9 +95,10 @@
 .weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: 6px;
   width: 100%;
-  margin-bottom: 8px;
+  min-width: 0;
+  margin-bottom: 6px;
 }
 
 .weekday {
@@ -111,10 +117,13 @@
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
   width: 100%;
+  min-width: 0;
 }
 
 .cell {
   aspect-ratio: 1;
+  min-width: 0;
+  max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -387,6 +396,33 @@
   color: var(--text-color-secondary);
   font-size: var(--h6-fontsize);
   opacity: 0.88;
+}
+
+/* 中等视口（如 14 寸 100%）：略微收紧日历内边距与格子间距，避免栏宽被压缩时错位或溢出 */
+@media (max-width: 1600px) {
+  .rightLane {
+    width: clamp(160px, 18vw, 300px);
+  }
+
+  .card {
+    padding: 14px 12px;
+    gap: 10px;
+  }
+
+  .weekdays,
+  .grid {
+    gap: 4px;
+  }
+
+  .navBtn {
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+  }
+
+  .monthLabel {
+    font-size: var(--h6-fontsize);
+  }
 }
 
 @media (max-width: 1024px) {

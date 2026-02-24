@@ -15,11 +15,19 @@
     animation: fadeOut 0.2s ease-out;
   }
 
-  .item{
+  .item {
     position: relative;
-    border-radius: var(--moments-headshot-borderRadius);
+    border-radius: 14px;
     background-color: var(--pop-bgc);
-    overflow: hidden;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     animation: slideUp 0.3s ease-out;
     transform-origin: center;
 

@@ -63,6 +63,7 @@ const Pop = ({children, isLittle, onClose}) => {
 				ref={itemRef}
 				className={`${pop.item} ${isClosing ? pop.itemClosing : ''}`} 
 				onClick={e => e.stopPropagation()}
+				onWheel={e => e.stopPropagation()}
 			>
 				<button
 					type="button"

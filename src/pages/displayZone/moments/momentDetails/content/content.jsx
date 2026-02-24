@@ -1,4 +1,4 @@
-import React, {useCallback, useContext} from 'react';
+import React, { useCallback, useContext, useRef } from 'react';
 import Like from "../../../../../components/ui/feedback/like";
 import IvPreview from "../../../../../components/ui/image_video_preview/ivPreview";
 import {sendMomentLike} from "../../../../../utils/sendMomentLike";
@@ -9,6 +9,7 @@ import { getUid, isGuest } from "../../../../../utils/auth";
 import {getAvatarColor} from '../../../../../utils/avatarColor';
 import { UiPersistContext } from "../../../context/uiPersistContext";
 import { t } from "../../../../../i18n/uiText";
+import { useWheelInertia } from '../../../../../hooks/useWheelInertia';
 import card from './content.module.less';
 
 
@@ -69,8 +70,11 @@ const Content = ({ headshotType }) => {
 		}
 	}, [_id, uid, onMomentDeleted, showFailed]);
 
+	const contentScrollRef = useRef(null);
+	useWheelInertia(contentScrollRef);
+
 	return (
-		<div className={card.entire} onClick={e=>e.stopPropagation()}>
+		<div ref={contentScrollRef} className={card.entire} onClick={e=>e.stopPropagation()}>
 			<div className={card.content}>
 				{/* alt=username */}
 				{headshotType ? (
@@ -82,7 +86,7 @@ const Content = ({ headshotType }) => {
 				)}
 				<div className={card.body}>
 					<h4>{username}</h4>
-					<u><h4>{title}</h4></u>
+					<h2 className={card.title}>{title}</h2>
 					{texts}
 					<div className={card.live}>
 						<IvPreview items={ivs.map(item => [item.url, 'image'])} prefix={`${_id}_iv`}/>

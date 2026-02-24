@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -15,6 +15,8 @@ import { sendArticleLike } from '../../../utils/sendArticleLike';
 import { KnowledgeListContext } from './context/knowledgeListContext';
 import { UiPersistContext } from '../context/uiPersistContext';
 import { t } from '../../../i18n/uiText';
+import { useWheelInertia } from '../../../hooks/useWheelInertia';
+import IvPreview from '../../../components/ui/image_video_preview/ivPreview';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 
@@ -128,6 +130,18 @@ const KnowledgeCard = ({ article, liked, onOpenDetail, locale, isDeleting = fals
   );
 };
 
+// 从 markdown 内容中按出现顺序提取图片 URL（支持 ![](url) 与 <img src="url">）
+function extractImageUrlsFromMarkdown(text) {
+  if (!text || typeof text !== 'string') return [];
+  const urls = [];
+  const mdRe = /!\[[^\]]*\]\(([^)]+)\)/g;
+  let m;
+  while ((m = mdRe.exec(text)) !== null) urls.push(m[1].trim());
+  const imgRe = /<img[^>]+src=["']([^"']+)["']/gi;
+  while ((m = imgRe.exec(text)) !== null) urls.push(m[1].trim());
+  return urls;
+}
+
 const ArticleDetail = ({
   article,
   liked,
@@ -144,11 +158,41 @@ const ArticleDetail = ({
   locale
 }) => {
   const { title, category, tags, content, createdAt, updatedAt, _id } = article;
+  const contentScrollRef = useRef(null);
+  useWheelInertia(contentScrollRef);
+  const imageUrls = useMemo(() => extractImageUrlsFromMarkdown(content), [content]);
+  const [enlargedImageIndex, setEnlargedImageIndex] = useState(null);
+  const imgRenderIndexRef = useRef(0);
+  useEffect(() => {
+    imgRenderIndexRef.current = 0;
+  }, [imageUrls]);
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit' });
   };
+
+  const markdownComponents = useMemo(() => ({
+    img: (props) => {
+      const src = props.src || '';
+      if (imageUrls.indexOf(src) < 0) return <img {...props} alt={props.alt || ''} />;
+      const index = imgRenderIndexRef.current++;
+      return (
+        <span
+          className={knowledge.articleDetailImgWrap}
+          role="button"
+          tabIndex={0}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setEnlargedImageIndex(index); }}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setEnlargedImageIndex(index); } }}
+          aria-label="点击放大"
+        >
+          <img src={src} alt={props.alt || ''} />
+        </span>
+      );
+    }
+  }), [imageUrls]);
+
+  const imageItems = useMemo(() => imageUrls.map((url) => [url, 'image']), [imageUrls]);
 
   return (
     <div className={knowledge.detailContainer}>
@@ -175,8 +219,17 @@ const ArticleDetail = ({
           </div>
         )}
       </div>
-      <div className={knowledge.detailContent}>
-        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{content || ''}</ReactMarkdown>
+      <div ref={contentScrollRef} className={knowledge.detailContent}>
+        {imageUrls.length > 0 && (
+          <IvPreview
+            items={imageItems}
+            prefix={`article-detail-${_id}`}
+            showThumbnails={false}
+            enlargedIndex={enlargedImageIndex}
+            onEnlargedIndexChange={setEnlargedImageIndex}
+          />
+        )}
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={markdownComponents}>{content || ''}</ReactMarkdown>
       </div>
       <div className={knowledge.detailFooter} onClick={e => e.stopPropagation()}>
         <Like onChange={onLikeChange} checked={liked} likes={likeNumbers} _id={_id} type="article" />
