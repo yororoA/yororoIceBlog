@@ -42,6 +42,7 @@ const LINKS = [
   { name: 'Change Image Color', description: '图片颜色替换', url: 'https://changeimagecolor.net/zh/color-replace', image: 'https://changeimagecolor.net/logo.png', category: 'tool' },
   { name: 'Vocal Remover', description: '去人声/音频分离/变调/音频剪辑/音频合并', url: 'https://vocalremover.org/zh/', image: 'https://vocalremover.org/favicon.ico', category: 'tool' },
   { name: 'FreeConvert', description: '一个有好多种文件处理工具的网站', url: 'https://www.freeconvert.com/zh', image: 'https://www.freeconvert.com/favicon.ico', category: 'tool' },
+  { name: 'SAKURAIN TEAM', description: '用代码构建未来', url: 'https://sakurain.net', image: 'https://sakurain.net/favicon.ico', category: 'friend' },
 ];
 
 const CATEGORY_ORDER = ['friend', 'tool', 'development', 'other'];
