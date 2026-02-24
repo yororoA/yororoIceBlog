@@ -20,6 +20,8 @@ export const homeAnnouncementMarkdown = {
 > 9. **Viewed** count may trigger repeatedly; root cause not found. **Won't fix.**
 
 10. You can view **moments/articles** published on a given date directly from the calendar.
+
+> 11. The website is currently not optimized for small screens. Adaptation will be **considered** once all features/styles are completed.
 `,
   zh: `# Welcome to yororIce's Town
 
@@ -40,6 +42,8 @@ export const homeAnnouncementMarkdown = {
 > 9. **viewed** 好像会重复触发, 没找到问题发生点, **拒绝修复**
 
 10. 通过日历可直接查看对应日期发布的 **动态/文章**
+
+> 11. 网站目前未对小屏进行适配, 待功能/样式全部完成后会 **考虑** 适配
 `,
   ja: `# Welcome to yororIce's Town
 
@@ -60,5 +64,7 @@ export const homeAnnouncementMarkdown = {
 > 9. **viewed** が重複してカウントされることがあるが、原因不明のため **修正しない**。
 
 10. カレンダーから指定日の **モーメント/記事** を直接確認できます。
+
+> 11. 現在のところ、ウェブサイトは小さい画面に対応していません。機能やスタイルがすべて完成した後で**対応を検討**します
 `,
 };

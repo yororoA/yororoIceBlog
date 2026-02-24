@@ -152,7 +152,7 @@ const About = () => {
     } catch (_) { }
   }, [locale, showSuccess]);
 
-  const SITE_ICON_URL = 'https://www.yororoice.top/favicon.png';
+  const SITE_ICON_URL = 'https://www.yororoice.top/favicon.ico';
   const handleCopySiteIcon = useCallback(async (e) => {
     e.stopPropagation();
     try {
