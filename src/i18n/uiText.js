@@ -125,6 +125,9 @@ export const UI_TEXT = {
     linkCategory: 'Category',
     save: 'Save',
     cancel: 'Cancel',
+    importMarkdownBtn: 'Import Markdown',
+    importMarkdownNoMd: 'Please select at least one .md file.',
+    importMarkdownFailed: 'Failed to import: ',
   },
   zh: {
     navHome: '首页',
@@ -252,6 +255,9 @@ export const UI_TEXT = {
     linkCategory: '分类',
     save: '保存',
     cancel: '取消',
+    importMarkdownBtn: '导入 Markdown 文件',
+    importMarkdownNoMd: '请至少选择一个 .md 文件。',
+    importMarkdownFailed: '导入失败：',
   },
   ja: {
     navHome: 'ホーム',
@@ -379,6 +385,9 @@ export const UI_TEXT = {
     linkCategory: 'カテゴリ',
     save: '保存',
     cancel: 'キャンセル',
+    importMarkdownBtn: 'Markdown をインポート',
+    importMarkdownNoMd: '.md ファイルを1つ以上選択してください。',
+    importMarkdownFailed: 'インポートに失敗しました：',
   },
 };
 

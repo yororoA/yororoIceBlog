@@ -256,6 +256,7 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
   const [uploading, setUploading] = useState(false);
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
+  const mdFileInputRef = useRef(null);
 
   const insertImageMarkdown = useCallback((file, imageUrl, cursorStart, cursorEnd) => {
     const mdImage = `![${file.name}](${imageUrl})`;
@@ -319,6 +320,44 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
     await uploadImageAndInsert(file, start, end);
   }, [uploadImageAndInsert]);
 
+  const handleImportMarkdown = useCallback(async (e) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    e.target.value = '';
+    if (files.length === 0) return;
+    const mdFile = files.find(f => f.name.toLowerCase().endsWith('.md') || f.type === 'text/markdown');
+    const imageFiles = files.filter(f => f !== mdFile && (f.type.startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(f.name)));
+    if (!mdFile) {
+      alert(t(locale, 'importMarkdownNoMd'));
+      return;
+    }
+    setUploading(true);
+    try {
+      const rawMd = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result ?? '');
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsText(mdFile, 'UTF-8');
+      });
+      let contentMd = rawMd;
+      for (const imgFile of imageFiles) {
+        const formData = new FormData();
+        formData.append('image', imgFile);
+        const resp = await fetch(`${process.env.REACT_APP_SERVER_HOST}/api/knowledge/upload-image`, { method: 'POST', body: formData });
+        const result = await resp.json();
+        if (!result?.success || !result?.data?.url) continue;
+        const url = result.data.url;
+        const escapedName = imgFile.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp('!\\[([^\\]]*)\\]\\(' + '[^)]*' + escapedName + '\\)', 'gi');
+        contentMd = contentMd.replace(regex, (match, alt) => `![${alt || imgFile.name}](${url})`);
+      }
+      setContent(contentMd);
+    } catch (err) {
+      alert(t(locale, 'importMarkdownFailed') + (err.message || ''));
+    } finally {
+      setUploading(false);
+    }
+  }, [locale]);
+
   const handleSubmit = async () => {
     if (!title.trim() || !content.trim()) {
       alert('Title and content are required');
@@ -375,6 +414,14 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
               style={{ display: 'none' }}
               onChange={handleInsertImage}
             />
+            <input
+              ref={mdFileInputRef}
+              type="file"
+              accept=".md,text/markdown,image/*"
+              multiple
+              style={{ display: 'none' }}
+              onChange={handleImportMarkdown}
+            />
             <button
               type="button"
               className={knowledge.toolbarBtn}
@@ -383,6 +430,15 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
               title="插入图片"
             >
               {uploading ? '上传中...' : '插入图片'}
+            </button>
+            <button
+              type="button"
+              className={knowledge.toolbarBtn}
+              onClick={() => mdFileInputRef.current?.click()}
+              disabled={uploading}
+              title={t(locale, 'importMarkdownBtn')}
+            >
+              {t(locale, 'importMarkdownBtn')}
             </button>
           </div>
           <textarea
