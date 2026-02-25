@@ -811,7 +811,7 @@
 }
 
 .manageLinksTitle {
-  font-size: var(--h2-fontsize);
+  font-size: var(--h3-fontsize);
   font-weight: 600;
   margin: 0 0 16px 0;
   padding-right: 28px;
@@ -826,7 +826,7 @@
 .manageLinksInput,
 .manageLinksSelect {
   padding: 8px 12px;
-  font-size: var(--h5-fontsize);
+  font-size: var(--h6-fontsize);
   border: var(--nm-input-border);
   border-radius: 8px;
   background: var(--input-bgc);
@@ -873,6 +873,12 @@
 .manageLinksList {
   max-height: 320px;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.manageLinksList::-webkit-scrollbar {
+  display: none;
 }
 
 .manageLinksRow {
@@ -888,6 +894,7 @@
   flex: 1;
   min-width: 0;
   font-weight: 500;
+  font-size: var(--h6-fontsize);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
