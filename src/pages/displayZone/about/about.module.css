@@ -721,3 +721,92 @@
   line-height: 1.5;
   word-break: break-word;
 }
+.manageLinksPop {
+  padding: 24px 32px 32px;
+  min-width: 320px;
+  max-width: 480px;
+}
+.manageLinksTitle {
+  font-size: var(--h2-fontsize);
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  padding-right: 28px;
+}
+.manageLinksForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.manageLinksInput,
+.manageLinksSelect {
+  padding: 8px 12px;
+  font-size: var(--h5-fontsize);
+  border: var(--nm-input-border);
+  border-radius: 8px;
+  background: var(--input-bgc);
+  color: var(--text-color);
+}
+.manageLinksFormActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.manageLinksSaveBtn {
+  padding: 6px 14px;
+  font-size: var(--h6-fontsize);
+  color: #fff;
+  background: var(--accent-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.manageLinksSaveBtn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+.manageLinksSaveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.manageLinksAddBtn {
+  padding: 8px 14px;
+  font-size: var(--h6-fontsize);
+  color: var(--accent-color);
+  background: var(--accent-color-light);
+  border: 1px solid var(--accent-color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+.manageLinksAddBtn:hover {
+  opacity: 0.9;
+}
+.manageLinksList {
+  max-height: 320px;
+  overflow-y: auto;
+}
+.manageLinksRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--nm-input-border);
+  flex-wrap: wrap;
+}
+.manageLinksRowName {
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.manageLinksRowCat {
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
+  flex-shrink: 0;
+}
+.manageLinksRowActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}

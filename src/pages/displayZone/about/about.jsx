@@ -5,48 +5,18 @@ import adminImg from '../../../assets/images/admin.png';
 import binesImg from '../../../assets/images/bines.png';
 import { postGuestbookComment } from '../../../utils/guestbook';
 import { GuestbookContext } from '../context/guestbookContext';
-import { isGuest } from '../../../utils/auth';
+import { isGuest, getUid } from '../../../utils/auth';
 import { getAvatarColor } from '../../../utils/avatarColor';
 import { formatDateTime } from '../../../utils/formatDateTime';
 import { UiPersistContext } from '../context/uiPersistContext';
 import { t } from '../../../i18n/uiText';
 import { PROFILE } from '../shared/profileInfo';
 import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
+import { getLinks, createLink, updateLink, deleteLink } from '../../../utils/links';
+import Pop from '../../../components/ui/pop/pop';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
-
-
-// Links (static)
-// 支持格式：
-// 1. 纯文字链接: { name: 'Example Blog', url: 'https://example.com', category: 'friend' }
-// 2. 带图片链接: { name: 'Example Blog', url: 'https://example.com', image: '/path/to/image.png', category: 'friend' }
-// 3. 可选 description: { name: '...', url: '...', description: '简短说明', category: '...' }
-// 4. 工具/开发/其他: category 为 'tool' | 'development' | 'other'
-// category: 'friend' | 'tool' | 'development' | 'other'，默认为 'friend'
-const LINKS = [
-  // { name: 'Example Blog', url: 'https://example.com', category: 'friend' },
-  // { name: 'Tech Corner', url: 'https://example2.com', image: '/path/to/logo.png', category: 'friend' },
-  // { name: 'Useful Tool', url: 'https://tool.com', category: 'tool' },
-  // { name: 'Other Link', url: 'https://other.com', category: 'other' },
-  { name: 'Vocu Ai', description: '小样本语音克隆及音色转换', url: 'https://www.vocu.ai', image: 'https://www.vocu.ai/favicon.ico', category: 'other' },
-  { name: 'Vercel', description: '前端网站部署', url: 'https://vercel.com', image: 'https://www.vercel.com/favicon.ico', category: 'development' },
-  { name: 'Render', description: '后端网站部署', url: 'https://render.com', image: 'https://ts3.tc.mm.bing.net/th/id/ODF.rtcYxUnBRdAMKi7zNULYxw?w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2', category: 'development' },
-  { name: 'Cloudinary', description: '图片存储', image: 'https://res.cloudinary.com/prod/image/upload/w_32/console/favicon.png', url: 'https://cloudinary.com', category: 'development' },
-  { name: 'Upstash', description: 'redis缓存', image: 'https://console.upstash.com/static/icons/favicon-32x32.png', url: 'https://upstash.com', category: 'development' },
-  { name: 'MongoDB', description: '数据库', image: 'https://www.mongodb.com/favicon.ico', url: 'https://www.mongodb.com', category: 'development' },
-  { name: 'Cloudflare', description: 'CDN加速', image: 'https://dash.cloudflare.com/c411dbca6e493cdb.svg', url: 'https://developers.cloudflare.com', category: 'development' },
-  { name: 'SubExtractor', description: '视频硬编码字幕提取', url: 'https://subextractor.com', image: 'https://www.subextractor.com/logo.png', category: 'tool' },
-  { name: 'Split Image', description: '图片分割 (广告太多了, 用着有点烦)', url: 'https://splitimage.app/favicon.ico', iamge: 'https://splitimage.app/favicon.ico', category: 'tool' },
-  { name: 'IMGONLINE.TOOLS', description: '滤镜/图像转换/图像处理/删除颜色', url: 'https://imgonline.tools/zh/remove-color#google_vignette', image: 'https://imgonline.tools/icon.png', category: 'tool' },
-  { name: 'Change Image Color', description: '图片颜色替换', url: 'https://changeimagecolor.net/zh/color-replace', image: 'https://changeimagecolor.net/logo.png', category: 'tool' },
-  { name: 'Vocal Remover', description: '去人声/音频分离/变调/音频剪辑/音频合并', url: 'https://vocalremover.org/zh/', image: 'https://vocalremover.org/favicon.ico', category: 'tool' },
-  { name: 'FreeConvert', description: '一个有好多种文件处理工具的网站', url: 'https://www.freeconvert.com/zh', image: 'https://www.freeconvert.com/favicon.ico', category: 'tool' },
-  { name: 'SAKURAIN TEAM', description: '用代码构建未来', url: 'https://sakurain.net', image: 'https://sakurain.net/favicon.ico', category: 'friend' },
-  { name: '熵的小站', description: '世界本就浑浊，罪与爱同歌', url: 'https://www.nekt.qzz.io', image: 'https://img.mxw2024.top/head.webp', category: 'friend' },
-
-];
-
 const CATEGORY_ORDER = ['friend', 'tool', 'development', 'other'];
 
 /** 生成随机字母串，用于游客未填名称时的默认用户名 */
@@ -80,11 +50,99 @@ const About = () => {
   const [fadeInId, setFadeInId] = useState(null);
   const prevCommentsLenRef = useRef(comments.length);
 
+  const currentUid = getUid();
+  const isAdmin = !isGuest() && ADMIN_UIDS.includes(currentUid);
+
   const [linksVisible, setLinksVisible] = useState(false);
   const [gbVisible, setGbVisible] = useState(false);
+  const [links, setLinks] = useState([]);
+  const [showManageLinks, setShowManageLinks] = useState(false);
+  const [manageLinksList, setManageLinksList] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [linkForm, setLinkForm] = useState(null);
+  const [saving, setSaving] = useState(false);
   const linksRef = useRef(null);
   const gbRef = useRef(null);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const setLinksFromApi = useCallback((list) => {
+    setLinks(list.map((item) => ({
+      name: item.name,
+      description: item.description || '',
+      url: item.url,
+      image: item.imgurl || '',
+      category: item.category || 'friend',
+    })));
+  }, []);
+
+  useEffect(() => {
+    getLinks().then((list) => {
+      setLinksFromApi(list);
+    });
+  }, [setLinksFromApi]);
+
+  const openManageLinks = useCallback(() => {
+    getLinks().then((list) => {
+      setManageLinksList(list);
+      setShowManageLinks(true);
+      setEditingId(null);
+      setLinkForm(null);
+    });
+  }, []);
+
+  const closeManageLinks = useCallback((proceed) => {
+    (proceed || (() => {}))();
+    setShowManageLinks(false);
+    setEditingId(null);
+    setLinkForm(null);
+    getLinks().then(setLinksFromApi);
+  }, [setLinksFromApi]);
+
+  const handleSaveLink = useCallback(async () => {
+    if (!linkForm || !linkForm.name?.trim() || !linkForm.url?.trim() || saving) return;
+    setSaving(true);
+    try {
+      const body = {
+        name: linkForm.name.trim(),
+        description: (linkForm.description || '').trim(),
+        url: linkForm.url.trim(),
+        imgurl: (linkForm.imgurl || '').trim(),
+        category: linkForm.category || 'friend',
+      };
+      if (editingId) {
+        await updateLink(editingId, body);
+        showSuccess?.('已更新');
+      } else {
+        await createLink(body);
+        showSuccess?.('已添加');
+      }
+      const list = await getLinks();
+      setManageLinksList(list);
+      setEditingId(null);
+      setLinkForm(null);
+    } catch (err) {
+      console.error(err);
+      showSuccess?.(err.message || '操作失败');
+    } finally {
+      setSaving(false);
+    }
+  }, [linkForm, editingId, saving, showSuccess]);
+
+  const handleDeleteLink = useCallback(async (id) => {
+    if (!window.confirm(t(locale, 'confirm'))) return;
+    try {
+      await deleteLink(id);
+      showSuccess?.('已删除');
+      const list = await getLinks();
+      setManageLinksList(list);
+      setLinksFromApi(list);
+      setEditingId(null);
+      setLinkForm(null);
+    } catch (err) {
+      console.error(err);
+      showSuccess?.(err.message || '删除失败');
+    }
+  }, [locale, showSuccess, setLinksFromApi]);
 
   useEffect(() => {
     if (searchParams.get('scroll') !== 'guestbook') return;
@@ -195,7 +253,12 @@ const About = () => {
           <div className={about.cardHeader} onClick={() => setLinksExpanded(!linksExpanded)}>
             <div className={about.cardHeaderLeft}>
               <h3 className={about.cardTitle}>{t(locale, 'linksTitle')}</h3>
-              <div className={about.cardHeaderActions}>
+              <div className={about.cardHeaderActions} onClick={(e) => e.stopPropagation()}>
+                {isAdmin && (
+                  <button type="button" className={about.headerActionBtn} onClick={openManageLinks}>
+                    {t(locale, 'manageLinks')}
+                  </button>
+                )}
                 <button type="button" className={about.headerActionBtn} onClick={handleCopyEmail}>{t(locale, 'copyEmail')}</button>
                 <button type="button" className={about.headerActionBtn} onClick={handleCopySiteLink}>{t(locale, 'copySiteLink')}</button>
                 <button type="button" className={about.headerActionBtn} onClick={handleCopySiteIcon}>{t(locale, 'copySiteIcon')}</button>
@@ -278,7 +341,7 @@ const About = () => {
 
                   if (selectedCategory === 'all') {
                     const grouped = {};
-                    LINKS.forEach(link => {
+                    links.forEach(link => {
                       const cat = link.category || 'friend';
                       if (!grouped[cat]) grouped[cat] = [];
                       grouped[cat].push(link);
@@ -303,7 +366,7 @@ const About = () => {
                     );
                   }
 
-                  const filteredLinks = LINKS.filter(link => {
+                  const filteredLinks = links.filter(link => {
                     const category = link.category || 'friend';
                     return category === selectedCategory;
                   });
@@ -385,6 +448,80 @@ const About = () => {
           </div>
         </div>
       </div>
+
+      {showManageLinks && (
+        <Pop onClose={closeManageLinks}>
+          <div className={about.manageLinksPop}>
+            <h3 className={about.manageLinksTitle}>{t(locale, 'manageLinks')}</h3>
+            {linkForm !== null ? (
+              <div className={about.manageLinksForm}>
+                <input
+                  type="text"
+                  className={about.manageLinksInput}
+                  placeholder={t(locale, 'linkName')}
+                  value={linkForm.name || ''}
+                  onChange={(e) => setLinkForm((f) => ({ ...f, name: e.target.value }))}
+                />
+                <input
+                  type="text"
+                  className={about.manageLinksInput}
+                  placeholder={t(locale, 'linkDescription')}
+                  value={linkForm.description || ''}
+                  onChange={(e) => setLinkForm((f) => ({ ...f, description: e.target.value }))}
+                />
+                <input
+                  type="text"
+                  className={about.manageLinksInput}
+                  placeholder={t(locale, 'linkUrl')}
+                  value={linkForm.url || ''}
+                  onChange={(e) => setLinkForm((f) => ({ ...f, url: e.target.value }))}
+                />
+                <input
+                  type="text"
+                  className={about.manageLinksInput}
+                  placeholder={t(locale, 'linkImgUrl')}
+                  value={linkForm.imgurl || ''}
+                  onChange={(e) => setLinkForm((f) => ({ ...f, imgurl: e.target.value }))}
+                />
+                <select
+                  className={about.manageLinksSelect}
+                  value={linkForm.category || 'friend'}
+                  onChange={(e) => setLinkForm((f) => ({ ...f, category: e.target.value }))}
+                >
+                  <option value="friend">{t(locale, 'friendLinks')}</option>
+                  <option value="tool">{t(locale, 'toolLinks')}</option>
+                  <option value="development">{t(locale, 'development')}</option>
+                  <option value="other">{t(locale, 'other')}</option>
+                </select>
+                <div className={about.manageLinksFormActions}>
+                  <button type="button" className={about.headerActionBtn} onClick={() => { setLinkForm(null); setEditingId(null); }}>{t(locale, 'cancel')}</button>
+                  <button type="button" className={about.manageLinksSaveBtn} onClick={handleSaveLink} disabled={saving || !linkForm?.name?.trim() || !linkForm?.url?.trim()}>{saving ? t(locale, 'loading') : t(locale, 'save')}</button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <button type="button" className={about.manageLinksAddBtn} onClick={() => setLinkForm({ name: '', description: '', url: '', imgurl: '', category: 'friend' })}>{t(locale, 'addLink')}</button>
+                <div className={about.manageLinksList}>
+                  {manageLinksList.length === 0 ? (
+                    <p className={about.linksEmpty}>{t(locale, 'noLinksYet')}</p>
+                  ) : (
+                    manageLinksList.map((item) => (
+                      <div key={item._id} className={about.manageLinksRow}>
+                        <span className={about.manageLinksRowName}>{item.name}</span>
+                        <span className={about.manageLinksRowCat}>{categoryLabels[item.category] || item.category}</span>
+                        <div className={about.manageLinksRowActions}>
+                          <button type="button" className={about.headerActionBtn} onClick={() => { setEditingId(item._id); setLinkForm({ name: item.name, description: item.description || '', url: item.url, imgurl: item.imgurl || '', category: item.category || 'friend' }); }}>{t(locale, 'editLink')}</button>
+                          <button type="button" className={about.headerActionBtn} onClick={() => handleDeleteLink(item._id)}>{t(locale, 'delete')}</button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </Pop>
+      )}
     </div>
   );
 };
