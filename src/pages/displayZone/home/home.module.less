@@ -229,8 +229,15 @@
   color: var(--text-color-secondary);
 }
 
-.avatarSection {
+.avatarAndBines {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
   margin-bottom: 14px;
+}
+
+.avatarSection {
 }
 
 .avatar {
@@ -260,6 +267,44 @@
   color: white;
   border: 4px solid var(--nav-bgc);
   box-shadow: var(--card-shadow);
+}
+
+.binesRow {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.binesAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--nav-bgc);
+  box-shadow: var(--card-shadow);
+}
+
+.binesInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.binesName {
+  font-size: var(--h5-fontsize);
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.binesStatus {
+  font-size: var(--h6-fontsize);
+  color: var(--text-color-secondary);
+}
+
+.binesStatusOnline {
+  color: var(--accent-color);
 }
 
 .authorName {

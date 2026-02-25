@@ -7,6 +7,7 @@ import { SuccessBoardContext } from '../../../components/ui/pop/status/successBo
 import { MomentsListContext } from '../moments/context/momentsListContext';
 import { KnowledgeListContext } from '../knowledge/context/knowledgeListContext';
 import { useNavigate } from 'react-router-dom';
+import binesImg from '../../../assets/images/bines.png';
 
 function getFirstImageAsCover(markdown) {
 	if (!markdown || typeof markdown !== 'string') return { coverUrl: null, contentWithoutFirstImage: markdown || '' };
@@ -30,6 +31,7 @@ const Home = () => {
 	const [momentsData] = useContext(MomentsListContext);
 	const [articlesData] = useContext(KnowledgeListContext);
 	const [now, setNow] = useState(() => new Date());
+	const [binesOnline, setBinesOnline] = useState(false);
 	const displayAuthor = t(locale, 'profileAuthor');
 	const interestItems = t(locale, 'interestsItems');
 	const effectiveMoments = momentsData;
@@ -39,6 +41,28 @@ const Home = () => {
 		const tick = () => setNow(new Date());
 		const id = setInterval(tick, 1000);
 		return () => clearInterval(id);
+	}, []);
+
+	useEffect(() => {
+		let timerId;
+		const apiBase = process.env.REACT_APP_SERVER_HOST || '';
+		const url = `${apiBase}/api/status/bines`;
+		const fetchStatus = async () => {
+			try {
+				const resp = await fetch(url);
+				const data = await resp.json().catch(() => ({}));
+				if (resp.ok && data && typeof data.data?.online === 'boolean') {
+					setBinesOnline(!!data.data.online);
+				}
+			} catch (e) {
+				// ignore
+			}
+		};
+		fetchStatus();
+		timerId = setInterval(fetchStatus, 30000);
+		return () => {
+			if (timerId) clearInterval(timerId);
+		};
 	}, []);
 
 	const latestMoment = useMemo(() => {
@@ -129,14 +153,25 @@ const Home = () => {
 				<div className={homeStyles.homeGrid}>
 					{/* Profile Card */}
 					<div className={homeStyles.profileCard}>
-						<div className={homeStyles.avatarSection}>
-							{PROFILE.avatar ? (
-								<img src={PROFILE.avatar} alt={displayAuthor} className={homeStyles.avatar} />
-							) : (
-								<div className={homeStyles.avatarPlaceholder}>
-									{displayAuthor.charAt(0).toUpperCase()}
+						<div className={homeStyles.avatarAndBines}>
+							<div className={homeStyles.avatarSection}>
+								{PROFILE.avatar ? (
+									<img src={PROFILE.avatar} alt={displayAuthor} className={homeStyles.avatar} />
+								) : (
+									<div className={homeStyles.avatarPlaceholder}>
+										{displayAuthor.charAt(0).toUpperCase()}
+									</div>
+								)}
+							</div>
+							<div className={homeStyles.binesRow}>
+								<img src={binesImg} alt="Bines" className={homeStyles.binesAvatar} />
+								<div className={homeStyles.binesInfo}>
+									<span className={homeStyles.binesName}>{t(locale, 'binesDisplayName')}</span>
+									<span className={`${homeStyles.binesStatus} ${binesOnline ? homeStyles.binesStatusOnline : ''}`}>
+										{binesOnline ? t(locale, 'statusOnline') : t(locale, 'statusOffline')}
+									</span>
 								</div>
-							)}
+							</div>
 						</div>
 						<h2 className={homeStyles.authorName}>{displayAuthor}</h2>
 						<p className={homeStyles.description}>{t(locale, 'profileDescription')}</p>
