@@ -160,7 +160,7 @@ const Home = () => {
 						<div className={homeStyles.avatarAndBines}>
 							<div className={homeStyles.avatarSection}>
 								{PROFILE.avatar ? (
-									<img src={PROFILE.avatar} alt={displayAuthor} className={homeStyles.avatar} />
+									<img src={PROFILE.avatar} alt={displayAuthor} className={homeStyles.avatar} loading="lazy" />
 								) : (
 									<div className={homeStyles.avatarPlaceholder}>
 										{displayAuthor.charAt(0).toUpperCase()}
@@ -168,7 +168,7 @@ const Home = () => {
 								)}
 							</div>
 							<div className={homeStyles.binesRow}>
-								<img src={binesImg} alt="Bines" className={homeStyles.binesAvatar} />
+								<img src={binesImg} alt="Bines" className={homeStyles.binesAvatar} loading="lazy" />
 								<div className={homeStyles.binesInfo}>
 									<span className={homeStyles.binesName}>{t(locale, 'binesDisplayName')}</span>
 									<span className={`${homeStyles.binesStatus} ${binesOnline ? homeStyles.binesStatusOnline : ''}`}>

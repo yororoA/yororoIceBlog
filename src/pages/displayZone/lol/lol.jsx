@@ -14,7 +14,7 @@ const ITEMS = [
   },
 ];
 
-const Lol = () => {
+const LoL = () => {
   const { locale } = useContext(UiPersistContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -78,5 +78,5 @@ const Lol = () => {
   );
 };
 
-export default Lol;
+export default LoL;
 

@@ -9,7 +9,6 @@ import { getUid, isGuest } from "../../../../../utils/auth";
 import {getAvatarColor} from '../../../../../utils/avatarColor';
 import { UiPersistContext } from "../../../context/uiPersistContext";
 import { t } from "../../../../../i18n/uiText";
-import { useWheelInertia } from '../../../../../hooks/useWheelInertia';
 import card from './content.module.less';
 
 
@@ -70,11 +69,8 @@ const Content = ({ headshotType }) => {
 		}
 	}, [_id, uid, onMomentDeleted, showFailed]);
 
-	const contentScrollRef = useRef(null);
-	useWheelInertia(contentScrollRef);
-
 	return (
-		<div ref={contentScrollRef} className={card.entire} onClick={e=>e.stopPropagation()}>
+		<div className={card.entire} onClick={e=>e.stopPropagation()}>
 			<div className={card.content}>
 				{/* alt=username */}
 				{headshotType ? (

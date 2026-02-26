@@ -99,8 +99,9 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 			{showThumbnails && items.map((item, index) =>
 				<div className={preview.iv} key={prefix + index} onClick={(e) => viewIv(e, index)}>
 					{
-						item[1] === 'image' ? <img src={item[0]} alt="" id={`${prefix}-${index}`}/> :
-							<video src={item[0]} id={`${prefix}-${index}`}/>
+						item[1] === 'image'
+							? <img src={item[0]} alt="" id={`${prefix}-${index}`} loading="lazy" />
+							: <video src={item[0]} id={`${prefix}-${index}`}/>
 					}
 					<label htmlFor={`${prefix}-${index}`}>
 						<svg viewBox="0 0 1024 1024" version="1.1"
@@ -149,7 +150,7 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 										aria-label={`第 ${i + 1} 张`}
 									>
 										{item[1] === 'image' ? (
-											<img src={item[0]} alt="" />
+											<img src={item[0]} alt="" loading="lazy" />
 										) : (
 											<video src={item[0]} muted />
 										)}

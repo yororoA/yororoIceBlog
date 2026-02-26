@@ -101,6 +101,9 @@ const Moments = () => {
 	const pendingCount = pendingNewMoments.length;
 	const [editing, setEditing] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const listRef = useRef(null);
+	const [viewportHeight, setViewportHeight] = useState(0);
+	const [scrollTop, setScrollTop] = useState(0);
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	const midFromQuery = searchParams.get('mid');
@@ -253,12 +256,32 @@ const Moments = () => {
 		if (momentsData.length === 0 && !editing) fetchMoments();
 	}, [editing, momentsData.length, fetchMoments]);
 
-	// 直接根据数据渲染列表，midFromQuery 变化时只更新 props 不整表替换，避免关闭详情时卡片重挂载导致 Pop 关闭动画重播
-	const listContent = loading && momentsData.length === 0
-		? null
-		: momentsData.length === 0
-			? 'no moments yet'
-			: momentsData.map(item => (
+	// 虚拟列表：根据滚动位置仅渲染可视区附近的 items，减轻大列表渲染开销
+	useLayoutEffect(() => {
+		const el = listRef.current;
+		if (!el) return;
+		const update = () => {
+			setViewportHeight(el.clientHeight || window.innerHeight);
+		};
+		update();
+		window.addEventListener('resize', update);
+		return () => window.removeEventListener('resize', update);
+	}, []);
+
+	const handleScroll = useCallback((e) => {
+		setScrollTop(e.currentTarget.scrollTop);
+	}, []);
+
+	// 直接根据数据渲染列表；当数据量较大时启用简单虚拟列表，midFromQuery 变化时只更新 props，不整表替换
+	const shouldVirtualize = momentsData.length > 40 && viewportHeight > 0;
+	const ESTIMATED_ITEM_HEIGHT = 320;
+	const OVERSCAN = 4;
+
+	let elements;
+	if (!loading && momentsData.length === 0) {
+		elements = 'no moments yet';
+	} else if (!shouldVirtualize) {
+		elements = momentsData.map(item => (
 			<MomentItem
 				data={item}
 				liked={likedMoments.includes(item._id)}
@@ -269,7 +292,37 @@ const Moments = () => {
 				isActiveDetail={detailMomentId === item._id}
 			/>
 		));
-	const elements = listContent;
+	} else {
+		const totalHeight = momentsData.length * ESTIMATED_ITEM_HEIGHT;
+		const startIndex = Math.max(
+			0,
+			Math.floor(scrollTop / ESTIMATED_ITEM_HEIGHT) - OVERSCAN
+		);
+		const endIndex = Math.min(
+			momentsData.length,
+			Math.ceil((scrollTop + viewportHeight) / ESTIMATED_ITEM_HEIGHT) + OVERSCAN
+		);
+		const slice = momentsData.slice(startIndex, endIndex);
+		const virtualItems = slice.map(item => (
+			<MomentItem
+				data={item}
+				liked={likedMoments.includes(item._id)}
+				key={item._id}
+				onOpenDetails={onOpenDetails}
+				onRequestDetail={handleRequestDetail}
+				isDeleting={deletingIds.includes(item._id)}
+				isActiveDetail={detailMomentId === item._id}
+			/>
+		));
+
+		elements = (
+			<div style={{ position: 'relative', height: totalHeight }}>
+				<div style={{ position: 'absolute', top: startIndex * ESTIMATED_ITEM_HEIGHT, left: 0, right: 0 }}>
+					{virtualItems}
+				</div>
+			</div>
+		);
+	}
 
 	// 发布新 moment 关闭弹层后刷新列表并更新 context
 	const handleCloseNewMoment = useCallback(() => {
@@ -322,7 +375,11 @@ const Moments = () => {
 						{t(locale, 'pendingMomentsBanner', pendingCount)}
 					</button>
 				)}
-				<div className={moments.entire}>
+				<div
+					className={moments.entire}
+					ref={listRef}
+					onScroll={shouldVirtualize ? handleScroll : undefined}
+				>
 				{loading && momentsData.length === 0 ? (
 					<div className={moments.loading}>
 						<span className={moments.loadingDot} />

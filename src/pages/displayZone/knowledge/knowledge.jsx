@@ -15,7 +15,6 @@ import { sendArticleLike } from '../../../utils/sendArticleLike';
 import { KnowledgeListContext } from './context/knowledgeListContext';
 import { UiPersistContext } from '../context/uiPersistContext';
 import { t } from '../../../i18n/uiText';
-import { useWheelInertia } from '../../../hooks/useWheelInertia';
 import IvPreview from '../../../components/ui/image_video_preview/ivPreview';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
@@ -87,7 +86,7 @@ const KnowledgeCard = ({ article, liked, onOpenDetail, locale, isDeleting = fals
       <div className={`${knowledge.cardTop} ${hasCover ? knowledge.cardTopWithCover : ''}`}>
         {hasCover && (
           <div className={knowledge.cardCover}>
-            <img src={coverUrl} alt="" />
+            <img src={coverUrl} alt="" loading="lazy" />
           </div>
         )}
         <div className={knowledge.cardBody}>
@@ -158,8 +157,6 @@ const ArticleDetail = ({
   locale
 }) => {
   const { title, category, tags, content, createdAt, updatedAt, _id } = article;
-  const contentScrollRef = useRef(null);
-  useWheelInertia(contentScrollRef);
   const imageUrls = useMemo(() => extractImageUrlsFromMarkdown(content), [content]);
   const [enlargedImageIndex, setEnlargedImageIndex] = useState(null);
   const imgRenderIndexRef = useRef(0);
@@ -219,7 +216,7 @@ const ArticleDetail = ({
           </div>
         )}
       </div>
-      <div ref={contentScrollRef} className={knowledge.detailContent}>
+      <div className={knowledge.detailContent}>
         {imageUrls.length > 0 && (
           <IvPreview
             items={imageItems}

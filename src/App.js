@@ -13,7 +13,7 @@ const PAGE_TITLES = {
 	'/town/gallery': `Gallery${TITLE_SUFFIX}`,
 	'/town/articles': `Articles${TITLE_SUFFIX}`,
 	'/town/archive': `Archive${TITLE_SUFFIX}`,
-	'/town/lol': `Lol${TITLE_SUFFIX}`,
+	'/town/lol': `LOL${TITLE_SUFFIX}`,
 	'/town/other': `Other${TITLE_SUFFIX}`,
 };
 

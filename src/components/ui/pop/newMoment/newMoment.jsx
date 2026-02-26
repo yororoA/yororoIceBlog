@@ -42,7 +42,7 @@ const NmIvPreview = React.memo(({ images, videos, onRemoveImage, onRemoveVideo }
 			<>
 				{imageUrls.map((url, i) => (
 					<div key={`img-${i}`} className={card.nmIvItem}>
-						<img src={url} alt="" />
+						<img src={url} alt="" loading="lazy" />
 						<button
 							type="button"
 							className={card.nmIvRemove}
