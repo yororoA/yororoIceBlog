@@ -1,0 +1,228 @@
+.page {
+  padding: 24px 20px 32px;
+  max-width: 1360px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.header {
+  margin-bottom: 18px;
+}
+.title {
+  margin: 0 0 6px 0;
+  font-size: var(--h2-fontsize);
+  font-weight: 700;
+  color: var(--text-color);
+}
+.subtitle {
+  margin: 0;
+  font-size: var(--p-fontsize);
+  color: var(--text-color-secondary);
+}
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+.card {
+  border: var(--nm-input-border);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+  background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow var(--hover-duration) var(--hover-ease), transform var(--hover-duration) var(--hover-ease);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-3px);
+}
+.cardTitle {
+  margin: 0;
+  font-size: var(--h4-fontsize);
+  font-weight: 600;
+  color: var(--text-color);
+}
+.cardDesc {
+  margin: 0;
+  font-size: var(--h5-fontsize);
+  color: var(--text-color-secondary);
+}
+.playerRoot {
+  padding: 0;
+  width: min(1400px, 98vw);
+  max-height: 96vh;
+  box-sizing: border-box;
+  background: #020617;
+  border-radius: 16px;
+  border: 1px solid #1e293b;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.8);
+  color: #e5e7eb;
+}
+.playerRoot * {
+  box-sizing: border-box;
+}
+.fsContainer {
+  display: flex;
+  gap: 16px;
+  max-width: 1800px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+.leftCol {
+  width: 60%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.rightCol {
+  flex: 1;
+  min-width: 300px;
+  position: sticky;
+  top: 12px;
+}
+.resizer {
+  width: 8px;
+  background: #1e293b;
+  border-radius: 4px;
+  cursor: col-resize;
+  align-self: stretch;
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.resizer::after {
+  content: "";
+  width: 2px;
+  height: 24px;
+  background: #4b5563;
+  border-radius: 2px;
+}
+.resizer:hover,
+.resizerActive {
+  background: #3b82f6;
+}
+.resizer:hover::after,
+.resizerActive::after {
+  background: #fff;
+}
+.panel {
+  background: #020617;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.6);
+  border: 1px solid #1e293b;
+}
+.row {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+.rowItem {
+  flex: 1;
+}
+.fsLabel {
+  display: block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+.fsLabel span {
+  display: inline-block;
+}
+.fsInput,
+.fsSelect {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+  background: #0f172a;
+  color: #e5e7eb;
+  font-size: 13px;
+  margin-top: 6px;
+}
+.fsInput:focus,
+.fsSelect:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+.fsButton {
+  margin-top: 16px;
+  margin-right: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: #3b82f6;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.fsButtonSecondary {
+  background: #4b5563;
+}
+.fsButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.fsButton:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+.fsButtonSecondary:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(75, 85, 99, 0.3);
+}
+.status {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #10b981;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.fsSmall {
+  font-size: 12px;
+  color: #6b7280;
+  display: inline-block;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.fsVideo {
+  width: 100%;
+  border-radius: 8px;
+  background: #000;
+  display: block;
+}
+.fsCanvas {
+  touch-action: none;
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  background: #0f172a;
+  border: 1px solid #1f2937;
+}
+@media (max-width: 1024px) {
+  .fsContainer {
+    flex-direction: column;
+  }
+  .leftCol {
+    width: 100% !important;
+  }
+  .resizer {
+    display: none;
+  }
+  .rightCol {
+    position: static;
+    width: 100%;
+  }
+}

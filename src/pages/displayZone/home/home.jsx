@@ -118,6 +118,10 @@ const Home = () => {
 			navigate('/town/moments');
 			return;
 		}
+		if (action === 'lol') {
+			navigate('/town/lol');
+			return;
+		}
 		if (action === 'articles') {
 			navigate('/town/articles');
 			return;
@@ -229,6 +233,7 @@ const Home = () => {
 				</div>
 				<div className={homeStyles.shortcutStrip}>
 					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('moments')}>{t(locale, 'shortcutViewMoments')}</button>
+				<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('lol')}>{t(locale, 'shortcutLol')}</button>
 					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('articles')}>{t(locale, 'shortcutViewArticles')}</button>
 					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('gallery')}>{t(locale, 'shortcutViewGallery')}</button>
 					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('friendLinks')}>{t(locale, 'friendLinks')}</button>
