@@ -347,7 +347,7 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
         if (!result?.success || !result?.data?.url) continue;
         const url = result.data.url;
         const escapedName = imgFile.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const regex = new RegExp('!\\[([^\\]]*)\\]\\(' + '[^)]*' + escapedName + '\\)', 'gi');
+        const regex = new RegExp('!\\[([^\\]]*)\\]\\([^)]*' + escapedName + '\\)', 'gi');
         contentMd = contentMd.replace(regex, (match, alt) => `![${alt || imgFile.name}](${url})`);
       }
       setContent(contentMd);
