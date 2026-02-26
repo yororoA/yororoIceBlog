@@ -139,8 +139,13 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 	// 草稿/发布post
 	const published = useRef(false);
 	const addApi = useRef(`${process.env.REACT_APP_SERVER_HOST}/api/moments/post`);
+	const submittingRef = useRef(false);
+	const [submitting, setSubmitting] = useState(false);
 	const handleSubmitMoment = async (e) => {
 		e.preventDefault();
+		if (submittingRef.current) return;
+		submittingRef.current = true;
+		setSubmitting(true);
 		const formElements = formRef.current;
 		// const files = Array.from(formElements.files.files);
 
@@ -194,6 +199,8 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 		} finally {
 			// 重置发布状态，避免下一次提交被误判
 			published.current = false;
+			submittingRef.current = false;
+			setSubmitting(false);
 			// 关闭编辑界面
 			onClose();
 		}
@@ -311,7 +318,12 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 					<label htmlFor="acknowledge">{t(locale, 'commitToGallery')}</label>
 				</section>
 
-				<CommonBtn type={"submit"} text={t(locale, 'publish')} disabled={!allCompleted} onClick={() => published.current = true}/>
+				<CommonBtn
+					type={"submit"}
+					text={submitting ? t(locale, 'publishing') : t(locale, 'publish')}
+					disabled={!allCompleted || submitting}
+					onClick={() => { if (!submittingRef.current) published.current = true; }}
+				/>
 			</form>
 		</>
 	);

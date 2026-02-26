@@ -30,6 +30,47 @@ const Archive = lazy(() => import('./pages/displayZone/archive/archive'));
 const About = lazy(() => import('./pages/displayZone/about/about'));
 const Lol = lazy(() => import('./pages/displayZone/lol/lol'));
 
+const GlobalFallback = () => (
+	<div
+		style={{
+			position: 'fixed',
+			inset: 0,
+			display: 'flex',
+			alignItems: 'center',
+			justifyContent: 'center',
+			background: 'rgba(15,23,42,0.75)',
+			zIndex: 9999,
+			color: '#e5e7eb',
+			fontSize: 14,
+			backdropFilter: 'blur(2px)',
+		}}
+	>
+		<div
+			style={{
+				padding: '12px 18px',
+				borderRadius: 999,
+				background: 'rgba(15,23,42,0.95)',
+				boxShadow: '0 10px 40px rgba(0,0,0,0.45)',
+				display: 'flex',
+				alignItems: 'center',
+				gap: 10,
+			}}
+		>
+			<span
+				style={{
+					width: 14,
+					height: 14,
+					borderRadius: '999px',
+					border: '2px solid rgba(148,163,184,0.4)',
+					borderTopColor: '#38bdf8',
+					animation: 'spin 0.8s linear infinite',
+				}}
+			/>
+			<span>Loading...</span>
+		</div>
+	</div>
+);
+
 // 创建一个在Router内部的组件来处理导航逻辑
 function AppContent() {
 	const navigate = useNavigate();
@@ -49,7 +90,7 @@ function AppContent() {
 	}, [location.pathname]);
 
 	return (
-		<Suspense fallback={null}>
+		<Suspense fallback={<GlobalFallback />}>
 			<Routes>
 				{/* access allowed only after account */}
 				<Route path='/town' element={<DisplayZone />}>
