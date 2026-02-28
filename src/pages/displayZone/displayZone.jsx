@@ -28,6 +28,7 @@ import { getMoments } from '../../utils/getMoments';
 import { getKnowledgeArticles } from '../../utils/knowledge';
 import { getGuestbookComments } from '../../utils/guestbook';
 import { GuestbookContext } from './context/guestbookContext';
+import { ChatProvider } from './chat/context/chatContext';
 
 const LOCALE_ORDER = ['en', 'zh', 'ja'];
 
@@ -369,6 +370,7 @@ const DisplayZone = () => {
 								{ id: 'articles', labelKey: 'navArticles' },
 								{ id: 'gallery', labelKey: 'navGallery' },
 								{ id: 'archive', labelKey: 'navArchive' },
+								{ id: 'chat', labelKey: 'navChat' },
 								{ id: 'other', labelKey: 'navOther' },
 							].map(item => (
 								<span
@@ -456,7 +458,9 @@ const DisplayZone = () => {
 									<GalleryContext.Provider value={[galleryIvs, setGalleryIvs, galleryHasMore, setGalleryHasMore]}>
 										<GuestbookContext.Provider value={[guestbookComments, setGuestbookComments]}>
 											<ArchiveListContext.Provider value={[archiveData, setArchiveData, archiveStats, setArchiveStats, archiveYears, setArchiveYears]}>
-												<Outlet />
+												<ChatProvider>
+													<Outlet />
+												</ChatProvider>
 											</ArchiveListContext.Provider>
 										</GuestbookContext.Provider>
 									</GalleryContext.Provider>

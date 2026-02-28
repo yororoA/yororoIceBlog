@@ -44,6 +44,11 @@
     --nav-link-padding: 8rem;
     --logo-height: 35rem; /* logo height */
     /*--mainNav-height: 80vh;*/
+    /* displayZone 导航栏 / 底部声明栏高度，用于一屏判定与滚动区域计算 */
+    --displayzone-nav-height: calc(var(--logo-height) * 0.9);
+    --displayzone-footer-height: 44px;
+    /* displayZone 内容区背景（不透明，用于粘滞块等） */
+    --displayzone-bgc: rgb(227, 226, 226);
 
     --entire-bgc: rgba(227, 226, 226, 0.6);
     /*--entire-bgc: rgba(18,19,22,1);*/
@@ -144,6 +149,7 @@
 /* 深色模式变量：通过 html[data-theme="dark"] 激活 */
 :root[data-theme='dark'] {
     /* 背景与容器 */
+    --displayzone-bgc: rgba(18, 19, 22, 1);
     --entire-bgc: rgba(18, 19, 22, 1);
     --nav-bgc: rgba(31, 32, 36, 0.9);
     --pop-bgc: rgba(31, 32, 36, 0.94);

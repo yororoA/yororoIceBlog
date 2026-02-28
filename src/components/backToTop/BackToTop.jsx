@@ -31,11 +31,23 @@ const BackToTop = ({ scrollContainerRef }) => {
 
 	const scrollToTop = useCallback(() => {
 		const el = getScrollElement();
-		if (el) {
-			el.scrollTo({ top: 0, behavior: 'smooth' });
-		} else {
-			window.scrollTo({ top: 0, behavior: 'smooth' });
-		}
+		const getTop = () => (el ? el.scrollTop : window.scrollY ?? document.documentElement.scrollTop);
+		const setTop = (v) => {
+			if (el) el.scrollTop = v;
+			else window.scrollTo(0, v);
+		};
+		const start = getTop();
+		if (start <= 0) return;
+		const duration = 360;
+		const startTime = performance.now();
+		const easeOut = (t) => 1 - (1 - t) * (1 - t);
+		const tick = (now) => {
+			const elapsed = now - startTime;
+			const t = Math.min(elapsed / duration, 1);
+			setTop(start * (1 - easeOut(t)));
+			if (t < 1) requestAnimationFrame(tick);
+		};
+		requestAnimationFrame(tick);
 	}, [getScrollElement]);
 
 	if (!visible) return null;

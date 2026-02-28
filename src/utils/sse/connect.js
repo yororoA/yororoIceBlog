@@ -102,6 +102,15 @@ function handleEvent(eventName, payload, dispatch) {
 			// payload: { type: 'guestbook.new', data: entry }
 			dispatch(payload);
 			break;
+		case 'chat':
+			// payload: { type: 'chat.new', chatType: 'group'|'private', convKey?: string, data: msg }
+			if (payload?.type === 'chat.new' && payload.data) {
+				window.dispatchEvent(new CustomEvent('chat.new', {
+					detail: { chatType: payload.chatType, convKey: payload.convKey, data: payload.data },
+				}));
+			}
+			dispatch(payload);
+			break;
 		case 'token':
 			// payload: { type: 'token.refresh', data: { token, expiresAt, refreshUtil} }
 			// 按当前登录类型更新对应 key，避免 guest 与正式账号混用

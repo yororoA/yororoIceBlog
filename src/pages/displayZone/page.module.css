@@ -8,12 +8,13 @@
     transform: translateY(0);
   }
 }
+/* 滚动区域高度 = 视口 - 底部声明栏，使“一屏”判定与无多余滚动时计入导航栏与底部栏 */
 .entire {
   margin: 0 auto;
   width: 100%;
   max-width: 100vw;
-  min-height: 100vh;
-  max-height: 100vh;
+  min-height: calc(100vh - var(--displayzone-footer-height));
+  max-height: calc(100vh - var(--displayzone-footer-height));
   overflow: auto;
   scrollbar-width: none;
   box-sizing: border-box;
@@ -198,6 +199,8 @@
 .entire main {
   width: 60%;
   min-width: 0;
+  min-height: 0;
+  flex: 1 1 0%;
   padding: 0 0 calc(var(--logo-height) * 2) 0;
   box-sizing: border-box;
 }
@@ -287,7 +290,7 @@
     height: 28px;
   }
 }
-/* 固定页脚：与导航栏对称，始终贴在视口底部（通过 Portal 挂到 body） */
+/* 固定页脚：与导航栏对称，始终贴在视口底部（通过 Portal 挂到 body），高度与 --displayzone-footer-height 一致 */
 .globalFooter {
   position: fixed;
   bottom: 0;
@@ -295,6 +298,7 @@
   right: 0;
   z-index: 9;
   width: 100%;
+  min-height: var(--displayzone-footer-height);
   display: flex;
   flex-direction: column;
   align-items: center;

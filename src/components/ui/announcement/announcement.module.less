@@ -1,6 +1,6 @@
 .entire {
-  min-width: 60vw;
-  max-width: 80vw;
+  min-width: min(60vw, 340px);
+  max-width: 90vw;
   max-height: 70vh;
   padding: 8rem 10rem;
   box-sizing: border-box;
@@ -35,6 +35,14 @@
 .content {
   flex: 1 1 auto;
   overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  word-break: break-word;
+  overflow-wrap: break-word;
   font-size: var(--p-fontsize);
   line-height: 1.6;
   font-family: "Inter", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -66,17 +74,21 @@
 
   p {
     margin: 2rem 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   ul,
   ol {
-    padding-left: 12rem;
+    padding-left: 24rem; /* 留足空间，避免两位数序号（如 10、11、12）首位被遮挡 */
     margin: 3rem 0;
   }
 
   li {
     margin: 2.4rem 0;
     line-height: 1.85;
+    word-break: break-word;
+    overflow-wrap: break-word;
 
     p {
       margin: 1.4rem 0;
@@ -113,10 +125,12 @@
   blockquote {
     border-left: 2rem solid var(--accent-color-border);
     margin: 4rem 0;
-    padding: 2rem 6rem;
+    padding: 2rem 6rem 2rem 12rem; /* 左内边距加大，避免两位数序号首位被遮挡 */
     color: var(--text-color-secondary);
     background: var(--accent-color-lighter);
     border-radius: 0 4rem 4rem 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   table {
