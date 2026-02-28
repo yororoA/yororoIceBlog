@@ -23,7 +23,10 @@ import { useWheelInertia } from '../../hooks/useWheelInertia';
 import BackToTop from '../../components/backToTop/BackToTop';
 import ProfileMiniCard from './shared/profileMiniCard';
 import MomentsCalendar from './shared/momentsCalendar';
-import { getUid, logout } from '../../utils/auth';
+import { getUid, logout, isGuest, getGuestDisplayName, getUsername } from '../../utils/auth';
+import { getAvatarColor, getAvatarLetter } from '../../utils/avatarColor';
+import adminImg from '../../assets/images/admin.png';
+import binesImg from '../../assets/images/bines.png';
 import { getMoments } from '../../utils/getMoments';
 import { getKnowledgeArticles } from '../../utils/knowledge';
 import { getGuestbookComments } from '../../utils/guestbook';
@@ -31,9 +34,23 @@ import { GuestbookContext } from './context/guestbookContext';
 import { ChatProvider } from './chat/context/chatContext';
 
 const LOCALE_ORDER = ['en', 'zh', 'ja'];
+const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
+const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
+
+const SettingsIcon = () => (
+	<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+		<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+		<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+	</svg>
+);
 
 const DisplayZone = () => {
 	const uid = getUid();
+	const guest = isGuest();
+	const displayName = guest ? getGuestDisplayName() : (getUsername() || (uid ? `User_${String(uid).slice(-6)}` : ''));
+	const avatarImg = ADMIN_UIDS.includes(uid) ? adminImg : uid === BINES_UID ? binesImg : null;
+	const avatarLetter = !avatarImg && displayName ? getAvatarLetter(displayName) : null;
+	const avatarColor = avatarLetter ? getAvatarColor(uid || displayName) : null;
 	// gallery 的 ivs、hasMore 放在 DisplayZone，切换路由时不会卸载，回来时图片仍在且不会重复请求
 	const [galleryIvs, setGalleryIvs] = useState([]);
 	const [galleryHasMore, setGalleryHasMore] = useState(true);
@@ -68,7 +85,15 @@ const DisplayZone = () => {
 	const [successList, setSuccessList] = useState([]);
 	const [failedList, setFailedList] = useState([]);
 	const [showConnectedBoard, setShowConnectedBoard] = useState(true);
-	const [showLocaleMenu, setShowLocaleMenu] = useState(false);
+	const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+	const [showLocaleSubmenu, setShowLocaleSubmenu] = useState(false);
+	const [showGuestModal, setShowGuestModal] = useState(false);
+	useEffect(() => {
+		if (guest && typeof sessionStorage !== 'undefined' && sessionStorage.getItem('guest_modal_pending')) {
+			sessionStorage.removeItem('guest_modal_pending');
+			setShowGuestModal(true);
+		}
+	}, [guest]);
 	const showSuccess = useCallback((content) => {
 		setSuccessList(prev => [...prev, { id: Date.now(), content }]);
 	}, []);
@@ -85,7 +110,7 @@ const DisplayZone = () => {
 	const location = useLocation();
 	const isHomeRoute = location.pathname === '/town' || location.pathname === '/town/';
 	const scrollContainerRef = useRef(null);
-	const localeMenuRef = useRef(null);
+	const settingsMenuRef = useRef(null);
 	useWheelInertia(scrollContainerRef);
 
 	// 首次进入 DisplayZone 时拉取首页/列表所需数据，避免切到首页或 other 时重复请求
@@ -132,29 +157,34 @@ const DisplayZone = () => {
 		sessionStorage.setItem('welcomeAnnouncementSeen', '1');
 		if (typeof proceed === 'function') proceed();
 	}, []);
+	const handleCloseGuestModal = useCallback((proceed) => {
+		setShowGuestModal(false);
+		if (typeof proceed === 'function') proceed();
+	}, []);
 
 	// 手动打开公告（通过按钮）
 	const handleOpenAnnouncement = useCallback(() => {
 		setShowAnnouncement(true);
 	}, []);
 
-	const handleToggleLocaleMenu = useCallback(() => {
-		setShowLocaleMenu(prev => !prev);
+	const handleToggleSettingsMenu = useCallback(() => {
+		setShowSettingsMenu(prev => { if (!prev) setShowLocaleSubmenu(false); return !prev; });
 	}, []);
 	const handleSelectLocale = useCallback((nextLocale) => {
 		setLocale(nextLocale);
-		setShowLocaleMenu(false);
+		setShowLocaleSubmenu(false);
 	}, []);
 	useEffect(() => {
-		if (!showLocaleMenu) return undefined;
+		if (!showSettingsMenu) return undefined;
 		const onPointerDown = (e) => {
-			if (localeMenuRef.current && !localeMenuRef.current.contains(e.target)) {
-				setShowLocaleMenu(false);
+			if (settingsMenuRef.current && !settingsMenuRef.current.contains(e.target)) {
+				setShowSettingsMenu(false);
+				setShowLocaleSubmenu(false);
 			}
 		};
 		window.addEventListener('pointerdown', onPointerDown);
 		return () => window.removeEventListener('pointerdown', onPointerDown);
-	}, [showLocaleMenu]);
+	}, [showSettingsMenu]);
 
 	useEffect(() => {
 		localStorage.setItem('ui_locale', locale);
@@ -344,6 +374,28 @@ const DisplayZone = () => {
 					/>
 				</Pop>
 			)}
+			{showGuestModal && (
+				<Pop isLittle={false} onClose={handleCloseGuestModal}>
+					<div className={page.guestModal}>
+						<p className={page.guestModalTitle}>{t(locale, 'guestModalTitle')}</p>
+						<div className={page.guestModalActions}>
+							<button type="button" className={page.guestModalBtn} onClick={() => setShowGuestModal(false)}>
+								{t(locale, 'guestModalContinue')}
+							</button>
+							<button
+								type="button"
+								className={page.guestModalBtnPrimary}
+								onClick={() => {
+									setShowGuestModal(false);
+									navigate('/account/login');
+								}}
+							>
+								{t(locale, 'guestModalGoLogin')}
+							</button>
+						</div>
+					</div>
+				</Pop>
+			)}
 			{((showConnectedBoard && connect) || successList.length > 0 || failedList.length > 0) && (
 				<StatusBoardStack
 					showConnected={connect && showConnectedBoard}
@@ -388,41 +440,67 @@ const DisplayZone = () => {
 									<path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16ZM11 11H13V13H11V11ZM11 7H13V9H11V7Z" fill="currentColor" />
 								</svg>
 							</span>
-							<div className={page.localeMenuWrap} ref={localeMenuRef}>
-								<button
-									type="button"
-									className={page.localeIconBtn}
-									onClick={handleToggleLocaleMenu}
-									title={t(locale, 'languageToggle')}
-									aria-haspopup="menu"
-									aria-expanded={showLocaleMenu}
-								>
-									<svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-										<circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
-										<path d="M3.5 12H20.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-										<path d="M12 3C14.5 5.3 16 8.5 16 12C16 15.5 14.5 18.7 12 21" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-										<path d="M12 3C9.5 5.3 8 8.5 8 12C8 15.5 9.5 18.7 12 21" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-									</svg>
-								</button>
-								{showLocaleMenu && (
-									<div className={page.localeMenu} role="menu">
-										{LOCALE_ORDER.map((item) => (
-											<button
-												key={item}
-												type="button"
-												role="menuitemradio"
-												aria-checked={locale === item}
-												className={`${page.localeMenuItem}${locale === item ? ` ${page.localeMenuItemActive}` : ''}`}
-												onClick={() => handleSelectLocale(item)}
-											>
-												{item === 'en' ? t(locale, 'localeEn') : item === 'zh' ? t(locale, 'localeZh') : t(locale, 'localeJa')}
-											</button>
-										))}
-									</div>
-								)}
+							<div className={page.navUserSection}>
+								{displayName && <span className={page.navUsername} title={displayName}>{displayName}</span>}
+								{avatarImg ? (
+									<img src={avatarImg} alt="" className={page.navAvatarImg} />
+								) : avatarLetter ? (
+									<span className={page.navAvatarLetter} style={{ backgroundColor: avatarColor }}>{avatarLetter}</span>
+								) : null}
+								<div className={page.settingsWrap} ref={settingsMenuRef}>
+									<button
+										type="button"
+										className={page.settingsBtn}
+										onClick={handleToggleSettingsMenu}
+										title={t(locale, 'navSettings')}
+										aria-haspopup="menu"
+										aria-expanded={showSettingsMenu}
+									>
+										<SettingsIcon />
+									</button>
+									{showSettingsMenu && (
+										<>
+											<div className={page.settingsDropdown} role="menu">
+												<button type="button" className={page.settingsItem} role="menuitem" onClick={handleLogout}>
+													{t(locale, 'navLogout')}
+												</button>
+												<div className={page.settingsItemTheme}>
+													<span className={page.settingsItemLabel}>{t(locale, 'navTheme')}</span>
+													<SwitchTheme />
+												</div>
+												<div className={page.settingsItemWithSub}>
+													<button
+														type="button"
+														className={page.settingsItem}
+														role="menuitem"
+														aria-haspopup="true"
+														aria-expanded={showLocaleSubmenu}
+														onClick={() => setShowLocaleSubmenu(prev => !prev)}
+													>
+														{t(locale, 'languageToggle')}
+													</button>
+													{showLocaleSubmenu && (
+														<div className={page.localeSubmenu} role="menu">
+															{LOCALE_ORDER.map((item) => (
+																<button
+																	key={item}
+																	type="button"
+																	role="menuitemradio"
+																	aria-checked={locale === item}
+																	className={`${page.localeMenuItem}${locale === item ? ` ${page.localeMenuItemActive}` : ''}`}
+																	onClick={() => handleSelectLocale(item)}
+																>
+																	{item === 'en' ? t(locale, 'localeEn') : item === 'zh' ? t(locale, 'localeZh') : t(locale, 'localeJa')}
+																</button>
+															))}
+														</div>
+													)}
+												</div>
+											</div>
+										</>
+									)}
+								</div>
 							</div>
-							<span className={page.linkLogout} onClick={handleLogout}>{'Log out'}</span>
-							<SwitchTheme />
 						</div>
 					</nav>
 				</div>

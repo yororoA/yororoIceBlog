@@ -155,16 +155,18 @@ export function ChatProvider({ children }) {
 	);
 
 	const handleSend = useCallback(
-		async (text, imgurl = '', replyto = '') => {
-			if (!text?.trim()) return false;
+		async (text, imgurls = [], replyto = '') => {
+			const hasText = text != null && String(text).trim();
+			const hasMedia = Array.isArray(imgurls) && imgurls.length > 0;
+			if (!hasText && !hasMedia) return false;
 			setSending(true);
 			try {
 				const targetUserId = getTargetUserId(activeId, activeType);
 				const msg = await sendMessage({
 					type: activeType,
 					targetUserId: activeType === 'private' ? targetUserId : undefined,
-					text: text.trim(),
-					imgurl,
+					text: hasText ? String(text).trim() : '',
+					imgurl: imgurls || [],
 					replyto,
 				});
 				const key = getConvKey(activeId, activeType);

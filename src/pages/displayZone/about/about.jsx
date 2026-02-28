@@ -5,7 +5,7 @@ import adminImg from '../../../assets/images/admin.png';
 import binesImg from '../../../assets/images/bines.png';
 import { postGuestbookComment } from '../../../utils/guestbook';
 import { GuestbookContext } from '../context/guestbookContext';
-import { isGuest, getUid } from '../../../utils/auth';
+import { isGuest, getUid, setGuestDisplayName } from '../../../utils/auth';
 import { getAvatarColor } from '../../../utils/avatarColor';
 import { formatDateTime } from '../../../utils/formatDateTime';
 import { UiPersistContext } from '../context/uiPersistContext';
@@ -233,7 +233,8 @@ const About = () => {
       if (result.success && result.data) {
         setGuestbookComments(prev => [result.data, ...prev]);
         setNewComment('');
-        setGuestName(''); // 清空游客名称
+        if (isGuest() && guestName.trim()) setGuestDisplayName(guestName.trim());
+        setGuestName('');
       }
     } catch (err) {
       console.error('Post guestbook comment failed:', err);

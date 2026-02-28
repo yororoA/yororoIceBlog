@@ -38,8 +38,7 @@ const LoginCard = () => {
 			const payload = Object.fromEntries(formData.entries());
 			const result = await submitLoginWithFallback(payload, action);
 			if (result?.ok && result?.data) {
-				const { token, uid, migrated } = result.data;
-				// 如果密码已迁移，可以给用户提示（可选）
+				const { token, uid, username, migrated } = result.data;
 				if (migrated) {
 					console.log('您的密码已自动迁移到新格式，下次登录将使用新格式');
 				}
@@ -62,6 +61,15 @@ const LoginCard = () => {
 					} else {
 						sessionStorage.setItem('uid', `${uid}`);
 						localStorage.removeItem('uid');
+					}
+				}
+				if (username != null && String(username).trim()) {
+					if (rememberMe) {
+						localStorage.setItem('username', String(username).trim());
+						sessionStorage.removeItem('username');
+					} else {
+						sessionStorage.setItem('username', String(username).trim());
+						localStorage.removeItem('username');
 					}
 				}
 				navigate('/town');

@@ -15,3 +15,11 @@ export const getAvatarColor = (str = '') => {
   }
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 };
+
+/** 头像首字母：Guest_ 后接 6 位随机字母时取该 6 位的首字母，否则取整串首字母 */
+export const getAvatarLetter = (name = '') => {
+  if (!name || typeof name !== 'string') return '?';
+  const trimmed = name.trim();
+  if (/^Guest_[a-z]{6}$/i.test(trimmed)) return trimmed.charAt(6).toUpperCase();
+  return trimmed.charAt(0).toUpperCase() || '?';
+};

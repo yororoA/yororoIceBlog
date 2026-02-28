@@ -1,8 +1,49 @@
-import React, { useContext, useRef, useCallback } from 'react';
+import React, { useContext, useRef, useCallback, useState } from 'react';
 import styles from './chat.module.less';
 import { UiPersistContext } from '../context/uiPersistContext';
+import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
 import { t } from '../../../i18n/uiText';
 import { useChat } from './context/chatContext';
+import { getAvatarColor, getAvatarLetter } from '../../../utils/avatarColor';
+import { uploadChatMedia } from '../../../utils/chat';
+import adminImg from '../../../assets/images/admin.png';
+import binesImg from '../../../assets/images/bines.png';
+import IvPreview from '../../../components/ui/image_video_preview/ivPreview';
+
+const VIDEO_EXT = /\.(mp4|webm|ogg|mov|avi|mkv)(\?|$)/i;
+function inferMediaType(url) {
+	return VIDEO_EXT.test(url || '') ? 'video' : 'image';
+}
+
+function normalizeImgurl(imgurl) {
+	if (Array.isArray(imgurl)) return imgurl.filter(Boolean);
+	return imgurl ? [imgurl] : [];
+}
+
+const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
+const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
+
+function getMsgAvatar(msg) {
+	if (!msg) return { avatarImg: null, avatarLetter: null, avatarColor: null };
+	const uid = msg.uid;
+	const avatarImg = ADMIN_UIDS.includes(uid) ? adminImg : uid === BINES_UID ? binesImg : null;
+	const name = msg.username || uid || '';
+	const avatarLetter = !avatarImg && name ? getAvatarLetter(name) : null;
+	const avatarColor = avatarLetter ? getAvatarColor(uid || name) : null;
+	return { avatarImg, avatarLetter, avatarColor };
+}
+
+function getConvAvatar(conv) {
+	if (!conv) return { avatarImg: null, avatarLetter: null, avatarColor: null };
+	if (conv.id === 'group') {
+		return { avatarImg: null, avatarLetter: 'G', avatarColor: getAvatarColor('group') };
+	}
+	const avatarImg = conv.id === 'admin' ? adminImg : ADMIN_UIDS.includes(conv.id) ? adminImg : conv.id === BINES_UID ? binesImg : null;
+	const label = conv.label || conv.id || '';
+	const avatarLetter = !avatarImg && label ? getAvatarLetter(label) : null;
+	const avatarColor = avatarLetter ? getAvatarColor(conv.id || label) : null;
+	return { avatarImg, avatarLetter, avatarColor };
+}
 
 function formatTime(date) {
 	if (!date) return '';
@@ -30,8 +71,11 @@ function shouldShowTimeAbove(messages, index) {
 	return index === 0 || curMs - prevMs > THREE_MIN_MS;
 }
 
+const AVATAR_SIZE = 32;
+
 function ChatContent() {
 	const { locale } = useContext(UiPersistContext);
+	const { showFailed } = useContext(SuccessBoardContext) || {};
 	const {
 		conversations,
 		activeId,
@@ -45,8 +89,21 @@ function ChatContent() {
 		handleSend,
 		selectConversation,
 	} = useChat();
-	const [inputValue, setInputValue] = React.useState('');
+	const [inputValue, setInputValue] = useState('');
+	const [selectedMedia, setSelectedMedia] = useState([]);
+	const [uploading, setUploading] = useState(false);
+	const [enlargedMsgId, setEnlargedMsgId] = useState(null);
+	const [enlargedIndex, setEnlargedIndex] = useState(null);
 	const messagesRef = useRef(null);
+	const fileInputRef = useRef(null);
+	const selectedMediaRef = useRef([]);
+	selectedMediaRef.current = selectedMedia;
+
+	React.useEffect(() => () => {
+		selectedMediaRef.current.forEach((m) => {
+			if (m?.previewUrl) URL.revokeObjectURL(m.previewUrl);
+		});
+	}, []);
 
 	React.useEffect(() => {
 		const el = messagesRef.current;
@@ -65,12 +122,52 @@ function ChatContent() {
 		}
 	}, [canLoadMoreRendered, canLoadMoreHistory, loadMoreRendered, loadMoreHistory]);
 
-	const doSend = useCallback(() => {
-		if (!inputValue.trim() || sending) return;
-		handleSend(inputValue.trim()).then((ok) => {
-			if (ok) setInputValue('');
+	const handleFileSelect = useCallback((e) => {
+		const files = e.target.files;
+		if (!files || files.length === 0) return;
+		const next = [];
+		for (let i = 0; i < files.length; i++) {
+			const file = files[i];
+			const type = file.type.startsWith('video/') ? 'video' : 'image';
+			next.push({ file, previewUrl: URL.createObjectURL(file), type });
+		}
+		setSelectedMedia((prev) => [...prev, ...next]);
+		if (fileInputRef.current) fileInputRef.current.value = '';
+	}, []);
+
+	const removeSelectedMedia = useCallback((index) => {
+		setSelectedMedia((prev) => {
+			const item = prev[index];
+			if (item?.previewUrl) URL.revokeObjectURL(item.previewUrl);
+			return prev.filter((_, i) => i !== index);
 		});
-	}, [inputValue, sending, handleSend]);
+	}, []);
+
+	const doSend = useCallback(() => {
+		const hasText = inputValue.trim();
+		const hasMedia = selectedMedia.length > 0;
+		if ((!hasText && !hasMedia) || sending) return;
+		const files = selectedMedia.map((m) => m.file);
+		const previewUrls = selectedMedia.map((m) => m.previewUrl);
+		const sendPayload = () => {
+			if (files.length === 0) {
+				return handleSend(hasText ? inputValue.trim() : '', []);
+			}
+			setUploading(true);
+			return uploadChatMedia(files)
+				.then((urls) => handleSend(hasText ? inputValue.trim() : '', urls))
+				.finally(() => setUploading(false));
+		};
+		sendPayload().then((ok) => {
+			if (ok) {
+				previewUrls.forEach((url) => url && URL.revokeObjectURL(url));
+				setInputValue('');
+				setSelectedMedia([]);
+			}
+		}).catch((err) => {
+			showFailed?.(err.message || t(locale, 'galleryUploadFailed'));
+		});
+	}, [inputValue, selectedMedia, sending, handleSend, locale, showFailed]);
 
 	const getConvLabel = (conv) => {
 		if (conv.labelKey) return t(locale, conv.labelKey);
@@ -85,17 +182,26 @@ function ChatContent() {
 			<div className={styles.chatLayout} role="main">
 				<aside className={styles.sidebar}>
 					<div className={styles.convList}>
-						{conversations.map((conv) => (
-							<button
-								key={conv.id}
-								type="button"
-								className={`${styles.convItem} ${activeId === conv.id ? styles.convItemActive : ''}`}
-								onClick={() => selectConversation(conv.id, conv.type)}
-							>
-								<span className={styles.convAvatar} aria-hidden />
-								<span className={styles.convLabel}>{getConvLabel(conv)}</span>
-							</button>
-						))}
+						{conversations.map((conv) => {
+							const { avatarImg, avatarLetter, avatarColor } = getConvAvatar(conv);
+							return (
+								<button
+									key={conv.id}
+									type="button"
+									className={`${styles.convItem} ${activeId === conv.id ? styles.convItemActive : ''}`}
+									onClick={() => selectConversation(conv.id, conv.type)}
+								>
+									{avatarImg ? (
+										<img src={avatarImg} alt="" className={styles.convAvatarImg} />
+									) : avatarLetter ? (
+										<span className={styles.convAvatarLetter} style={{ backgroundColor: avatarColor }}>{avatarLetter}</span>
+									) : (
+										<span className={styles.convAvatar} aria-hidden />
+									)}
+									<span className={styles.convLabel}>{getConvLabel(conv)}</span>
+								</button>
+							);
+						})}
 					</div>
 				</aside>
 
@@ -113,6 +219,19 @@ function ChatContent() {
 						) : (
 							messages.map((msg, idx) => {
 								const showTimeAbove = shouldShowTimeAbove(messages, idx);
+								const { avatarImg, avatarLetter, avatarColor } = getMsgAvatar(msg);
+								const msgAvatarNode = avatarImg ? (
+									<img src={avatarImg} alt="" className={styles.msgAvatarImg} />
+								) : avatarLetter ? (
+									<span className={styles.msgAvatarLetter} style={{ backgroundColor: avatarColor }}>{avatarLetter}</span>
+								) : (
+									<span className={styles.msgAvatar} aria-hidden />
+								);
+								const imgurls = normalizeImgurl(msg.imgurl);
+								const hasText = msg.text && String(msg.text).trim();
+								const hasMedia = imgurls.length > 0;
+								const mediaItems = imgurls.map((url) => [url, inferMediaType(url)]);
+								const isOnlyMedia = hasMedia && !hasText;
 								return (
 									<div
 										key={msg._id}
@@ -122,24 +241,37 @@ function ChatContent() {
 											<div className={styles.msgTimeAbove}>{formatTime(msg.createdAt)}</div>
 										)}
 										<div className={styles.messageBubbleWrap}>
-											{!msg.isSent && (
-												<span className={styles.msgAvatar} aria-hidden />
-											)}
+											{!msg.isSent && msgAvatarNode}
 											<div className={styles.messageContent}>
 												<span className={styles.msgUsername}>{msg.username}</span>
 												<div className={styles.messageBubbles}>
-													<div className={styles.bubble}>{msg.text}</div>
-													{msg.imgurl && (
-														<a href={msg.imgurl} target="_blank" rel="noopener noreferrer" className={styles.bubbleImg}>
-															<img src={msg.imgurl} alt="" />
-														</a>
+													{hasText && <div className={styles.bubble}>{msg.text}</div>}
+													{hasMedia && (
+														<div className={isOnlyMedia ? styles.mediaGrid2 : styles.mediaGrid5}>
+															{mediaItems.map((item, i) => (
+																<div key={i} className={styles.mediaThumb} onClick={() => { setEnlargedMsgId(msg._id); setEnlargedIndex(i); }}>
+																	{item[1] === 'image' ? (
+																		<img src={item[0]} alt="" loading="lazy" />
+																	) : (
+																		<video src={item[0]} muted />
+																	)}
+																</div>
+															))}
+														</div>
 													)}
 												</div>
 											</div>
-											{msg.isSent && (
-												<span className={styles.msgAvatar} aria-hidden />
-											)}
+											{msg.isSent && msgAvatarNode}
 										</div>
+										{enlargedMsgId === msg._id && (
+											<IvPreview
+												items={mediaItems}
+												prefix={`chat_${msg._id}`}
+												showThumbnails={mediaItems.length > 1}
+												enlargedIndex={enlargedIndex}
+												onEnlargedIndexChange={(v) => { setEnlargedIndex(v); if (v == null) setEnlargedMsgId(null); }}
+											/>
+										)}
 										<div className={styles.msgTimeHover} aria-hidden>
 											{formatTime(msg.createdAt)}
 										</div>
@@ -149,6 +281,20 @@ function ChatContent() {
 						)}
 					</div>
 
+					{selectedMedia.length > 0 && (
+						<div className={styles.selectedMediaPreview}>
+							{selectedMedia.map((m, i) => (
+								<div key={i} className={styles.selectedMediaItem}>
+									{m.type === 'image' ? (
+										<img src={m.previewUrl} alt="" />
+									) : (
+										<video src={m.previewUrl} muted />
+									)}
+									<button type="button" className={styles.selectedMediaRemove} onClick={() => removeSelectedMedia(i)} aria-label="移除">×</button>
+								</div>
+							))}
+						</div>
+					)}
 					<div className={styles.inputBar}>
 						<input
 							type="text"
@@ -159,11 +305,32 @@ function ChatContent() {
 							onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && doSend()}
 							disabled={sending}
 						/>
-						<button type="button" className={styles.btnPlus} title="附件/表情" aria-label="附件">
+						<input
+							ref={fileInputRef}
+							type="file"
+							accept="image/*,video/*"
+							multiple
+							style={{ display: 'none' }}
+							onChange={handleFileSelect}
+							disabled={uploading}
+						/>
+						<button
+							type="button"
+							className={styles.btnPlus}
+							title={t(locale, 'upload')}
+							aria-label={t(locale, 'upload')}
+							onClick={() => fileInputRef.current?.click()}
+							disabled={uploading}
+						>
 							⊕
 						</button>
-						<button type="button" className={styles.btnSend} onClick={doSend} disabled={sending}>
-							{t(locale, 'chatSend')}
+						<button
+							type="button"
+							className={styles.btnSend}
+							onClick={doSend}
+							disabled={sending || uploading || (!inputValue.trim() && selectedMedia.length === 0)}
+						>
+							{uploading ? t(locale, 'uploading') : t(locale, 'chatSend')}
 						</button>
 					</div>
 				</section>

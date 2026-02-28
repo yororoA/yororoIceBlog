@@ -16,15 +16,27 @@ export async function getHistory({ type, userId, page = 1, limit = 15 }) {
 	return { items: data.data || [], hasMore: !!data.hasMore };
 }
 
-export async function sendMessage({ type, targetUserId, text, imgurl = '', replyto = '' }) {
+export async function sendMessage({ type, targetUserId, text, imgurl = [], replyto = '' }) {
+	const imgurlArr = Array.isArray(imgurl) ? imgurl : (imgurl ? [imgurl] : []);
 	const resp = await fetch(`${API}/send`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ type, targetUserId, text, imgurl, replyto }),
+		body: JSON.stringify({ type, targetUserId, text, imgurl: imgurlArr, replyto }),
 	});
 	const data = await resp.json();
 	if (!resp.ok) throw new Error(data.message || '发送失败');
 	return data.data;
+}
+
+export async function uploadChatMedia(files) {
+	const formData = new FormData();
+	for (let i = 0; i < files.length; i++) {
+		formData.append('files', files[i]);
+	}
+	const resp = await fetch(`${API}/upload`, { method: 'POST', body: formData });
+	const data = await resp.json();
+	if (!resp.ok) throw new Error(data.message || '上传失败');
+	return data.data?.urls || [];
 }
 
 export async function hasPrivateHistory(userId) {

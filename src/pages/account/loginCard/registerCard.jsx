@@ -84,13 +84,16 @@ const RegisterCard = () => {
 			const payload = Object.fromEntries(formData.entries());
 			const result = await submitRegister(payload, action);
 			if (result.ok) {
-				const {token, uid} = result.data;
+				const { token, uid, username } = result.data;
 				localStorage.removeItem('guest_token');
 				localStorage.removeItem('guest_uid');
 				localStorage.setItem('token', token);
 				localStorage.setItem('uid', uid);
+				if (username != null && String(username).trim()) {
+					localStorage.setItem('username', String(username).trim());
+				}
 				navigate('/town');
-			}else throw new Error(result.data.message);
+			} else throw new Error(result.data.message);
 		} catch (err) {
 			console.error('Register request failed:', err);
 		}
