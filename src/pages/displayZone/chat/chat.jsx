@@ -71,8 +71,6 @@ function shouldShowTimeAbove(messages, index) {
 	return index === 0 || curMs - prevMs > THREE_MIN_MS;
 }
 
-const AVATAR_SIZE = 32;
-
 function ChatContent() {
 	const { locale } = useContext(UiPersistContext);
 	const { showFailed } = useContext(SuccessBoardContext) || {};
