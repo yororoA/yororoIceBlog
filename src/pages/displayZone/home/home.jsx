@@ -149,6 +149,10 @@ const Home = () => {
 			setGuestbookExpanded(true);
 			navigate('/town/other?scroll=guestbook');
 		}
+		if (action === 'chat') {
+			navigate('/town/chat');
+			return;
+		}
 	};
 
 	return (
@@ -233,6 +237,7 @@ const Home = () => {
 				</div>
 				<div className={homeStyles.shortcutStrip}>
 					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('moments')}>{t(locale, 'shortcutViewMoments')}</button>
+					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('chat')}>{t(locale, 'shortcutChat')}</button>
 				<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('lol')}>{t(locale, 'shortcutLol')}</button>
 					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('articles')}>{t(locale, 'shortcutViewArticles')}</button>
 					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('gallery')}>{t(locale, 'shortcutViewGallery')}</button>

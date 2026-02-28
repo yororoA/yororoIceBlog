@@ -14,6 +14,7 @@ const PAGE_TITLES = {
 	'/town/articles': `Articles${TITLE_SUFFIX}`,
 	'/town/archive': `Archive${TITLE_SUFFIX}`,
 	'/town/lol': `LOL${TITLE_SUFFIX}`,
+	'/town/chat': `Chat${TITLE_SUFFIX}`,
 	'/town/other': `Other${TITLE_SUFFIX}`,
 };
 
@@ -29,6 +30,7 @@ const Knowledge = lazy(() => import('./pages/displayZone/knowledge/knowledge'));
 const Archive = lazy(() => import('./pages/displayZone/archive/archive'));
 const About = lazy(() => import('./pages/displayZone/about/about'));
 const Lol = lazy(() => import('./pages/displayZone/lol/lol'));
+const Chat = lazy(() => import('./pages/displayZone/chat/chat'));
 
 // 创建一个在Router内部的组件来处理导航逻辑
 function AppContent() {
@@ -59,6 +61,7 @@ function AppContent() {
 					<Route path='articles' element={<Knowledge />} />
 					<Route path='archive' element={<Archive />} />
 					<Route path='lol' element={<Lol />} />
+					<Route path='chat' element={<Chat />} />
 					<Route path='other' element={<About />} />
 				</Route>
 
