@@ -2,7 +2,8 @@
   display: flex;
   width: 100%;
   margin: 0 auto;
-  min-height: 70vh;
+  height: 70vh;
+  max-height: 70vh;
   border-radius: 16px;
   overflow: hidden;
   border: var(--nm-input-border, 1px solid #e5e7eb);
@@ -99,6 +100,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .loading {
@@ -107,6 +113,17 @@
   justify-content: center;
   gap: 8px;
   padding: 24px;
+  font-size: var(--p-fontsize, 14px);
+  color: var(--text-color-secondary);
+}
+
+/* 拉取更多历史时在列表顶部展示 */
+.loadingMore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
   font-size: var(--p-fontsize, 14px);
   color: var(--text-color-secondary);
 }
@@ -131,24 +148,33 @@
   display: block;
 }
 
-/* 仅媒体：两列 */
+/* 仅媒体：两列，从内侧开始排布 */
 .mediaGrid2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   max-width: 280px;
 }
 
-/* 文字+媒体：五列，缩略图 2x 头像 (64px) */
+.messageRowSent .mediaGrid2 {
+  flex-direction: row-reverse;
+}
+
+/* 文字+媒体：仅图片/视频五列从内侧排，气泡宽度由文字决定 */
 .mediaGrid5 {
-  display: grid;
-  grid-template-columns: repeat(5, 64px);
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   margin-top: 6px;
 }
 
+.messageRowSent .mediaGrid5 {
+  flex-direction: row-reverse;
+}
+
 .mediaThumb {
-  width: 100%;
+  width: 64px;
+  flex-shrink: 0;
   aspect-ratio: 1;
   border-radius: 8px;
   overflow: hidden;
@@ -231,6 +257,7 @@
 }
 
 .messageContent {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -245,7 +272,9 @@
 .messageBubbles {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 4px;
+  // max-width: 100%;
 }
 
 .bubble {
@@ -254,6 +283,8 @@
   font-size: var(--p-fontsize, 14px);
   line-height: 1.45;
   word-break: break-word;
+  // max-width: 100%;
+  // width: max-content;
 }
 
 // 时间：仅在间隔超过 3 分钟时显示在消息上方
@@ -265,22 +296,33 @@
   margin-bottom: 4px;
 }
 
-// hover 时在消息下方紧贴展示时间
+// hover 时紧贴消息外侧展示时间（不占下方）
 .msgTimeHover {
+  position: absolute;
+  top: 50%;
+  // transform: translateY(-50%);
   font-size: 11px;
   color: var(--text-color-secondary);
+  white-space: nowrap;
   opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  transition: opacity 0.15s ease, max-height 0.15s ease;
-  margin-top: 2px;
-  width: 100%;
-  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.messageRowReceived .msgTimeHover {
+  left: 100%;
+  margin-left: 8px;
+  text-align: left;
+}
+
+.messageRowSent .msgTimeHover {
+  right: 100%;
+  margin-right: 8px;
+  text-align: right;
 }
 
 .messageRow:hover .msgTimeHover {
   opacity: 1;
-  max-height: 24px;
 }
 
 /* 已选媒体预览（输入框上方） */
@@ -397,5 +439,24 @@
 
   &:hover {
     opacity: 0.9;
+  }
+}
+
+/* 深色模式下增强气泡、头像与选中会话可辨性 */
+:global(html[data-theme='dark']) {
+  .convItemActive {
+    background: rgba(255, 255, 255, 0.12);
+    // box-shadow: inset 3px 0 0 rgba(96, 165, 250, 0.9);
+  }
+  .messageRowReceived .bubble {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .messageRowSent .bubble {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .msgAvatar,
+  .msgAvatarImg,
+  .msgAvatarLetter {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
   }
 }

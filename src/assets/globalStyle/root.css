@@ -185,6 +185,10 @@
     --nm-iv-bgc: rgba(255, 255, 255, 0.03);
     --nm-iv-label-color: rgba(229, 231, 235, .8);
     --nm-iv-label-hover-bgc: rgba(148, 163, 184, .22);
+
+    /* 导航 / 按钮 accent，深色下提高对比度便于辨认选中项 */
+    --accent-color: rgba(96, 165, 250, 1);
+    --accent-color-light: rgba(96, 165, 250, 0.22);
 }
 
 /* 进入动效 keyframes：用于列表/卡片初次出现 */

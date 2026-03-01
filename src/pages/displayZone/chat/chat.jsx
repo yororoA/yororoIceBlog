@@ -95,6 +95,9 @@ function ChatContent() {
 	const messagesRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const selectedMediaRef = useRef([]);
+	const skipScrollToBottomRef = useRef(false);
+	const savedScrollTopRef = useRef(null);
+	const savedScrollHeightRef = useRef(null);
 	selectedMediaRef.current = selectedMedia;
 
 	React.useEffect(() => () => {
@@ -103,15 +106,46 @@ function ChatContent() {
 		});
 	}, []);
 
+	// 仅在新消息在底部时（如发送/接收）滚到底；加载更多历史/多渲染一批时保持视觉位置，避免被顶部的插入内容“推离”导致需再次上滚才能触发
 	React.useEffect(() => {
 		const el = messagesRef.current;
+		if (skipScrollToBottomRef.current) {
+			skipScrollToBottomRef.current = false;
+			const savedTop = savedScrollTopRef.current;
+			const savedHeight = savedScrollHeightRef.current;
+			savedScrollTopRef.current = null;
+			savedScrollHeightRef.current = null;
+			if (el != null && savedTop != null && savedHeight != null) {
+				requestAnimationFrame(() => {
+					const node = messagesRef.current;
+					if (node) node.scrollTop = savedTop + (node.scrollHeight - savedHeight);
+				});
+			}
+			return;
+		}
 		if (el && messages.length > 0) el.scrollTop = el.scrollHeight - el.clientHeight;
 	}, [messages.length]);
+
+	// 当内容区无滚动条时（5 条消息不足以撑满），自动多渲染一批，直到可滚动或已全部渲染，避免“无法滚动所以无法加载更多”的死锁
+	React.useEffect(() => {
+		if (!canLoadMoreRendered || !messagesRef.current) return;
+		const el = messagesRef.current;
+		const ensureScrollable = () => {
+			if (!el || !canLoadMoreRendered) return;
+			const needMore = el.scrollHeight <= el.clientHeight;
+			if (needMore) loadMoreRendered();
+		};
+		const id = requestAnimationFrame(ensureScrollable);
+		return () => cancelAnimationFrame(id);
+	}, [messages.length, canLoadMoreRendered, loadMoreRendered]);
 
 	const onScroll = useCallback(() => {
 		const el = messagesRef.current;
 		if (!el) return;
 		if (el.scrollTop <= 10 && (canLoadMoreRendered || canLoadMoreHistory)) {
+			skipScrollToBottomRef.current = true;
+			savedScrollTopRef.current = el.scrollTop;
+			savedScrollHeightRef.current = el.scrollHeight;
 			if (canLoadMoreRendered) {
 				loadMoreRendered();
 			} else if (canLoadMoreHistory) {
@@ -215,7 +249,14 @@ function ChatContent() {
 								{t(locale, 'loading')}
 							</div>
 						) : (
-							messages.map((msg, idx) => {
+							<>
+								{loading && messages.length > 0 && (
+									<div className={styles.loadingMore}>
+										<span className={styles.loadingDot} />
+										{t(locale, 'loading')}
+									</div>
+								)}
+								{messages.map((msg, idx) => {
 								const showTimeAbove = shouldShowTimeAbove(messages, idx);
 								const { avatarImg, avatarLetter, avatarColor } = getMsgAvatar(msg);
 								const msgAvatarNode = avatarImg ? (
@@ -258,6 +299,9 @@ function ChatContent() {
 														</div>
 													)}
 												</div>
+												<div className={styles.msgTimeHover} aria-hidden>
+													{formatTime(msg.createdAt)}
+												</div>
 											</div>
 											{msg.isSent && msgAvatarNode}
 										</div>
@@ -270,12 +314,10 @@ function ChatContent() {
 												onEnlargedIndexChange={(v) => { setEnlargedIndex(v); if (v == null) setEnlargedMsgId(null); }}
 											/>
 										)}
-										<div className={styles.msgTimeHover} aria-hidden>
-											{formatTime(msg.createdAt)}
-										</div>
 									</div>
 								);
-							})
+							})}
+							</>
 						)}
 					</div>
 
