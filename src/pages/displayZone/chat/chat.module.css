@@ -102,6 +102,16 @@
   font-size: var(--p-fontsize, 14px);
   color: var(--text-color-secondary);
 }
+/* 拉取更多历史时在列表顶部展示 */
+.loadingMore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  font-size: var(--p-fontsize, 14px);
+  color: var(--text-color-secondary);
+}
 .loadingDot {
   width: 8px;
   height: 8px;
