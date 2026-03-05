@@ -24,6 +24,7 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	}, [isControlled, onEnlargedIndexChange, enlargedIndex]);
 	const total = items.length;
 	const thumbStripRef = useRef(null);
+	const [imageScale, setImageScale] = useState(1);
 
 	const viewIv = useCallback((e, index) => {
 		e.stopPropagation();
@@ -93,6 +94,20 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	const hasMultiple = total > 1;
 	const rawUploader = currentItem != null ? currentItem[2] : null;
 	const currentUploader = rawUploader != null && rawUploader !== '' && String(rawUploader).trim() !== '' ? String(rawUploader).trim() : null;
+	const isImage = currentItem != null && currentItem[1] === 'image';
+
+	useEffect(() => {
+		if (enlargedIndex != null) setImageScale(1);
+	}, [enlargedIndex]);
+
+	const zoomIn = useCallback((e) => {
+		e?.stopPropagation?.();
+		setImageScale((s) => Math.min(3, s + 0.25));
+	}, []);
+	const zoomOut = useCallback((e) => {
+		e?.stopPropagation?.();
+		setImageScale((s) => Math.max(0.5, s - 0.25));
+	}, []);
 
 	return (
 		<>
@@ -123,9 +138,14 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 							{hasMultiple && (
 								<button type="button" className={`${preview.navBtn} ${preview.navPrev}`} onClick={goPrev} aria-label="上一张" />
 							)}
-							<div className={preview.mediaWrap}>
+							<div className={`${preview.mediaWrap} ${isImage ? preview.mediaWrapZoomable : ''}`}>
 								{currentItem[1] === 'image' ? (
-									<img src={currentItem[0]} alt="" key={enlargedIndex} />
+									<img
+										src={currentItem[0]}
+										alt=""
+										key={enlargedIndex}
+										style={{ transform: `scale(${imageScale})`, transformOrigin: 'center center' }}
+									/>
 								) : (
 									<video src={currentItem[0]} controls autoPlay key={enlargedIndex} />
 								)}
@@ -139,23 +159,46 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 								<span className={preview.uploaderLabel}>{t(locale, 'uploaderBy', currentUploader)}</span>
 							</div>
 						)}
-						{hasMultiple && (
-							<div className={preview.thumbStrip} ref={thumbStripRef}>
-								{items.map((item, i) => (
-									<button
-										type="button"
-										key={i}
-										className={i === enlargedIndex ? preview.thumbActive : preview.thumb}
-										onClick={(e) => { e.stopPropagation(); setEnlargedIndex(i); }}
-										aria-label={`第 ${i + 1} 张`}
-									>
-										{item[1] === 'image' ? (
-											<img src={item[0]} alt="" loading="lazy" />
-										) : (
-											<video src={item[0]} muted />
-										)}
-									</button>
-								))}
+						{(isImage || hasMultiple) && (
+							<div className={preview.bottomBar}>
+								{isImage && (
+									<div className={preview.zoomBtns}>
+										<button type="button" className={preview.zoomBtn} onClick={zoomOut} aria-label="缩小" title="缩小">
+											<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+												<circle cx="11" cy="11" r="8" />
+												<path d="M21 21l-4.35-4.35" />
+												<line x1="8" y1="11" x2="14" y2="11" />
+											</svg>
+										</button>
+										<button type="button" className={preview.zoomBtn} onClick={zoomIn} aria-label="放大" title="放大">
+											<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+												<circle cx="11" cy="11" r="8" />
+												<path d="M21 21l-4.35-4.35" />
+												<line x1="11" y1="8" x2="11" y2="14" />
+												<line x1="8" y1="11" x2="14" y2="11" />
+											</svg>
+										</button>
+									</div>
+								)}
+								{hasMultiple && (
+									<div className={preview.thumbStrip} ref={thumbStripRef}>
+										{items.map((item, i) => (
+											<button
+												type="button"
+												key={i}
+												className={i === enlargedIndex ? preview.thumbActive : preview.thumb}
+												onClick={(e) => { e.stopPropagation(); setEnlargedIndex(i); }}
+												aria-label={`第 ${i + 1} 张`}
+											>
+												{item[1] === 'image' ? (
+													<img src={item[0]} alt="" loading="lazy" />
+												) : (
+													<video src={item[0]} muted />
+												)}
+											</button>
+										))}
+									</div>
+								)}
 							</div>
 						)}
 						<button type="button" className={preview.closeBtn} onClick={closeEnlarged} aria-label="关闭" />

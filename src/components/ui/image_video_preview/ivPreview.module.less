@@ -121,6 +121,14 @@ div.iv {
     object-position: center;
     animation: mediaFadeIn 0.25s ease-out;
   }
+
+  /* 图片可缩放时允许滚动查看放大后的区域 */
+  &.mediaWrapZoomable {
+    overflow: auto;
+    img {
+      transition: transform 0.2s ease-out;
+    }
+  }
 }
 
 /* 放大时图片底部的上传者信息（如 gallery 使用） */
@@ -143,8 +151,8 @@ div.iv {
   font-size: 14px;
 }
 
-/* 小图预览条固定在底部，左右各 50% 留白使小图整体在正中，可横向滚动由 JS 将当前项居中 */
-.thumbStrip {
+/* 底部栏容器：放大/缩小按钮 + 缩略图条 */
+.bottomBar {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -152,21 +160,64 @@ div.iv {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-  padding: 12px 50%;
+  gap: 0;
+  padding: 12px 24px;
   max-width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  flex-shrink: 0;
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0.75);
   border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* 小图预览条：可横向滚动，由 JS 将当前项居中 */
+.thumbStrip {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
   scroll-behavior: smooth;
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+.zoomBtns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-right: 8px;
+  padding-right: 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.zoomBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
 }
 

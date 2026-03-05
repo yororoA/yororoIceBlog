@@ -1,3 +1,8 @@
+/* 单栏布局下父容器无固定高度，避免 content 区 height:100% 导致塌陷 */
+:global([class*="entireSingleCol"]) > .entire:nth-child(2) {
+  height: auto;
+  min-height: 0;
+}
 .entire {
   box-sizing: border-box;
   height: 100%;

@@ -191,6 +191,17 @@ const ArticleDetail = ({
 
   const imageItems = useMemo(() => imageUrls.map((url) => [url, 'image']), [imageUrls]);
 
+  const handleExportMarkdown = useCallback(() => {
+    const safeName = (title || 'article').replace(/[<>:"/\\|?*]/g, '_').slice(0, 80) || 'article';
+    const blob = new Blob([content || ''], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${safeName}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [title, content]);
+
   return (
     <div className={knowledge.detailContainer}>
       <div className={knowledge.detailHeader}>
@@ -237,6 +248,7 @@ const ArticleDetail = ({
             <button type="button" className={knowledge.actionBtn} onClick={onDelete}>{t(locale, 'delete')}</button>
           )}
           <button type="button" className={knowledge.actionBtn} onClick={onShare}>{t(locale, 'share')}</button>
+          <button type="button" className={knowledge.actionBtn} onClick={handleExportMarkdown}>{t(locale, 'exportMarkdown')}</button>
         </div>
       </div>
     </div>
