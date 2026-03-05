@@ -114,6 +114,27 @@ div.iv {
     animation: mediaFadeIn 0.25s ease-out;
   }
 
+  /* 图片平移层：用于自由拖拽，可与展示区域边界存在空隙 */
+  .panLayer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: transform;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      transition: transform 0.2s ease-out;
+    }
+  }
+
   video {
     width: 100%;
     height: 100%;
@@ -122,16 +143,13 @@ div.iv {
     animation: mediaFadeIn 0.25s ease-out;
   }
 
-  /* 图片可缩放时允许滚动查看放大后的区域，并支持拖拽平移；隐藏滚动条 */
+  /* 图片可缩放时支持拖拽平移（translate），图片与边界可有空隙；不出现滚动条 */
   &.mediaWrapZoomable {
-    overflow: auto;
+    overflow: hidden;
     cursor: grab;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    img {
+    position: relative;
+
+    .panLayer img {
       transition: transform 0.2s ease-out;
     }
   }

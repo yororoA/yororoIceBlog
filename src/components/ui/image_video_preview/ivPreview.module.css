@@ -96,7 +96,8 @@ div.iv video {
   min-height: 158px;
   max-height: calc(70vw / 16 * 9);
   /* 完整展示图片，且宽或高至少一边铺满显示框（等比缩放，不裁切） */
-  /* 图片可缩放时允许滚动查看放大后的区域 */
+  /* 图片平移层：用于自由拖拽，可与展示区域边界存在空隙 */
+  /* 图片可缩放时支持拖拽平移（translate），图片与边界可有空隙；不出现滚动条 */
 }
 .mediaWrap img {
   width: 100%;
@@ -104,6 +105,24 @@ div.iv video {
   object-fit: contain;
   object-position: center;
   animation: mediaFadeIn 0.25s ease-out;
+}
+.mediaWrap .panLayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+.mediaWrap .panLayer img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transition: transform 0.2s ease-out;
 }
 .mediaWrap video {
   width: 100%;
@@ -113,10 +132,15 @@ div.iv video {
   animation: mediaFadeIn 0.25s ease-out;
 }
 .mediaWrap.mediaWrapZoomable {
-  overflow: auto;
+  overflow: hidden;
+  cursor: grab;
+  position: relative;
 }
-.mediaWrap.mediaWrapZoomable img {
+.mediaWrap.mediaWrapZoomable .panLayer img {
   transition: transform 0.2s ease-out;
+}
+.mediaWrap.mediaWrapPanning {
+  cursor: grabbing;
 }
 /* 放大时图片底部的上传者信息（如 gallery 使用） */
 .uploaderBar {

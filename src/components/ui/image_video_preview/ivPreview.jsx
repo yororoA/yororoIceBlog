@@ -26,8 +26,9 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	const thumbStripRef = useRef(null);
 	const mediaWrapRef = useRef(null);
 	const [imageScale, setImageScale] = useState(1);
+	const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
 	const [isPanning, setIsPanning] = useState(false);
-	const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, scrollLeft: 0, scrollTop: 0 });
+	const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffsetX: 0, startOffsetY: 0 });
 
 	const viewIv = useCallback((e, index) => {
 		e.stopPropagation();
@@ -100,7 +101,10 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	const isImage = currentItem != null && currentItem[1] === 'image';
 
 	useEffect(() => {
-		if (enlargedIndex != null) setImageScale(1);
+		if (enlargedIndex != null) {
+			setImageScale(1);
+			setPanOffset({ x: 0, y: 0 });
+		}
 	}, [enlargedIndex]);
 
 	const zoomIn = useCallback((e) => {
@@ -110,6 +114,12 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	const zoomOut = useCallback((e) => {
 		e?.stopPropagation?.();
 		setImageScale((s) => Math.max(0.5, s - 0.25));
+	}, []);
+
+	const resetZoomPan = useCallback((e) => {
+		e?.stopPropagation?.();
+		setImageScale(1);
+		setPanOffset({ x: 0, y: 0 });
 	}, []);
 
 	// 滚轮在图片上时用于缩放（passive: false 才能 preventDefault 阻止滚动）
@@ -125,9 +135,9 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 		return () => wrap.removeEventListener('wheel', onWheel);
 	}, [isImage, enlargedIndex]);
 
-	// 放大后拖拽图片平移滚动（用 ref 判断是否拖拽，避免 setState 滞后）
+	// 放大后拖拽图片自由平移（translate，图片与展示区域边界可有空隙）
 	const onPanStart = useCallback((e) => {
-		if (!mediaWrapRef.current || !isImage) return;
+		if (!isImage) return;
 		e.preventDefault();
 		setIsPanning(true);
 		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -136,19 +146,21 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 			isDragging: true,
 			startX: clientX,
 			startY: clientY,
-			scrollLeft: mediaWrapRef.current.scrollLeft,
-			scrollTop: mediaWrapRef.current.scrollTop,
+			startOffsetX: panOffset.x,
+			startOffsetY: panOffset.y,
 		};
-	}, [isImage]);
+	}, [isImage, panOffset.x, panOffset.y]);
 	const onPanMove = useCallback((e) => {
-		if (!dragRef.current.isDragging || !mediaWrapRef.current) return;
+		if (!dragRef.current.isDragging) return;
 		e.preventDefault();
 		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 		const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-		const dx = dragRef.current.startX - clientX;
-		const dy = dragRef.current.startY - clientY;
-		mediaWrapRef.current.scrollLeft = dragRef.current.scrollLeft + dx;
-		mediaWrapRef.current.scrollTop = dragRef.current.scrollTop + dy;
+		const dx = clientX - dragRef.current.startX;
+		const dy = clientY - dragRef.current.startY;
+		setPanOffset({
+			x: dragRef.current.startOffsetX + dx,
+			y: dragRef.current.startOffsetY + dy,
+		});
 	}, []);
 	const onPanEnd = useCallback(() => {
 		dragRef.current.isDragging = false;
@@ -210,13 +222,18 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 								aria-label={isImage ? '可拖拽平移、滚轮缩放' : undefined}
 							>
 								{currentItem[1] === 'image' ? (
-									<img
-										src={currentItem[0]}
-										alt=""
-										key={enlargedIndex}
-										draggable={false}
-										style={{ transform: `scale(${imageScale})`, transformOrigin: 'center center' }}
-									/>
+									<div
+										className={preview.panLayer}
+										style={{ transform: `translate(${panOffset.x}px, ${panOffset.y}px)` }}
+									>
+										<img
+											src={currentItem[0]}
+											alt=""
+											key={enlargedIndex}
+											draggable={false}
+											style={{ transform: `scale(${imageScale})`, transformOrigin: 'center center' }}
+										/>
+									</div>
 								) : (
 									<video src={currentItem[0]} controls autoPlay key={enlargedIndex} />
 								)}
@@ -247,6 +264,12 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 												<path d="M21 21l-4.35-4.35" />
 												<line x1="11" y1="8" x2="11" y2="14" />
 												<line x1="8" y1="11" x2="14" y2="11" />
+											</svg>
+										</button>
+										<button type="button" className={preview.zoomBtn} onClick={resetZoomPan} aria-label="复位" title="复位">
+											<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+												<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+												<path d="M3 3v5h5" />
 											</svg>
 										</button>
 									</div>
