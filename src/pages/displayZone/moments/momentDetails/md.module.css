@@ -79,6 +79,7 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   /* 评论区占满剩余高度，输入框固定在弹窗底部；content 与 comments 共用一个滚动（仅根容器滚动） */
+  /* 滚动时评论框黏在弹窗底部 */
 }
 .entire.entireSingleCol::-webkit-scrollbar {
   display: none;
@@ -109,6 +110,8 @@
 }
 .entire.entireSingleCol > *:nth-child(3) > *:last-child {
   flex: 0 0 28rem;
+  position: sticky;
+  bottom: 0;
   z-index: 2;
   background: var(--moments-card-bgc);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);

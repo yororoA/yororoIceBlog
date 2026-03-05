@@ -168,7 +168,6 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	}, []);
 	useEffect(() => {
 		if (!isImage || enlargedIndex == null) return;
-		const wrap = mediaWrapRef.current;
 		const doc = document;
 		doc.addEventListener('mousemove', onPanMove);
 		doc.addEventListener('mouseup', onPanEnd);

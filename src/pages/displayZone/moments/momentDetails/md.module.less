@@ -112,8 +112,11 @@
       min-height: 0;
       overflow: visible;
     }
+    /* 滚动时评论框黏在弹窗底部 */
     > *:nth-child(3) > *:last-child {
       flex: 0 0 28rem;
+      position: sticky;
+      bottom: 0;
       z-index: 2;
       background: var(--moments-card-bgc);
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
