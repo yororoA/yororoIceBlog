@@ -24,6 +24,9 @@ export const homeAnnouncementMarkdown = {
 > 11. The website is currently not optimized for small screens. Adaptation will be **considered** once all features/styles are completed.
 
 12. Chat room is now available (beta).
+13. Improved page display: guests entering via direct link are no longer forced to redirect to the login page.
+14. Improved image display and added article export to Markdown.
+
 `,
   zh: `# Welcome to yororIce's Town
 
@@ -48,6 +51,9 @@ export const homeAnnouncementMarkdown = {
 > 11. 网站目前未对小屏进行适配, 待功能/样式全部完成后会 **考虑** 适配
 
 12. 初步上线聊天室(测试中)
+13. 优化页面展示效果, 游客通过链接直接进入网站时不再强制重定向到登录页面
+14. 优化图片展示功能, 增添article导出markdown功能
+
 `,
   ja: `# Welcome to yororIce's Town
 
@@ -72,5 +78,8 @@ export const homeAnnouncementMarkdown = {
 > 11. 現在のところ、ウェブサイトは小さい画面に対応していません。機能やスタイルがすべて完成した後で**対応を検討**します
 
 12. チャットルームをリリースしました（ベータ版）
+13. ページ表示を改善し、リンクから直接入ったゲストはログインページへ強制リダイレクトされなくなりました。
+14. 画像表示を改善し、記事の Markdown エクスポート機能を追加しました。
+
 `,
 };
