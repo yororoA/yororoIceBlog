@@ -122,12 +122,21 @@ div.iv {
     animation: mediaFadeIn 0.25s ease-out;
   }
 
-  /* 图片可缩放时允许滚动查看放大后的区域 */
+  /* 图片可缩放时允许滚动查看放大后的区域，并支持拖拽平移；隐藏滚动条 */
   &.mediaWrapZoomable {
     overflow: auto;
+    cursor: grab;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
     img {
       transition: transform 0.2s ease-out;
     }
+  }
+  &.mediaWrapPanning {
+    cursor: grabbing;
   }
 }
 

@@ -24,7 +24,10 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	}, [isControlled, onEnlargedIndexChange, enlargedIndex]);
 	const total = items.length;
 	const thumbStripRef = useRef(null);
+	const mediaWrapRef = useRef(null);
 	const [imageScale, setImageScale] = useState(1);
+	const [isPanning, setIsPanning] = useState(false);
+	const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, scrollLeft: 0, scrollTop: 0 });
 
 	const viewIv = useCallback((e, index) => {
 		e.stopPropagation();
@@ -109,6 +112,66 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 		setImageScale((s) => Math.max(0.5, s - 0.25));
 	}, []);
 
+	// 滚轮在图片上时用于缩放（passive: false 才能 preventDefault 阻止滚动）
+	useEffect(() => {
+		const wrap = mediaWrapRef.current;
+		if (!wrap || !isImage) return;
+		const onWheel = (e) => {
+			e.preventDefault();
+			const delta = e.deltaY > 0 ? -0.25 : 0.25;
+			setImageScale((s) => Math.max(0.5, Math.min(3, s + delta)));
+		};
+		wrap.addEventListener('wheel', onWheel, { passive: false });
+		return () => wrap.removeEventListener('wheel', onWheel);
+	}, [isImage, enlargedIndex]);
+
+	// 放大后拖拽图片平移滚动（用 ref 判断是否拖拽，避免 setState 滞后）
+	const onPanStart = useCallback((e) => {
+		if (!mediaWrapRef.current || !isImage) return;
+		e.preventDefault();
+		setIsPanning(true);
+		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+		const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+		dragRef.current = {
+			isDragging: true,
+			startX: clientX,
+			startY: clientY,
+			scrollLeft: mediaWrapRef.current.scrollLeft,
+			scrollTop: mediaWrapRef.current.scrollTop,
+		};
+	}, [isImage]);
+	const onPanMove = useCallback((e) => {
+		if (!dragRef.current.isDragging || !mediaWrapRef.current) return;
+		e.preventDefault();
+		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+		const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+		const dx = dragRef.current.startX - clientX;
+		const dy = dragRef.current.startY - clientY;
+		mediaWrapRef.current.scrollLeft = dragRef.current.scrollLeft + dx;
+		mediaWrapRef.current.scrollTop = dragRef.current.scrollTop + dy;
+	}, []);
+	const onPanEnd = useCallback(() => {
+		dragRef.current.isDragging = false;
+		setIsPanning(false);
+	}, []);
+	useEffect(() => {
+		if (!isImage || enlargedIndex == null) return;
+		const wrap = mediaWrapRef.current;
+		const doc = document;
+		doc.addEventListener('mousemove', onPanMove);
+		doc.addEventListener('mouseup', onPanEnd);
+		doc.addEventListener('touchmove', onPanMove, { passive: false });
+		doc.addEventListener('touchend', onPanEnd);
+		doc.addEventListener('touchcancel', onPanEnd);
+		return () => {
+			doc.removeEventListener('mousemove', onPanMove);
+			doc.removeEventListener('mouseup', onPanEnd);
+			doc.removeEventListener('touchmove', onPanMove);
+			doc.removeEventListener('touchend', onPanEnd);
+			doc.removeEventListener('touchcancel', onPanEnd);
+		};
+	}, [isImage, enlargedIndex, onPanMove, onPanEnd]);
+
 	return (
 		<>
 			{showThumbnails && items.map((item, index) =>
@@ -138,12 +201,20 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 							{hasMultiple && (
 								<button type="button" className={`${preview.navBtn} ${preview.navPrev}`} onClick={goPrev} aria-label="上一张" />
 							)}
-							<div className={`${preview.mediaWrap} ${isImage ? preview.mediaWrapZoomable : ''}`}>
+							<div
+								ref={mediaWrapRef}
+								className={`${preview.mediaWrap} ${isImage ? preview.mediaWrapZoomable : ''} ${isImage && isPanning ? preview.mediaWrapPanning : ''}`}
+								onMouseDown={isImage ? onPanStart : undefined}
+								onTouchStart={isImage ? onPanStart : undefined}
+								role={isImage ? 'img' : undefined}
+								aria-label={isImage ? '可拖拽平移、滚轮缩放' : undefined}
+							>
 								{currentItem[1] === 'image' ? (
 									<img
 										src={currentItem[0]}
 										alt=""
 										key={enlargedIndex}
+										draggable={false}
 										style={{ transform: `scale(${imageScale})`, transformOrigin: 'center center' }}
 									/>
 								) : (

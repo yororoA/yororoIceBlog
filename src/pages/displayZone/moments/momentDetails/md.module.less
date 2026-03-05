@@ -94,12 +94,13 @@
       min-height: 0;
       overflow: visible;
     }
+    /* 单栏下 content 与 comments 整体由根容器滚动，不单独滚动评论区 */
     > *:nth-child(3) {
       flex: 0 0 auto;
       grid-column: unset;
       grid-row: unset;
       width: 100%;
-      height: auto !important;
+      height: auto;
       min-height: 0;
       overflow: visible;
       display: grid;
@@ -107,8 +108,8 @@
       align-content: start;
     }
     > *:nth-child(3) > *:first-child {
-      max-height: none !important;
-      overflow-y: visible !important;
+      min-height: 0;
+      overflow: visible;
     }
     /* 评论区标题滚入可视区域后，评论框黏在底部 */
     > *:nth-child(3) > *:last-child {
