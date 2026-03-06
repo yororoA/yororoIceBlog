@@ -6,7 +6,7 @@ import pop from './pop.module.less';
 const portal1 = document.getElementById('portalSite');
 const portal2 = document.getElementById('littlePopPortal');
 
-const Pop = ({children, isLittle, onClose}) => {
+const Pop = ({children, isLittle, onClose, closeOnBackdrop = true, showCloseButton = true}) => {
 	const [isClosing, setIsClosing] = useState(false);
 	const [isVisible, setIsVisible] = useState(true);
 	const itemRef = useRef(null);
@@ -58,20 +58,22 @@ const Pop = ({children, isLittle, onClose}) => {
 	if (!isVisible) return null;
 
 	return createPortal((
-		<div className={`${pop.entire} ${isClosing ? pop.closing : ''}`} onClick={handleClose}>
+		<div className={`${pop.entire} ${isClosing ? pop.closing : ''}`} onClick={closeOnBackdrop ? handleClose : undefined}>
 			<div 
 				ref={itemRef}
 				className={`${pop.item} ${isClosing ? pop.itemClosing : ''}`} 
 				onClick={e => e.stopPropagation()}
 				onWheel={e => e.stopPropagation()}
 			>
-				<button
-					type="button"
-					className={pop.closeBtn}
-					onClick={handleClose}
-					aria-label="关闭"
-					title="关闭"
-				/>
+				{showCloseButton && (
+					<button
+						type="button"
+						className={pop.closeBtn}
+						onClick={handleClose}
+						aria-label="关闭"
+						title="关闭"
+					/>
+				)}
 				{children}
 			</div>
 		</div>

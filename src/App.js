@@ -39,9 +39,11 @@ function AppContent() {
 	const location = useLocation();
 
 	useEffect(() => {
-		const pathname = window.location.pathname.split('/').filter(item => item !== '').at(-1);
+		const currentPath = window.location.pathname;
+		const pathname = currentPath.split('/').filter(item => item !== '').at(-1);
+		const isAccountRoute = currentPath.startsWith('/account');
 		const hasToken = localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken');
-		if (!hasToken && pathname !== 'login' && pathname !== 'register') {
+		if (!hasToken && !isAccountRoute && pathname !== 'login' && pathname !== 'register') {
 			guestLogin()
 				.then(() => {
 					sessionStorage.setItem('guest_modal_pending', '1');

@@ -375,7 +375,7 @@ const DisplayZone = () => {
 				</Pop>
 			)}
 			{showGuestModal && (
-				<Pop isLittle={false} onClose={handleCloseGuestModal}>
+				<Pop isLittle={false} onClose={handleCloseGuestModal} closeOnBackdrop={false} showCloseButton={false}>
 					<div className={page.guestModal}>
 						<p className={page.guestModalTitle}>{t(locale, 'guestModalTitle')}</p>
 						<div className={page.guestModalActions}>
@@ -461,9 +461,6 @@ const DisplayZone = () => {
 									{showSettingsMenu && (
 										<>
 											<div className={page.settingsDropdown} role="menu">
-												<button type="button" className={page.settingsItem} role="menuitem" onClick={handleLogout}>
-													{t(locale, 'navLogout')}
-												</button>
 												<div className={page.settingsItemTheme}>
 													<span className={page.settingsItemLabel}>{t(locale, 'navTheme')}</span>
 													<SwitchTheme />
@@ -496,6 +493,10 @@ const DisplayZone = () => {
 														</div>
 													)}
 												</div>
+												<div className={page.settingsDivider} />
+												<button type="button" className={`${page.settingsItem} ${page.settingsItemDanger}`} role="menuitem" onClick={handleLogout}>
+													{t(locale, 'navLogout')}
+												</button>
 											</div>
 										</>
 									)}
