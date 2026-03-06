@@ -170,4 +170,54 @@ section.lr {
   }
 
 
+  @media (max-width: 960px) {
+    form {
+      section {
+        width: 88%;
+        margin: 4rem 0;
+
+        label {
+          margin: 2rem 0;
+        }
+      }
+
+      button {
+        width: 88%;
+      }
+    }
+  }
+
+  @media (max-width: 640px) {
+    form {
+      section {
+        width: 92%;
+
+        &.acknowledge {
+          align-items: flex-start;
+
+          label {
+            line-height: 1.4;
+          }
+        }
+
+        div.verify {
+          input.verification {
+            width: 68%;
+
+            &+span {
+              width: 32%;
+              font-size: 12px;
+              padding: 0 4px;
+            }
+          }
+        }
+      }
+
+      button {
+        width: 92%;
+      }
+    }
+  }
+
+
 }
