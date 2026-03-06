@@ -27,6 +27,38 @@
 .entire section.suggestion {
   margin: 20rem 0;
 }
+.entire section.suggestion .suggestionHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8rem;
+}
+.entire section.suggestion .suggestionHead h2 {
+  margin: 0;
+}
+.entire section.suggestion .backBtn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-color-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.entire section.suggestion .backBtn svg {
+  width: 20px;
+  height: 20px;
+}
+.entire section.suggestion .backBtn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text-color);
+}
 .entire section.suggestion h3 {
   display: inline;
   margin-right: 5rem;

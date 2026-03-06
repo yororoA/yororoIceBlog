@@ -26,10 +26,48 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
 
     img {
       height: 100%;
     }
+  }
+
+  .navRight {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .localeSwitch {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  .localeBtn {
+    padding: 6px 10px;
+    font-size: 13px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-color-secondary);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+
+    &:hover {
+      color: var(--text-color);
+      background: rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .localeBtnActive {
+    background: var(--card-bgc, #fff);
+    color: var(--text-color);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   }
 
 
@@ -58,6 +96,30 @@
     div.welComeFloat {
       position: relative;
       transform: translateY(-75rem);
+    }
+  }
+
+  /* login/register 时：两列等分，语种切换不位移 */
+  main.mainTwoCol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    align-items: center;
+    gap: 0;
+
+    > *:first-child {
+      grid-column: 1;
+      min-width: 0;
+    }
+
+    > *:last-child {
+      grid-column: 2;
+      min-width: 0;
+    }
+
+    div.welcome {
+      margin: 0;
+      justify-self: center;
     }
   }
 }

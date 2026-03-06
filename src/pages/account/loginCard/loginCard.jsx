@@ -1,13 +1,15 @@
-import React, {useCallback, useState} from 'react';
+import React, { useCallback, useState } from 'react';
 import entireCard from './entireLoginCard.module.less';
 import lr from './lrCard.module.less';
-import {useNavigate} from "react-router-dom";
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { submitLoginWithFallback } from '../../../utils/submitLogin';
 import { guestLogin } from '../../../utils/guestLogin';
+import { t } from '../../../i18n/uiText';
 
 const LoginCard = () => {
-	// navigate to register
 	const navigate = useNavigate();
+	const { locale } = useOutletContext() || {};
+	const lang = locale || (typeof localStorage !== 'undefined' ? localStorage.getItem('ui_locale') : null) || 'en';
 
 	// 仅用用户名、密码控制登录按钮是否可点，Remember me 不参与
 	const keys = ['username', 'password'].sort();
@@ -91,32 +93,45 @@ const LoginCard = () => {
 	return (
 		<div className={entireCard.entire}>
 			<section className={entireCard.suggestion}>
-				<h2>{'Login to your account'}</h2>
-				<h3>{"Don't have an account?"}</h3>
-				<h3 className={entireCard.lr} onClick={() => navigate('/account/register')}>{'Sign Up'}</h3>
+				<div className={entireCard.suggestionHead}>
+					<button
+						type="button"
+						className={entireCard.backBtn}
+						onClick={() => navigate('/account')}
+						title={t(lang, 'accountBackToAccount')}
+						aria-label={t(lang, 'accountBackToAccount')}
+					>
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+							<path d="M15 18l-6-6 6-6" />
+						</svg>
+					</button>
+					<h2>{t(lang, 'accountLoginTitle')}</h2>
+				</div>
+				<h3>{t(lang, 'accountLoginNoAccount')}</h3>
+				<h3 className={entireCard.lr} onClick={() => navigate('/account/register')}>{t(lang, 'accountLoginSignUp')}</h3>
 			</section>
 			<section className={lr.lr}>
-				<form onChange={checkCompletion} onKeyDown={disableSpace} onSubmit={handleLoginSubmit} action={`${process.env.REACT_APP_SERVER_HOST}/api/login`} method={'POST'}>
+				<form onChange={checkCompletion} onKeyDown={disableSpace} onSubmit={handleLoginSubmit} action={`${process.env.REACT_APP_SERVER_HOST}/api/login`} method="POST">
 					<section>
-						<label htmlFor="username">{'Username'}</label>
-						<input type="text" name="username" id="username"/>
+						<label htmlFor="username">{t(lang, 'accountUsername')}</label>
+						<input type="text" name="username" id="username" />
 					</section>
 
 					<section>
-						<label htmlFor="password">{'Password'}</label>
-						<input type="password" name="password" id="password"/>
+						<label htmlFor="password">{t(lang, 'accountPassword')}</label>
+						<input type="password" name="password" id="password" />
 					</section>
 
 					<section className={lr.acknowledge}>
-						<input type="checkbox" name="checkbox" id="checkbox"/>
-						<label htmlFor="checkbox" onClick={e=>e.preventDefault()}>{'Remember me'}</label>
+						<input type="checkbox" name="checkbox" id="checkbox" />
+						<label htmlFor="checkbox" onClick={(e) => e.preventDefault()}>{t(lang, 'accountRememberMe')}</label>
 					</section>
 
 					<section>
-						<button className={`${lr.login} ${completed && lr.completed}`} type={"submit"}>{'Login'}</button>
+						<button className={`${lr.login} ${completed && lr.completed}`} type="submit">{t(lang, 'accountLoginSubmit')}</button>
 					</section>
 					<section>
-						<button type="button" className={lr.guest} onClick={handleGuestLogin}>{'Continue as guest'}</button>
+						<button type="button" className={lr.guest} onClick={handleGuestLogin}>{t(lang, 'accountContinueAsGuest')}</button>
 					</section>
 				</form>
 			</section>
