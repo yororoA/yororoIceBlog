@@ -27,6 +27,9 @@ export const homeAnnouncementMarkdown = {
 13. Improved page display: guests entering via direct link are no longer forced to redirect to the login page.
 14. Improved image display and added article export to Markdown.
 
+> 15. Improved locale display: the site will automatically select a locale based on the user's region on first visit, with options to change it later in settings.
+> 16. Mobile adaptation in progress.
+
 `,
   zh: `# Welcome to yororIce's Town
 
@@ -54,6 +57,9 @@ export const homeAnnouncementMarkdown = {
 13. 优化页面展示效果, 游客通过链接直接进入网站时不再强制重定向到登录页面
 14. 优化图片展示功能, 增添article导出markdown功能
 
+> 15. 优化语种显示, 首次进入网站时会根据用户所在地区自动选择语种, 后续可通过设置选项修改语种
+> 16. 正在进行移动端适配
+
 `,
   ja: `# Welcome to yororIce's Town
 
@@ -80,6 +86,9 @@ export const homeAnnouncementMarkdown = {
 12. チャットルームをリリースしました（ベータ版）
 13. ページ表示を改善し、リンクから直接入ったゲストはログインページへ強制リダイレクトされなくなりました。
 14. 画像表示を改善し、記事の Markdown エクスポート機能を追加しました。
+
+> 15. ロケール表示を改善し、初回訪問時にユーザーの地域に基づいてロケールを自動選択するようになりました。後で設定から変更することもできます。
+> 16. モバイル対応を進行中。
 
 `,
 };

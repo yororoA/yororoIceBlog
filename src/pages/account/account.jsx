@@ -7,12 +7,13 @@ import CommonBtn from '../../components/btn/commonBtn/commonBtn';
 import { useWheelInertia } from '../../hooks/useWheelInertia';
 import BackToTop from '../../components/backToTop/BackToTop';
 import { t } from '../../i18n/uiText';
+import { getInitialUiLocale } from '../../utils/uiLocale';
 
 const LOCALE_ORDER = ['en', 'zh', 'ja'];
 
 // account page, no access with no account
 const Account = () => {
-	const [locale, setLocale] = useState(() => localStorage.getItem('ui_locale') || 'en');
+	const [locale, setLocale] = useState(() => getInitialUiLocale());
 	const [firstClick, setFirstClick] = useState(false);
 	const navigate = useNavigate();
 	const windowScrollRef = useRef(null);

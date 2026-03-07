@@ -32,6 +32,8 @@ import { getKnowledgeArticles } from '../../utils/knowledge';
 import { getGuestbookComments } from '../../utils/guestbook';
 import { GuestbookContext } from './context/guestbookContext';
 import { ChatProvider } from './chat/context/chatContext';
+import { guestLogin } from '../../utils/guestLogin';
+import { getInitialUiLocale } from '../../utils/uiLocale';
 
 const LOCALE_ORDER = ['en', 'zh', 'ja'];
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
@@ -74,7 +76,7 @@ const DisplayZone = () => {
 	const [archiveStats, setArchiveStats] = useState({});
 	const [archiveYears, setArchiveYears] = useState(['all']);
 	// 页面级 UI 状态缓存：切路由不丢失
-	const [locale, setLocale] = useState(() => localStorage.getItem('ui_locale') || 'en');
+	const [locale, setLocale] = useState(() => getInitialUiLocale());
 	const [langViewMode, setLangViewMode] = useState('pie');
 	const [articlesSelectedCategory, setArticlesSelectedCategory] = useState('all');
 	const [archiveSelectedType, setArchiveSelectedType] = useState('all');
@@ -88,12 +90,17 @@ const DisplayZone = () => {
 	const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 	const [showLocaleSubmenu, setShowLocaleSubmenu] = useState(false);
 	const [showGuestModal, setShowGuestModal] = useState(false);
+	const [guestSubmitting, setGuestSubmitting] = useState(false);
+	const hasAuth = !!(localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken'));
 	useEffect(() => {
-		if (guest && typeof sessionStorage !== 'undefined' && sessionStorage.getItem('guest_modal_pending')) {
-			sessionStorage.removeItem('guest_modal_pending');
+		if (!hasAuth) {
+			if (typeof sessionStorage !== 'undefined') sessionStorage.setItem('guest_auth_pending', '1');
 			setShowGuestModal(true);
+			return;
 		}
-	}, [guest]);
+		if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('guest_auth_pending');
+		setShowGuestModal(false);
+	}, [hasAuth]);
 	const showSuccess = useCallback((content) => {
 		setSuccessList(prev => [...prev, { id: Date.now(), content }]);
 	}, []);
@@ -116,6 +123,7 @@ const DisplayZone = () => {
 	// 首次进入 DisplayZone 时拉取首页/列表所需数据，避免切到首页或 other 时重复请求
 	const initialLoadDoneRef = useRef(false);
 	useEffect(() => {
+		if (!hasAuth) return;
 		if (initialLoadDoneRef.current) return;
 		initialLoadDoneRef.current = true;
 		getMoments().then(list => {
@@ -127,7 +135,7 @@ const DisplayZone = () => {
 		getGuestbookComments().then(list => {
 			if (Array.isArray(list)) setGuestbookComments(list);
 		}).catch(() => {});
-	}, []);
+	}, [hasAuth]);
 
 	// 若有 mid 查询参数，则跳到 moments 页并用现有逻辑展示对应 moment
 	useEffect(() => {
@@ -161,6 +169,19 @@ const DisplayZone = () => {
 		setShowGuestModal(false);
 		if (typeof proceed === 'function') proceed();
 	}, []);
+	const handleContinueAsGuest = useCallback(async () => {
+		if (guestSubmitting) return;
+		setGuestSubmitting(true);
+		try {
+			await guestLogin();
+			if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('guest_auth_pending');
+			setShowGuestModal(false);
+		} catch (_) {
+			navigate('/account/login');
+		} finally {
+			setGuestSubmitting(false);
+		}
+	}, [guestSubmitting, navigate]);
 
 	// 手动打开公告（通过按钮）
 	const handleOpenAnnouncement = useCallback(() => {
@@ -353,11 +374,16 @@ const DisplayZone = () => {
 	// sse连接
 	const [connect, setConnect] = useState(false);
 	useEffect(() => {
+		if (!hasAuth) {
+			setConnect(false);
+			disconnectSSE();
+			return () => disconnectSSE();
+		}
 		setConnect(true)
 		connectSSE(dispatchFn).catch(() => setConnect(false));
 
 		return () => disconnectSSE();
-	}, [dispatchFn]);
+	}, [dispatchFn, hasAuth]);
 	// 断线后下次连接时再显示 Connected 板
 	useEffect(() => {
 		if (!connect) setShowConnectedBoard(true);
@@ -379,7 +405,7 @@ const DisplayZone = () => {
 					<div className={page.guestModal}>
 						<p className={page.guestModalTitle}>{t(locale, 'guestModalTitle')}</p>
 						<div className={page.guestModalActions}>
-							<button type="button" className={page.guestModalBtn} onClick={() => setShowGuestModal(false)}>
+							<button type="button" className={page.guestModalBtn} onClick={handleContinueAsGuest} disabled={guestSubmitting}>
 								{t(locale, 'guestModalContinue')}
 							</button>
 							<button
@@ -506,7 +532,7 @@ const DisplayZone = () => {
 					</nav>
 				</div>
 				<main>
-					<UiPersistContext.Provider
+					{hasAuth && <UiPersistContext.Provider
 						value={{
 							locale,
 							setLocale,
@@ -546,7 +572,7 @@ const DisplayZone = () => {
 								</ScrollContainerContext.Provider>
 							</KnowledgeListContext.Provider>
 						</MomentsListContext.Provider>
-					</UiPersistContext.Provider>
+					</UiPersistContext.Provider>}
 				</main>
 			</div>
 			<BackToTop scrollContainerRef={scrollContainerRef} />

@@ -5,11 +5,12 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import { submitLoginWithFallback } from '../../../utils/submitLogin';
 import { guestLogin } from '../../../utils/guestLogin';
 import { t } from '../../../i18n/uiText';
+import { getInitialUiLocale } from '../../../utils/uiLocale';
 
 const LoginCard = () => {
 	const navigate = useNavigate();
 	const { locale } = useOutletContext() || {};
-	const lang = locale || (typeof localStorage !== 'undefined' ? localStorage.getItem('ui_locale') : null) || 'en';
+	const lang = locale || getInitialUiLocale();
 
 	// 仅用用户名、密码控制登录按钮是否可点，Remember me 不参与
 	const keys = ['username', 'password'].sort();

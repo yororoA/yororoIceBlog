@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { lazy, useEffect, Suspense } from "react";
-import { guestLogin } from "./utils/guestLogin";
 
 const TITLE_SUFFIX = ' - YororoIce Town';
 const PAGE_TITLES = {
@@ -43,16 +42,10 @@ function AppContent() {
 		const pathname = currentPath.split('/').filter(item => item !== '').at(-1);
 		const isAccountRoute = currentPath.startsWith('/account');
 		const hasToken = localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken');
+		if (pathname === undefined && !isAccountRoute) navigate('/town');
 		if (!hasToken && !isAccountRoute && pathname !== 'login' && pathname !== 'register') {
-			guestLogin()
-				.then(() => {
-					sessionStorage.setItem('guest_modal_pending', '1');
-					navigate('/town');
-				})
-				.catch(() => {
-					navigate('/account/login');
-				});
-		} else if (pathname === undefined) navigate('/town');
+			sessionStorage.setItem('guest_auth_pending', '1');
+		}
 	}, [navigate]);
 
 	useEffect(() => {

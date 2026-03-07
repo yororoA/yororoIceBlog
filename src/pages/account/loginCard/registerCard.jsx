@@ -5,11 +5,12 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import sendVerificationCode from '../../../apis/sendVerificationCode';
 import { submitRegister } from '../../../utils/submitRegister';
 import { t } from '../../../i18n/uiText';
+import { getInitialUiLocale } from '../../../utils/uiLocale';
 
 const RegisterCard = () => {
 	const navigate = useNavigate();
 	const { locale } = useOutletContext() || {};
-	const lang = locale || (typeof localStorage !== 'undefined' ? localStorage.getItem('ui_locale') : null) || 'en';
+	const lang = locale || getInitialUiLocale();
 
 	// check completion
 	const keys = ['username', 'email', 'password', 'checkbox', 'verification'].sort();
