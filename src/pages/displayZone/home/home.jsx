@@ -8,6 +8,8 @@ import { MomentsListContext } from '../moments/context/momentsListContext';
 import { KnowledgeListContext } from '../knowledge/context/knowledgeListContext';
 import { useNavigate } from 'react-router-dom';
 import binesImg from '../../../assets/images/bines.png';
+import ProfileMiniCard from '../shared/profileMiniCard';
+import MomentsCalendar from '../shared/momentsCalendar';
 
 function getFirstImageAsCover(markdown) {
 	if (!markdown || typeof markdown !== 'string') return { coverUrl: null, contentWithoutFirstImage: markdown || '' };
@@ -32,6 +34,7 @@ const Home = () => {
 	const [articlesData] = useContext(KnowledgeListContext);
 	const [now, setNow] = useState(() => new Date());
 	const [binesOnline, setBinesOnline] = useState(false);
+	const [homeCalendarMode, setHomeCalendarMode] = useState('moments');
 	const displayAuthor = t(locale, 'profileAuthor');
 	const interestItems = t(locale, 'interestsItems');
 	const effectiveMoments = momentsData;
@@ -244,6 +247,36 @@ const Home = () => {
 					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('friendLinks')}>{t(locale, 'friendLinks')}</button>
 					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('toolLinks')}>{t(locale, 'shortcutUsefulTools')}</button>
 					<button type="button" className={homeStyles.shortcutTag} onClick={() => handleShortcut('guestbook')}>{t(locale, 'guestbookTitle')}</button>
+				</div>
+				<div className={homeStyles.mobileAssistGrid}>
+					<div className={homeStyles.mobileAssistCol}>
+						<ProfileMiniCard visible embedded githubOnly className={homeStyles.mobileGithubEmbed} />
+					</div>
+					<div className={homeStyles.mobileAssistCol}>
+						<div className={homeStyles.mobileCalendarPanel}>
+							<div className={homeStyles.mobileCalendarTabs} role="tablist" aria-label="home calendar mode switch">
+								<button
+									type="button"
+									role="tab"
+									aria-selected={homeCalendarMode === 'moments'}
+									className={`${homeStyles.mobileCalendarTab}${homeCalendarMode === 'moments' ? ` ${homeStyles.mobileCalendarTabActive}` : ''}`}
+									onClick={() => setHomeCalendarMode('moments')}
+								>
+									{t(locale, 'navMoments')}
+								</button>
+								<button
+									type="button"
+									role="tab"
+									aria-selected={homeCalendarMode === 'articles'}
+									className={`${homeStyles.mobileCalendarTab}${homeCalendarMode === 'articles' ? ` ${homeStyles.mobileCalendarTabActive}` : ''}`}
+									onClick={() => setHomeCalendarMode('articles')}
+								>
+									{t(locale, 'navArticles')}
+								</button>
+							</div>
+							<MomentsCalendar visible embedded mode={homeCalendarMode} className={homeStyles.mobileCalendarEmbed} />
+						</div>
+					</div>
 				</div>
 				<div className={homeStyles.latestGrid}>
 					<div

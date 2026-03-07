@@ -113,6 +113,49 @@
   align-items: stretch;
 }
 
+.mobileAssistGrid {
+  display: none;
+}
+
+.mobileAssistCol {
+  min-width: 0;
+}
+
+.mobileCalendarPanel {
+  width: 100%;
+}
+
+.mobileCalendarTabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.mobileCalendarTab {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid var(--nm-input-border);
+  background: var(--input-bgc);
+  color: var(--text-color-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--hover-duration) var(--hover-ease);
+
+  &:hover {
+    color: var(--text-color);
+    background: var(--accent-color-light);
+  }
+}
+
+.mobileCalendarTabActive {
+  color: var(--accent-color);
+  background: var(--accent-color-light);
+  border-color: var(--accent-color-border);
+}
+
 .infoCard {
   border: var(--nm-input-border);
   border-radius: 16px;
@@ -176,6 +219,7 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
 }
 
@@ -557,6 +601,19 @@
     border-radius: 16px;
   }
 
+  .mobileAssistGrid {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    align-items: start;
+  }
+
+  .mobileGithubEmbed,
+  .mobileCalendarEmbed {
+    width: 100%;
+  }
+
   .previewTitle {
     margin-bottom: 6px;
     font-size: 15px;
@@ -566,6 +623,7 @@
     font-size: 13px;
     line-height: 1.5;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
   }
 
   .previewMeta,
@@ -598,6 +656,7 @@
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         overflow: hidden;
       }
 
@@ -609,6 +668,7 @@
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         overflow: hidden;
       }
 
@@ -692,6 +752,21 @@
     height: 66px;
   }
 
+  .mobileAssistGrid {
+    margin-top: 8px;
+    gap: 8px;
+  }
+
+  .mobileCalendarTabs {
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+
+  .mobileCalendarTab {
+    height: 28px;
+    font-size: 11px;
+  }
+
   .latestGrid {
     .previewCard {
       gap: 5px;
@@ -708,6 +783,7 @@
       .previewText {
         font-size: 11px;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
       }
 
       .previewMeta {
@@ -723,5 +799,11 @@
         }
       }
     }
+  }
+}
+
+@media (max-width: 500px) {
+  .mobileAssistGrid {
+    grid-template-columns: 1fr;
   }
 }

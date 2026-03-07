@@ -97,7 +97,7 @@ const describeDonutSegment = (cx, cy, R, r, startDeg, endDeg) => {
   return `M ${outerStart.x} ${outerStart.y} A ${R} ${R} 0 ${largeArc} ${outerSweep} ${outerEnd.x} ${outerEnd.y} L ${innerEnd.x} ${innerEnd.y} A ${r} ${r} 0 ${largeArc} ${innerSweep} ${innerStart.x} ${innerStart.y} Z`;
 };
 
-const ProfileMiniCard = ({ visible = true }) => {
+const ProfileMiniCard = ({ visible = true, embedded = false, githubOnly = false, className = '' }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { locale, langViewMode, setLangViewMode } = useContext(UiPersistContext);
@@ -211,35 +211,39 @@ const ProfileMiniCard = ({ visible = true }) => {
     return { name: top.name, percent: Number(top.percent || 0).toFixed(1) };
   }, [pieSegments]);
 
+  const rootClass = embedded ? styles.embeddedLane : styles.leftLane;
+
   return (
-    <aside className={`${styles.leftLane}${visible ? '' : ` ${styles.leftLaneHidden}`}`} aria-label="profile snippet">
+    <aside className={`${rootClass}${visible ? '' : ` ${styles.leftLaneHidden}`}${className ? ` ${className}` : ''}`} aria-label="profile snippet">
       <div className={styles.stack}>
-        <div className={`${styles.card} page-enter`}>
-          <div className={styles.avatarSection}>
-            {PROFILE.avatar ? (
-              <img src={PROFILE.avatar} alt={displayAuthor} className={styles.avatar} />
-            ) : (
-              <div className={styles.avatarPlaceholder}>{displayAuthor.charAt(0).toUpperCase()}</div>
-            )}
+        {!githubOnly && (
+          <div className={`${styles.card} page-enter`}>
+            <div className={styles.avatarSection}>
+              {PROFILE.avatar ? (
+                <img src={PROFILE.avatar} alt={displayAuthor} className={styles.avatar} />
+              ) : (
+                <div className={styles.avatarPlaceholder}>{displayAuthor.charAt(0).toUpperCase()}</div>
+              )}
+            </div>
+            <h3 className={styles.authorName}>{displayAuthor}</h3>
+            <p className={styles.description}>{t(locale, 'profileDescription')}</p>
+            {PROFILE.email && <p className={styles.email} onClick={handleCopyEmail} title={t(locale, 'copyEmail')}>{PROFILE.email}</p>}
+            <div className={styles.links}>
+              {SOCIAL_LINKS.map(link => (
+                <a
+                  key={link.name}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.link}
+                  title={link.name}
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
           </div>
-          <h3 className={styles.authorName}>{displayAuthor}</h3>
-          <p className={styles.description}>{t(locale, 'profileDescription')}</p>
-          {PROFILE.email && <p className={styles.email} onClick={handleCopyEmail} title={t(locale, 'copyEmail')}>{PROFILE.email}</p>}
-          <div className={styles.links}>
-            {SOCIAL_LINKS.map(link => (
-              <a
-                key={link.name}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.link}
-                title={link.name}
-              >
-                {link.name}
-              </a>
-            ))}
-          </div>
-        </div>
+        )}
 
         <div className={`${styles.card} ${styles.statsCard} page-enter`}>
           <div className={styles.statsHeader}>

@@ -27,6 +27,12 @@
     align-items: center;
     gap: var(--ack-gap);
 
+    p {
+      margin: 0;
+      font-size: var(--h5-fontsize);
+      line-height: 1;
+    }
+
     svg {
       width: var(--action-icon-width);
       color: var(--inactive-color);
@@ -40,6 +46,20 @@
 
       &:hover {
         transform: scale(1.3);
+      }
+    }
+  }
+
+  &.sm {
+    label {
+      gap: 4px;
+
+      svg {
+        width: 14px;
+      }
+
+      p {
+        font-size: 12px;
       }
     }
   }

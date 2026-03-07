@@ -109,3 +109,48 @@
   0%, 100% { opacity: 0.4; transform: scale(0.95); }
   50% { opacity: 1; transform: scale(1.1); }
 }
+
+@media (max-width: 768px) {
+  .newBanner {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .entire {
+    .item {
+      margin-bottom: calc(var(--moments-zone-gap) * 1.2);
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .item:hover {
+      transform: none;
+      box-shadow: var(--card-shadow);
+      cursor: default;
+    }
+  }
+
+  .loading {
+    padding: 36px 12px;
+    font-size: 14px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .newBanner {
+    margin-bottom: 8px;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .entire .item {
+    margin-bottom: calc(var(--moments-zone-gap) * 1);
+    border-radius: 10px;
+  }
+
+  .loading {
+    font-size: 12px;
+  }
+}

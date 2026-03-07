@@ -28,7 +28,7 @@ const initialViewDate = () => new Date();
 // 涂鸦路径：从左上往右下的“之”字形，stroke-width 会让它变成色块
 const SCRIBBLE_PATH_D = "M 20,25 Q 55,20 85,25 L 15,45 L 85,55 L 15,70 L 80,80";
 
-const MomentsCalendar = ({ visible = true, mode = 'moments' }) => {
+const MomentsCalendar = ({ visible = true, mode = 'moments', embedded = false, className = '' }) => {
   const { locale } = useContext(UiPersistContext);
   const [momentsData] = useContext(MomentsListContext);
   const [articlesData] = useContext(KnowledgeListContext);
@@ -191,8 +191,10 @@ const MomentsCalendar = ({ visible = true, mode = 'moments' }) => {
   const goPrev = () => setViewDate((d) => new Date(d.getFullYear(), d.getMonth() - 1));
   const goNext = () => setViewDate((d) => new Date(d.getFullYear(), d.getMonth() + 1));
 
+  const rootClass = embedded ? styles.embeddedLane : styles.rightLane;
+
   return (
-    <aside className={`${styles.rightLane}${visible ? '' : ` ${styles.rightLaneHidden}`}`} aria-label={t(locale, 'calendarTitle')}>
+    <aside className={`${rootClass}${visible ? '' : ` ${styles.rightLaneHidden}`}${className ? ` ${className}` : ''}`} aria-label={t(locale, 'calendarTitle')}>
       <div className={styles.stack}>
         <div className={`${styles.card} page-enter`}>
           <div className={styles.calendarHeader}>

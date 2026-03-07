@@ -13,9 +13,10 @@ import like from './like.module.less';
 const Like = (props) => {
 	const id = `${props._id}_${props.type || 'moment'}_like`;
 	const disabled = !!props.disabled;
+	const sizeClass = props.size === 'sm' ? like.sm : '';
 
 	return (
-		<div className={`${like.feedback} ${disabled ? like.disabled : ''}`}>
+		<div className={`${like.feedback} ${sizeClass} ${disabled ? like.disabled : ''}`}>
 			<input type={"checkbox"} id={id} onChange={props.onChange} checked={props.checked} disabled={disabled}/>
 			<label htmlFor={id}>
 				<svg

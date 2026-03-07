@@ -122,7 +122,7 @@ const KnowledgeCard = ({ article, liked, onOpenDetail, locale, isDeleting = fals
             </svg>
             {views}
           </span>
-          <Like checked={liked} likes={likes} _id={article._id} type="article_card" disabled={true} />
+          <Like checked={liked} likes={likes} _id={article._id} type="article_card" disabled={true} size="sm" />
         </div>
       </div>
     </div>

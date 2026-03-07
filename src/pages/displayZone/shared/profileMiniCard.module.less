@@ -7,14 +7,24 @@
   padding: 8px 14px;
   box-sizing: border-box;
   z-index: 4;
-  pointer-events: none;
+  pointer-events: auto;
   overflow-y: auto;
   scrollbar-width: none;
   overscroll-behavior: contain;
+  scroll-behavior: smooth;
 
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+.embeddedLane {
+  position: static;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  z-index: auto;
+  pointer-events: auto;
 }
 
 .leftLaneHidden {
@@ -26,6 +36,19 @@
   flex-direction: column;
   gap: 12px;
   min-height: min-content;
+}
+
+.embeddedLane .stack {
+  gap: 10px;
+}
+
+.embeddedLane .card {
+  padding: 14px 12px;
+  border-radius: 12px;
+}
+
+.embeddedLane .statsCard {
+  gap: 6px;
 }
 
 .card {
@@ -47,9 +70,7 @@
   }
 }
 
-.stack > .card {
-  pointer-events: auto;
-}
+.stack > .card { pointer-events: auto; }
 
 .avatarSection {
   margin-top: 2px;
@@ -383,5 +404,53 @@
 @media (max-width: 1024px) {
   .leftLane {
     display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .embeddedLane .statsHeader {
+    align-items: flex-start;
+    gap: 6px;
+    flex-direction: column;
+  }
+
+  .embeddedLane .statsHeaderRight {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .embeddedLane .metrics {
+    gap: 5px;
+  }
+
+  .embeddedLane .metricItem {
+    padding: 7px 5px;
+  }
+
+  .embeddedLane .metricItem strong {
+    font-size: 15px;
+  }
+
+  .embeddedLane .metricItem span,
+  .embeddedLane .statsHint,
+  .embeddedLane .pieLegendItem,
+  .embeddedLane .barLabel,
+  .embeddedLane .barPercent,
+  .embeddedLane .langViewBtn,
+  .embeddedLane .statsHeader a {
+    font-size: 11px;
+  }
+
+  .embeddedLane .langViewStage {
+    min-height: 136px;
+  }
+
+  .embeddedLane .pieWrap {
+    min-height: 130px;
+  }
+
+  .embeddedLane .pieSvg {
+    min-height: 122px;
   }
 }

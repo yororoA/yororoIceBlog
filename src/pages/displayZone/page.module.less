@@ -540,6 +540,23 @@
 
     main {
       width: 92%;
+
+      section[id='header'] {
+        padding: 12px 0 10px 0;
+        margin-bottom: 10px;
+
+        span {
+          font-size: clamp(30px, 7vw, 38px);
+          line-height: 1.2;
+        }
+
+        button {
+          padding: 6px 12px;
+          font-size: 12px;
+          border-radius: 8px;
+          line-height: 1.25;
+        }
+      }
     }
 
     &.entireWide main {
@@ -813,6 +830,21 @@
           min-height: 28px;
           font-size: 10px;
           padding: 5px 8px;
+        }
+      }
+
+      section[id='header'] {
+        padding: 10px 0 8px 0;
+        margin-bottom: 8px;
+
+        span {
+          font-size: clamp(26px, 8vw, 32px);
+        }
+
+        button {
+          padding: 5px 10px;
+          font-size: 11px;
+          border-radius: 7px;
         }
       }
     }
