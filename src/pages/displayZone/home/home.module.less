@@ -578,6 +578,65 @@
   .articlePreviewCover img {
     height: 74px;
   }
+
+  // LatestMoment / LatestArticle 卡片在窄屏下的内容层级优化
+  .latestGrid {
+    .previewCard {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px 12px 10px;
+
+      .sectionTitle {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.25;
+      }
+
+      .previewTitle {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+
+      .previewText {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--text-color-secondary);
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+
+      .previewMeta {
+        margin: 2px 0 0;
+        padding-top: 6px;
+        border-top: 1px dashed rgba(127, 127, 127, 0.28);
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .previewEmpty {
+        margin-top: 2px;
+        font-size: 12px;
+      }
+
+      .articlePreviewCover {
+        margin-bottom: 2px;
+        border-radius: 10px;
+
+        img {
+          height: 72px;
+        }
+      }
+    }
+  }
 }
 
 @media (max-width: 480px) {
@@ -633,5 +692,38 @@
 
   .articlePreviewCover img {
     height: 66px;
+  }
+
+  .latestGrid {
+    .previewCard {
+      gap: 5px;
+      padding: 10px 10px 9px;
+
+      .sectionTitle {
+        font-size: 16px;
+      }
+
+      .previewTitle {
+        font-size: 12px;
+      }
+
+      .previewText {
+        font-size: 11px;
+        -webkit-line-clamp: 2;
+      }
+
+      .previewMeta {
+        font-size: 10px;
+        padding-top: 5px;
+      }
+
+      .articlePreviewCover {
+        border-radius: 9px;
+
+        img {
+          height: 64px;
+        }
+      }
+    }
   }
 }

@@ -339,42 +339,203 @@
 @media (max-width: 768px) {
   .stats {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 14px;
   }
 
   .statItem {
-    padding: 10px 12px;
+    padding: 10px 8px;
+    border-radius: 12px;
+  }
+
+  .statValue {
+    font-size: clamp(28px, 7.8vw, 34px);
+    margin-bottom: 0;
+  }
+
+  .statLabel {
+    font-size: 12px;
   }
 
   .timelineTrack {
-    left: 13px;
+    left: 11px;
+    width: 2px;
+    opacity: 0.42;
   }
 
   .filters {
-    padding: 16px;
+    margin-bottom: 16px;
+    padding: 14px 12px;
+    border-radius: 12px;
+    gap: 12px;
   }
 
   .filterGroup {
     flex-direction: column;
     align-items: flex-start;
+    gap: 8px;
+  }
+
+  .filterLabel {
+    font-size: 14px;
   }
 
   .timelineSide {
-    width: 30px;
+    width: 24px;
   }
 
   .dot {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
+    border-width: 2px;
+    margin-top: 4px;
+  }
+
+  .item {
+    gap: 10px;
   }
 
   .itemContent {
-    padding: 10px 14px 14px;
-    margin-bottom: 8px;
+    padding: 10px 12px 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+  }
+
+  .itemContentClickable:hover {
+    transform: none;
+  }
+
+  .itemHeader {
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .type {
+    padding: 3px 9px;
+    font-size: 11px;
+    border-radius: 999px;
+  }
+
+  .date {
+    font-size: 12px;
+  }
+
+  .itemTitle {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .meta {
+    font-size: 12px;
+    gap: 8px;
   }
 
   .viewHint {
     margin-top: 6px;
+    font-size: 12px;
+  }
+
+  .filterBtns {
+    gap: 6px;
+  }
+
+  .filterBtn {
+    padding: 7px 12px;
+    min-height: 34px;
+    border-radius: 999px;
+    font-size: 13px;
+  }
+
+  .loading {
+    padding: 36px 12px;
+    font-size: 14px;
+  }
+
+  .empty {
+    padding: 36px 12px;
+  }
+
+  .emptyText {
+    font-size: 14px;
+  }
+
+  .emptyHint {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats {
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+
+  .statItem {
+    padding: 9px 6px;
+    border-radius: 10px;
+  }
+
+  .statValue {
+    font-size: clamp(24px, 7.2vw, 30px);
+  }
+
+  .statLabel {
+    font-size: 11px;
+  }
+
+  .filters {
+    padding: 12px 10px;
+    border-radius: 10px;
+    gap: 10px;
+  }
+
+  .filterLabel {
+    font-size: 13px;
+  }
+
+  .filterBtn {
+    min-height: 30px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .timelineTrack {
+    left: 9px;
+  }
+
+  .timelineSide {
+    width: 20px;
+  }
+
+  .item {
+    gap: 8px;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+  }
+
+  .itemContent {
+    padding: 9px 10px 10px;
+    margin-bottom: 8px;
+    border-radius: 9px;
+  }
+
+  .type {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+
+  .date,
+  .meta,
+  .viewHint,
+  .emptyHint {
+    font-size: 11px;
+  }
+
+  .itemTitle,
+  .emptyText {
+    font-size: 14px;
   }
 }

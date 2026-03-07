@@ -550,11 +550,11 @@
       nav {
         width: 100%;
         max-width: none;
-        padding: 8px 12px;
-        gap: 10px;
+        padding: 6px 10px;
+        gap: 8px;
 
         img.logo {
-          height: calc(var(--logo-height) * 0.9);
+          height: clamp(26px, 7vw, 32px);
         }
 
         .mobileMenuBtn {
@@ -563,9 +563,9 @@
           position: relative;
           flex-direction: column;
           justify-content: center;
-          gap: 4px;
-          width: 36px;
-          height: 32px;
+          gap: 3px;
+          width: 34px;
+          height: 30px;
           border: none;
           border-radius: 8px;
           background: transparent;
@@ -573,7 +573,7 @@
           cursor: pointer;
 
           span {
-            width: 18px;
+            width: 16px;
             height: 2px;
             margin: 0 auto;
             border-radius: 999px;
@@ -586,10 +586,10 @@
           top: 0;
           left: 0;
           z-index: 1001;
-          width: min(74vw, 288px);
+          width: min(82vw, 304px);
           height: 100vh;
           height: 100dvh;
-          padding: max(12px, env(safe-area-inset-top)) 12px 16px;
+          padding: max(10px, env(safe-area-inset-top)) 10px 14px;
           box-sizing: border-box;
           background: var(--displayzone-bgc);
           border-right: var(--nm-input-border);
@@ -602,7 +602,7 @@
           flex-direction: column;
           align-items: stretch;
           justify-content: flex-start;
-          gap: 12px;
+          gap: 10px;
           overflow-y: auto;
           overscroll-behavior: contain;
           -webkit-overflow-scrolling: touch;
@@ -626,9 +626,9 @@
           & span {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            font-size: 14px;
+            gap: 7px;
+            padding: 9px 10px;
+            font-size: 13px;
             border-radius: 8px;
             text-align: left;
 
@@ -643,9 +643,9 @@
           display: flex;
           flex-direction: column;
           align-items: stretch;
-          gap: 10px;
+          gap: 8px;
           border-top: 1px solid rgba(0, 0, 0, 0.08);
-          padding-top: 10px;
+          padding-top: 8px;
         }
 
         .announcementBtn {
@@ -653,12 +653,12 @@
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 8px 10px;
-          font-size: 14px;
+          padding: 7px 9px;
+          font-size: 13px;
 
           span {
             display: inline;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-color-secondary);
           }
         }
@@ -666,7 +666,7 @@
         .navUserSection {
           flex-direction: column;
           align-items: stretch;
-          gap: 10px;
+          gap: 8px;
         }
 
         .mobileUserInfo {
@@ -675,7 +675,7 @@
 
         .navUsername {
           max-width: 200px;
-          font-size: 13px;
+          font-size: 12px;
         }
 
         .settingsBtn {
@@ -699,22 +699,22 @@
         .mobileSettingsDirect {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 6px;
           border-top: 1px solid rgba(0, 0, 0, 0.08);
-          padding-top: 10px;
+          padding-top: 8px;
 
           .settingsItemTheme {
-            padding: 10px 12px;
+            padding: 8px 10px;
           }
 
           .settingsItemLabel {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-color);
           }
 
           .settingsItem {
-            font-size: 14px;
-            padding: 10px 12px;
+            font-size: 13px;
+            padding: 8px 10px;
           }
         }
 
@@ -734,10 +734,10 @@
           color: var(--text-color-secondary);
           border-radius: 7px;
           padding: 6px 10px;
-          min-height: 32px;
+          min-height: 30px;
           line-height: 1;
           cursor: pointer;
-          font-size: 12px;
+          font-size: 11px;
 
           &:hover {
             color: var(--text-color);
@@ -759,6 +759,62 @@
       -webkit-backdrop-filter: blur(2px);
       backdrop-filter: blur(2px);
       pointer-events: auto;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .entire {
+    .navBox {
+      nav {
+        padding: 5px 8px;
+
+        img.logo {
+          height: clamp(22px, 7vw, 28px);
+        }
+
+        .mobileMenuBtn {
+          width: 32px;
+          height: 28px;
+
+          span {
+            width: 15px;
+          }
+        }
+
+        .navContent {
+          width: min(86vw, 292px);
+          padding: max(8px, env(safe-area-inset-top)) 8px 12px;
+        }
+
+        div.link {
+          & span {
+            padding: 8px 9px;
+            font-size: 12px;
+          }
+        }
+
+        .announcementBtn {
+          font-size: 12px;
+
+          span {
+            font-size: 12px;
+          }
+        }
+
+        .mobileSettingsDirect {
+          .settingsItemLabel,
+          .settingsItem {
+            font-size: 12px;
+          }
+        }
+
+        .mobileLocaleBtn {
+          min-height: 28px;
+          font-size: 10px;
+          padding: 5px 8px;
+        }
+      }
     }
   }
 }
@@ -796,4 +852,35 @@
   color: var(--text-color-secondary);
   font-size: var(--h6-fontsize);
   opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .globalFooter {
+    min-height: calc(var(--displayzone-footer-height) - 6px);
+    padding: 6px 12px;
+  }
+
+  .globalFooterCopyright {
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.35;
+  }
+
+  .globalFooterLicense {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .globalFooter {
+    padding: 5px 8px;
+  }
+
+  .globalFooterCopyright {
+    font-size: 11px;
+  }
+
+  .globalFooterLicense {
+    font-size: 10px;
+  }
 }
