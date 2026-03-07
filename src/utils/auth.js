@@ -33,7 +33,7 @@ export function isGuest() {
 /** 获取游客展示用用户名：若未设置则生成随机名并持久化，用于 nav/chat/留言板 */
 export function getGuestDisplayName() {
 	if (typeof localStorage === 'undefined' || !isGuest()) return '';
-	let name = localStorage.getItem(GUEST_DISPLAY_NAME_KEY);
+	let name = localStorage.getItem(GUEST_DISPLAY_NAME_KEY) || '';
 	if (!name || !name.trim()) {
 		name = randomLetterUsername();
 		localStorage.setItem(GUEST_DISPLAY_NAME_KEY, name);

@@ -16,12 +16,12 @@ export async function getHistory({ type, userId, page = 1, limit = 15 }) {
 	return { items: data.data || [], hasMore: !!data.hasMore };
 }
 
-export async function sendMessage({ type, targetUserId, text, imgurl = [], replyto = '' }) {
+export async function sendMessage({ type, targetUserId, text, imgurl = [], replyto = '', username = '', identity = 'user' }) {
 	const imgurlArr = Array.isArray(imgurl) ? imgurl : (imgurl ? [imgurl] : []);
 	const resp = await fetch(`${API}/send`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ type, targetUserId, text, imgurl: imgurlArr, replyto }),
+		body: JSON.stringify({ type, targetUserId, text, imgurl: imgurlArr, replyto, username, identity }),
 	});
 	const data = await resp.json();
 	if (!resp.ok) throw new Error(data.message || '发送失败');

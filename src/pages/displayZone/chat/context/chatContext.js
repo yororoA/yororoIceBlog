@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useCallback, useState, useEffect, useRef } from 'react';
 import { getConversations, getHistory, sendMessage, hasPrivateHistory } from '../../../../utils/chat';
-import { getUid } from '../../../../utils/auth';
+import { getUid, getUsername, getGuestDisplayName, isGuest } from '../../../../utils/auth';
+import { ADMIN_UIDS, BINES_UID } from '../../../../utils/userAvatar';
 
 const RENDER_BATCH = 5;
 const PAGE_SIZE = 15;
@@ -13,6 +14,9 @@ const ChatContext = createContext(null);
 
 export function ChatProvider({ children }) {
 	const uid = getUid();
+	const identity = isGuest()
+		? 'guest'
+		: ((uid === 'admin' || ADMIN_UIDS.includes(uid) || uid === BINES_UID) ? 'admin' : 'user');
 	const [conversations, setConversations] = useState([]);
 	const [activeId, setActiveId] = useState('group');
 	const [activeType, setActiveType] = useState('group');
@@ -161,6 +165,10 @@ export function ChatProvider({ children }) {
 			if (!hasText && !hasMedia) return false;
 			setSending(true);
 			try {
+				const guestMode = isGuest();
+				const senderUsername = guestMode
+					? getGuestDisplayName()
+					: (getUsername() || '');
 				const targetUserId = getTargetUserId(activeId, activeType);
 				const msg = await sendMessage({
 					type: activeType,
@@ -168,6 +176,8 @@ export function ChatProvider({ children }) {
 					text: hasText ? String(text).trim() : '',
 					imgurl: imgurls || [],
 					replyto,
+					username: senderUsername,
+					identity,
 				});
 				const key = getConvKey(activeId, activeType);
 				addMessageToConversation(key, msg);
@@ -179,7 +189,7 @@ export function ChatProvider({ children }) {
 				setSending(false);
 			}
 		},
-		[activeId, activeType, getTargetUserId, addMessageToConversation]
+		[activeId, activeType, getTargetUserId, addMessageToConversation, identity]
 	);
 
 	const selectConversation = useCallback((id, type) => {

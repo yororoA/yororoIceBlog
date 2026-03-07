@@ -4,11 +4,9 @@ import { UiPersistContext } from '../context/uiPersistContext';
 import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
 import { t } from '../../../i18n/uiText';
 import { useChat } from './context/chatContext';
-import { getAvatarColor, getAvatarLetter } from '../../../utils/avatarColor';
 import { uploadChatMedia } from '../../../utils/chat';
-import adminImg from '../../../assets/images/admin.png';
-import binesImg from '../../../assets/images/bines.png';
 import IvPreview from '../../../components/ui/image_video_preview/ivPreview';
+import { getIdentityAvatar, ADMIN_UIDS, BINES_UID, isLikelyGuestUser } from '../../../utils/userAvatar';
 
 const VIDEO_EXT = /\.(mp4|webm|ogg|mov|avi|mkv)(\?|$)/i;
 function inferMediaType(url) {
@@ -20,29 +18,27 @@ function normalizeImgurl(imgurl) {
 	return imgurl ? [imgurl] : [];
 }
 
-const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
-const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
-
 function getMsgAvatar(msg) {
 	if (!msg) return { avatarImg: null, avatarLetter: null, avatarColor: null };
-	const uid = msg.uid;
-	const avatarImg = ADMIN_UIDS.includes(uid) ? adminImg : uid === BINES_UID ? binesImg : null;
+	const uid = msg.uid || '';
 	const name = msg.username || uid || '';
-	const avatarLetter = !avatarImg && name ? getAvatarLetter(name) : null;
-	const avatarColor = avatarLetter ? getAvatarColor(uid || name) : null;
-	return { avatarImg, avatarLetter, avatarColor };
+	return getIdentityAvatar(uid, name, { stripGuestPrefixForGuest: true });
+}
+
+function getIdentityTag(uid, name = '') {
+	if (uid === BINES_UID) return { text: 'BINES', tone: 'privileged' };
+	if (uid === 'admin' || ADMIN_UIDS.includes(uid)) return { text: 'ADMIN', tone: 'privileged' };
+	if (isLikelyGuestUser(uid, name)) return { text: 'GUEST', tone: 'guest' };
+	return { text: 'USER', tone: 'member' };
 }
 
 function getConvAvatar(conv) {
 	if (!conv) return { avatarImg: null, avatarLetter: null, avatarColor: null };
 	if (conv.id === 'group') {
-		return { avatarImg: null, avatarLetter: 'G', avatarColor: getAvatarColor('group') };
+		return getIdentityAvatar('group', 'G');
 	}
-	const avatarImg = conv.id === 'admin' ? adminImg : ADMIN_UIDS.includes(conv.id) ? adminImg : conv.id === BINES_UID ? binesImg : null;
 	const label = conv.label || conv.id || '';
-	const avatarLetter = !avatarImg && label ? getAvatarLetter(label) : null;
-	const avatarColor = avatarLetter ? getAvatarColor(conv.id || label) : null;
-	return { avatarImg, avatarLetter, avatarColor };
+	return getIdentityAvatar(conv.id, label, { stripGuestPrefixForGuest: true });
 }
 
 function formatTime(date) {
@@ -203,7 +199,8 @@ function ChatContent() {
 
 	const getConvLabel = (conv) => {
 		if (conv.labelKey) return t(locale, conv.labelKey);
-		return conv.label || conv.id;
+		const { displayName } = getIdentityAvatar(conv.id, conv.label || conv.id || '', { stripGuestPrefixForGuest: true });
+		return displayName || conv.id;
 	};
 
 	return (
@@ -258,7 +255,8 @@ function ChatContent() {
 								)}
 								{messages.map((msg, idx) => {
 								const showTimeAbove = shouldShowTimeAbove(messages, idx);
-								const { avatarImg, avatarLetter, avatarColor } = getMsgAvatar(msg);
+								const { avatarImg, avatarLetter, avatarColor, displayName } = getMsgAvatar(msg);
+								const identityTag = getIdentityTag(msg.uid, msg.username || displayName || '');
 								const msgAvatarNode = avatarImg ? (
 									<img src={avatarImg} alt="" className={styles.msgAvatarImg} />
 								) : avatarLetter ? (
@@ -282,7 +280,19 @@ function ChatContent() {
 										<div className={styles.messageBubbleWrap}>
 											{!msg.isSent && msgAvatarNode}
 											<div className={styles.messageContent}>
-												<span className={styles.msgUsername}>{msg.username}</span>
+												<div className={`${styles.msgMetaRow} ${msg.isSent ? styles.msgMetaRowSent : ''}`}>
+													{msg.isSent ? (
+														<>
+															<span className={styles.msgUsername}>{displayName}</span>
+															<span className={`${styles.msgRoleTag} ${identityTag.tone === 'privileged' ? styles.msgRoleTagPrivileged : identityTag.tone === 'member' ? styles.msgRoleTagMember : styles.msgRoleTagGuest}`}>{identityTag.text}</span>
+														</>
+													) : (
+														<>
+															<span className={`${styles.msgRoleTag} ${identityTag.tone === 'privileged' ? styles.msgRoleTagPrivileged : identityTag.tone === 'member' ? styles.msgRoleTagMember : styles.msgRoleTagGuest}`}>{identityTag.text}</span>
+															<span className={styles.msgUsername}>{displayName}</span>
+														</>
+													)}
+												</div>
 												<div className={styles.messageBubbles}>
 													{hasText && <div className={styles.bubble}>{msg.text}</div>}
 													{hasMedia && (

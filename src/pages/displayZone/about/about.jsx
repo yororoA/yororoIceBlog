@@ -1,12 +1,10 @@
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import about from './about.module.less';
-import adminImg from '../../../assets/images/admin.png';
-import binesImg from '../../../assets/images/bines.png';
 import { postGuestbookComment } from '../../../utils/guestbook';
 import { GuestbookContext } from '../context/guestbookContext';
 import { isGuest, getUid, setGuestDisplayName } from '../../../utils/auth';
-import { getAvatarColor } from '../../../utils/avatarColor';
+import { getIdentityAvatar } from '../../../utils/userAvatar';
 import { formatDateTime } from '../../../utils/formatDateTime';
 import { UiPersistContext } from '../context/uiPersistContext';
 import { t } from '../../../i18n/uiText';
@@ -16,7 +14,6 @@ import { getLinks, createLink, updateLink, deleteLink } from '../../../utils/lin
 import Pop from '../../../components/ui/pop/pop';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
-const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
 const CATEGORY_ORDER = ['friend', 'tool', 'development', 'other'];
 
 /** 生成随机字母串，用于游客未填名称时的默认用户名 */
@@ -425,22 +422,27 @@ const About = () => {
                       key={c._id}
                       className={`${about.guestbookItem}${fadeInId === c._id ? ` ${about.guestbookItemFadeIn}` : ''}`}
                     >
-                      {ADMIN_UIDS.includes(c.uid) ? (
-                        <img src={adminImg} alt={c.username} className={about.guestbookAvatarImg} />
-                      ) : c.uid === BINES_UID ? (
-                        <img src={binesImg} alt={c.username} className={about.guestbookAvatarImg} />
-                      ) : (
-                        <div className={about.guestbookAvatar} style={{ backgroundColor: getAvatarColor(c.uid) }}>
-                          {c.username?.charAt(0).toUpperCase() || '?'}
+                    {(() => {
+                    const info = getIdentityAvatar(c.uid, c.username || c.uid || '', { stripGuestPrefixForGuest: true });
+                    return (
+                      <>
+                        {info.avatarImg ? (
+                          <img src={info.avatarImg} alt={info.displayName} className={about.guestbookAvatarImg} />
+                        ) : (
+                          <div className={about.guestbookAvatar} style={{ backgroundColor: info.avatarColor }}>
+                            {info.avatarLetter || '?'}
+                          </div>
+                        )}
+                        <div className={about.guestbookBody}>
+                          <div className={about.guestbookMeta}>
+                            <span className={about.guestbookUsername}>{info.displayName}</span>
+                            <span className={about.guestbookDate}>{formatDateTime(c.createdAt)}</span>
+                          </div>
+                          <p className={about.guestbookText}>{c.content}</p>
                         </div>
-                      )}
-                      <div className={about.guestbookBody}>
-                        <div className={about.guestbookMeta}>
-                          <span className={about.guestbookUsername}>{c.username}</span>
-                          <span className={about.guestbookDate}>{formatDateTime(c.createdAt)}</span>
-                        </div>
-                        <p className={about.guestbookText}>{c.content}</p>
-                      </div>
+                      </>
+                    );
+                    })()}
                     </div>
                   ))
                 )}

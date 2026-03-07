@@ -24,9 +24,6 @@ import BackToTop from '../../components/backToTop/BackToTop';
 import ProfileMiniCard from './shared/profileMiniCard';
 import MomentsCalendar from './shared/momentsCalendar';
 import { getUid, logout, isGuest, getGuestDisplayName, getUsername } from '../../utils/auth';
-import { getAvatarColor, getAvatarLetter } from '../../utils/avatarColor';
-import adminImg from '../../assets/images/admin.png';
-import binesImg from '../../assets/images/bines.png';
 import { getMoments } from '../../utils/getMoments';
 import { getKnowledgeArticles } from '../../utils/knowledge';
 import { getGuestbookComments } from '../../utils/guestbook';
@@ -34,10 +31,9 @@ import { GuestbookContext } from './context/guestbookContext';
 import { ChatProvider } from './chat/context/chatContext';
 import { guestLogin } from '../../utils/guestLogin';
 import { getInitialUiLocale } from '../../utils/uiLocale';
+import { getUserAvatar } from '../../utils/userAvatar';
 
 const LOCALE_ORDER = ['en', 'zh', 'ja'];
-const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
-const BINES_UID = 'u_mlkpl8fl_52a3d8c2068b281a';
 
 const SettingsIcon = () => (
 	<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
@@ -50,9 +46,7 @@ const DisplayZone = () => {
 	const uid = getUid();
 	const guest = isGuest();
 	const displayName = guest ? getGuestDisplayName() : (getUsername() || (uid ? `User_${String(uid).slice(-6)}` : ''));
-	const avatarImg = ADMIN_UIDS.includes(uid) ? adminImg : uid === BINES_UID ? binesImg : null;
-	const avatarLetter = !avatarImg && displayName ? getAvatarLetter(displayName) : null;
-	const avatarColor = avatarLetter ? getAvatarColor(uid || displayName) : null;
+	const { avatarImg, avatarLetter, avatarColor } = getUserAvatar(uid, displayName);
 	// gallery 的 ivs、hasMore 放在 DisplayZone，切换路由时不会卸载，回来时图片仍在且不会重复请求
 	const [galleryIvs, setGalleryIvs] = useState([]);
 	const [galleryHasMore, setGalleryHasMore] = useState(true);
