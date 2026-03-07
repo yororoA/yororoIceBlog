@@ -911,3 +911,300 @@
   gap: 6px;
   flex-shrink: 0;
 }
+
+@media (max-width: 768px) {
+  .container {
+    gap: 14px;
+    padding-bottom: 24px;
+  }
+
+  .linksCard,
+  .guestbookCard {
+    border-radius: 14px;
+    padding: 16px 12px;
+  }
+
+  .cardHeader {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .cardHeaderLeft {
+    flex: 1;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cardTitle {
+    font-size: clamp(24px, 6.2vw, 32px);
+    line-height: 1.2;
+  }
+
+  .cardHeaderActions {
+    width: 100%;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    padding-bottom: 2px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .headerActionBtn {
+    flex: 0 0 auto;
+    padding: 5px 10px;
+    font-size: 12px;
+    min-height: 30px;
+  }
+
+  .toggleIcon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .linkTip {
+    font-size: 12px;
+    line-height: 1.45;
+    margin-bottom: 10px;
+  }
+
+  .categoryTabs {
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .categoryTab {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 999px;
+    min-height: 32px;
+  }
+
+  .linksByCategory {
+    gap: 14px;
+  }
+
+  .linksCategoryHeading {
+    font-size: 16px;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+  }
+
+  .linksCategoryGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .linkWithImage,
+  .link {
+    width: 100%;
+    min-height: 64px;
+    box-sizing: border-box;
+  }
+
+  .linkWithImage {
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 10px;
+  }
+
+  .link {
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+
+  .linkImage {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  .linkName {
+    max-width: none;
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  .linkDescription {
+    max-width: none;
+    font-size: 12px;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .guestbookForm {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .guestbookNameInput,
+  .guestbookInput {
+    padding: 10px 12px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  .guestbookInput {
+    min-height: 82px;
+  }
+
+  .guestbookSubmit {
+    min-height: 32px;
+    padding: 7px 16px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  .guestbookList {
+    gap: 6px;
+  }
+
+  .guestbookItem {
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .guestbookAvatar,
+  .guestbookAvatarImg {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+  }
+
+  .guestbookAvatar {
+    font-size: 14px;
+  }
+
+  .guestbookMeta {
+    margin-bottom: 2px;
+    gap: 6px;
+  }
+
+  .guestbookUsername {
+    font-size: 12px;
+  }
+
+  .guestbookDate {
+    font-size: 11px;
+  }
+
+  .guestbookText,
+  .guestbookEmpty {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+}
+
+@media (max-width: 480px) {
+  .linksCard,
+  .guestbookCard {
+    border-radius: 12px;
+    padding: 12px 10px;
+  }
+
+  .cardHeader {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+  }
+
+  .cardTitle {
+    font-size: clamp(20px, 7vw, 26px);
+  }
+
+  .headerActionBtn {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-height: 28px;
+  }
+
+  .linkTip {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .categoryTabs {
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+
+  .categoryTab {
+    padding: 5px 8px;
+    min-height: 28px;
+    font-size: 11px;
+  }
+
+  .linksByCategory {
+    gap: 12px;
+  }
+
+  .linksCategoryHeading {
+    font-size: 14px;
+  }
+
+  .linkWithImage {
+    gap: 8px;
+    padding: 9px 8px;
+  }
+
+  .linkImage {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+  }
+
+  .linkName {
+    font-size: 13px;
+  }
+
+  .linkDescription {
+    font-size: 11px;
+  }
+
+  .guestbookNameInput,
+  .guestbookInput {
+    padding: 9px 10px;
+    font-size: 12px;
+  }
+
+  .guestbookInput {
+    min-height: 76px;
+  }
+
+  .guestbookSubmit {
+    min-height: 30px;
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+
+  .guestbookAvatar,
+  .guestbookAvatarImg {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+  }
+
+  .guestbookAvatar {
+    font-size: 12px;
+  }
+
+  .guestbookUsername {
+    font-size: 11px;
+  }
+
+  .guestbookDate,
+  .guestbookText,
+  .guestbookEmpty {
+    font-size: 10px;
+  }
+}

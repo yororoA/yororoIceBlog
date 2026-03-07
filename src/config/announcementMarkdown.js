@@ -26,16 +26,17 @@ export const homeAnnouncementMarkdown = {
 12. Chat room is now available (beta).
 13. Improved page display: guests entering via direct link are no longer forced to redirect to the login page.
 14. Improved image display and added article export to Markdown.
+15. Improved locale display: the site will automatically select a locale based on the user's region on first visit, with options to change it later in settings.
 
-> 15. Improved locale display: the site will automatically select a locale based on the user's region on first visit, with options to change it later in settings.
 > 16. Mobile adaptation in progress.
+> 17. Planning to add password/username modification features for non-guest users, as well as password reset functionality in the login process.
 
 `,
   zh: `# Welcome to yororIce's Town
 
 > 1. 目前后端对于游客模式的识别存在一定问题，使用游客模式进入网站后token很快就会失效
     **已修复**
-
+    
 2. 由于网络问题，POST/GET请求速度慢，在譬如发布moment的POST期间请耐心等待页面回退或自主关闭发布页面，请勿连续点击上传按钮以免重复上传
 
 3. 上传到gallery的图片无法删除（若要删除请通过邮箱联系管理员），发布moment时通过勾选commit上传到gallery的图片同样无法通过删除moment达到移除gallery的目的
@@ -56,9 +57,10 @@ export const homeAnnouncementMarkdown = {
 12. 初步上线聊天室(测试中)
 13. 优化页面展示效果, 游客通过链接直接进入网站时不再强制重定向到登录页面
 14. 优化图片展示功能, 增添article导出markdown功能
+15. 优化语种显示, 首次进入网站时会根据用户所在地区自动选择语种, 后续可通过设置选项修改语种
 
-> 15. 优化语种显示, 首次进入网站时会根据用户所在地区自动选择语种, 后续可通过设置选项修改语种
 > 16. 正在进行移动端适配
+> 17. 准备为非游客用户添加修改密码/用户名的功能, 以及 login 中重置密码的功能
 
 `,
   ja: `# Welcome to yororIce's Town
@@ -89,6 +91,6 @@ export const homeAnnouncementMarkdown = {
 
 > 15. ロケール表示を改善し、初回訪問時にユーザーの地域に基づいてロケールを自動選択するようになりました。後で設定から変更することもできます。
 > 16. モバイル対応を進行中。
-
+> 17. 非ゲストユーザー向けにパスワード/ユーザー名変更機能と、ログインプロセスにおけるパスワードリセット機能の追加を予定しています。
 `,
 };
