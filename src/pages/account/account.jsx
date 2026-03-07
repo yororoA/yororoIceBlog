@@ -8,6 +8,8 @@ import { useWheelInertia } from '../../hooks/useWheelInertia';
 import BackToTop from '../../components/backToTop/BackToTop';
 import { t } from '../../i18n/uiText';
 import { getInitialUiLocale } from '../../utils/uiLocale';
+import TownLaw from '../../components/ui/townLaw/townLaw';
+import { townLawMarkdown } from '../../config/townLawMarkdown';
 
 const LOCALE_ORDER = ['en', 'zh', 'ja'];
 
@@ -37,7 +39,8 @@ const Account = () => {
 	}, [pathname]);
 
 	const handleSelectLocale = useCallback((next) => setLocale(next), []);
-	const showBackBtn = pathname === 'login' || pathname === 'register';
+	const isAuthFormRoute = pathname === 'login' || pathname === 'register';
+	const isTownLawRoute = pathname === 'town-law';
 
 	return (
 		<div className={page.entire}>
@@ -61,18 +64,27 @@ const Account = () => {
 				</div>
 			</nav>
 
-			<main className={showBackBtn ? page.mainTwoCol : ''}>
-				<div className={`${page.welcome} ${firstClick && page.welComeFloat}`}>
-					<h1>{firstClick ? t(locale, 'accountWelcomeBack') : t(locale, 'accountWelcome')}</h1>
-					{firstClick && (
-						<h3>
-							{pathname === 'login' ? t(locale, 'accountLoginToJoin') : t(locale, 'accountRegisterToJoin')}
-						</h3>
-					)}
-					{!firstClick && (
-						<CommonBtn text={t(locale, 'accountClickToLogin')} onClick={handleFirstClick} />
-					)}
-				</div>
+			<main className={isAuthFormRoute ? page.mainTwoCol : ''}>
+				{!isTownLawRoute && (
+					<div className={`${page.welcome} ${firstClick && page.welComeFloat}`}>
+						<h1>{firstClick ? t(locale, 'accountWelcomeBack') : t(locale, 'accountWelcome')}</h1>
+						{firstClick && (
+							<>
+								<h3>
+									{pathname === 'login' ? t(locale, 'accountLoginToJoin') : t(locale, 'accountRegisterToJoin')}
+								</h3>
+								<TownLaw
+									title={t(locale, 'accountTownLaw')}
+									markdown={townLawMarkdown[locale] || townLawMarkdown.en}
+									className={page.wideTownLaw}
+								/>
+							</>
+						)}
+						{!firstClick && (
+							<CommonBtn text={t(locale, 'accountClickToLogin')} onClick={handleFirstClick} />
+						)}
+					</div>
+				)}
 				<Outlet context={{ locale }} />
 			</main>
 			<BackToTop scrollContainerRef={windowScrollRef} />

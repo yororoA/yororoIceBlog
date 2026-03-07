@@ -95,17 +95,6 @@ const LoginCard = () => {
 		<div className={entireCard.entire}>
 			<section className={entireCard.suggestion}>
 				<div className={entireCard.suggestionHead}>
-					<button
-						type="button"
-						className={entireCard.backBtn}
-						onClick={() => navigate('/account')}
-						title={t(lang, 'accountBackToAccount')}
-						aria-label={t(lang, 'accountBackToAccount')}
-					>
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-							<path d="M15 18l-6-6 6-6" />
-						</svg>
-					</button>
 					<h2>{t(lang, 'accountLoginTitle')}</h2>
 				</div>
 				<h3>{t(lang, 'accountLoginNoAccount')}</h3>

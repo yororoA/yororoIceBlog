@@ -1,16 +1,25 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import entireCard from './entireLoginCard.module.less';
 import lr from './lrCard.module.less';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import sendVerificationCode from '../../../apis/sendVerificationCode';
 import { submitRegister } from '../../../utils/submitRegister';
 import { t } from '../../../i18n/uiText';
 import { getInitialUiLocale } from '../../../utils/uiLocale';
+import Pop from '../../../components/ui/pop/pop';
+import TownLaw from '../../../components/ui/townLaw/townLaw';
+import { townLawMarkdown } from '../../../config/townLawMarkdown';
+
+const TOWN_LAW_HASH = '#town-law';
+const TOWN_LAW_ROUTE = '/account/town-law#town-law';
+const REGISTER_TOWN_LAW_ROUTE = '/account/register#town-law';
 
 const RegisterCard = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { locale } = useOutletContext() || {};
 	const lang = locale || getInitialUiLocale();
+	const [showTownLawPop, setShowTownLawPop] = useState(false);
 
 	// check completion
 	const keys = ['username', 'email', 'password', 'checkbox', 'verification'].sort();
@@ -102,22 +111,45 @@ const RegisterCard = () => {
 		}
 	}, [navigate]);
 
+	const openTownLawByViewport = useCallback(() => {
+		const isNarrow = window.innerWidth <= 960;
+		if (isNarrow) {
+			navigate(TOWN_LAW_ROUTE);
+			return;
+		}
+		navigate(REGISTER_TOWN_LAW_ROUTE, { replace: true });
+		setShowTownLawPop(true);
+	}, [navigate]);
+
+	const handleOpenTownLaw = useCallback((e) => {
+		e.preventDefault();
+		openTownLawByViewport();
+	}, [openTownLawByViewport]);
+
+	const handleCloseTownLawPop = useCallback(() => {
+		setShowTownLawPop(false);
+		if (window.location.hash === TOWN_LAW_HASH) {
+			navigate('/account/register', { replace: true });
+		}
+	}, [navigate]);
+
+	useEffect(() => {
+		if (location.hash !== TOWN_LAW_HASH) return;
+
+		const isNarrow = window.innerWidth <= 960;
+		if (isNarrow) {
+			navigate(TOWN_LAW_ROUTE, { replace: true });
+			return;
+		}
+
+		setShowTownLawPop(true);
+	}, [location.hash, navigate]);
+
 
 	return (
 		<div className={entireCard.entire}>
 			<section className={entireCard.suggestion}>
 				<div className={entireCard.suggestionHead}>
-					<button
-						type="button"
-						className={entireCard.backBtn}
-						onClick={() => navigate('/account')}
-						title={t(lang, 'accountBackToAccount')}
-						aria-label={t(lang, 'accountBackToAccount')}
-					>
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-							<path d="M15 18l-6-6 6-6" />
-						</svg>
-					</button>
 					<h2>{t(lang, 'accountRegisterTitle')}</h2>
 				</div>
 				<h3>{t(lang, 'accountRegisterHaveAccount')}</h3>
@@ -160,8 +192,16 @@ const RegisterCard = () => {
 					<section className={lr.acknowledge}>
 						<input type="checkbox" id="checkbox" />
 						<label htmlFor="checkbox" onClick={(e) => e.preventDefault()}>
-							{t(lang, 'accountAgreeLaw')}<span>{t(lang, 'accountTownLaw')}</span>
+							{t(lang, 'accountAgreeLaw')}
 						</label>
+						<a
+							href={REGISTER_TOWN_LAW_ROUTE}
+							className={lr.townLawLink}
+							onClick={handleOpenTownLaw}
+						>
+							{t(lang, 'accountTownLaw')}
+						</a>
+						<span className={lr.anchorTarget} id="town-law" aria-hidden />
 					</section>
 
 					<section>
@@ -169,6 +209,16 @@ const RegisterCard = () => {
 					</section>
 				</form>
 			</section>
+			{showTownLawPop && (
+				<Pop isLittle={false} onClose={handleCloseTownLawPop}>
+					<TownLaw
+						title={t(lang, 'accountTownLaw')}
+						markdown={townLawMarkdown[lang] || townLawMarkdown.en}
+						className={lr.townLawPop}
+						style={{ width: 'min(92vw, 860px)', marginTop: 0 }}
+					/>
+				</Pop>
+			)}
 		</div>
 	);
 };

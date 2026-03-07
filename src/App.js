@@ -7,6 +7,7 @@ const PAGE_TITLES = {
 	'/account': `Account${TITLE_SUFFIX}`,
 	'/account/login': `Login${TITLE_SUFFIX}`,
 	'/account/register': `Register${TITLE_SUFFIX}`,
+	'/account/town-law': `Town Law${TITLE_SUFFIX}`,
 	'/town': 'YororoIce Town',
 	'/town/': 'YororoIce Town',
 	'/town/moments': `Moments${TITLE_SUFFIX}`,
@@ -21,6 +22,7 @@ const PAGE_TITLES = {
 const Account = lazy(() => import('./pages/account/account'));
 const Login = lazy(() => import('./pages/account/loginCard/loginCard'));
 const Register = lazy(() => import('./pages/account/loginCard/registerCard'));
+const TownLawPage = lazy(() => import('./pages/account/townLaw/townLawPage'));
 
 const DisplayZone = lazy(() => import('./pages/displayZone/displayZone'));
 const Home = lazy(() => import('./pages/displayZone/home/home'));
@@ -73,6 +75,7 @@ function AppContent() {
 				<Route path="/account" element={<Account />}>
 					<Route path='login' element={<Login />} />
 					<Route path='register' element={<Register />} />
+					<Route path='town-law' element={<TownLawPage />} />
 				</Route>
 			</Routes>
 		</Suspense>

@@ -5,10 +5,11 @@
 
 .entire {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  min-height: 100dvh;
 
   background-color: transparent;
-  padding: 0 6vw;
+  padding: 0 max(6vw, 12px);
   box-sizing: border-box;
 
   display: flex;
@@ -23,6 +24,8 @@
   nav {
     width: 100%;
     height: 45rem;
+    margin: 6px 0 10px;
+    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -30,12 +33,17 @@
 
     img {
       height: 100%;
+      width: auto;
+      object-fit: contain;
+      flex: 0 0 auto;
     }
   }
 
   .navRight {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
     gap: 12px;
   }
 
@@ -70,11 +78,88 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   }
 
+  .wideTownLaw {
+    display: none;
+  }
+
+  @media (min-width: 961px) {
+    max-width: 1560px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 3.6vw, 56px);
+
+    nav {
+      height: 52rem;
+      margin: 10px 0 16px;
+
+      img {
+        height: 100%;
+      }
+    }
+
+    .navRight {
+      gap: 12px;
+    }
+
+    .localeSwitch {
+      padding: 3px;
+      border-radius: 10px;
+    }
+
+    .localeBtn {
+      padding: 7px 14px;
+      font-size: 15px;
+      border-radius: 8px;
+    }
+
+    main {
+      div.welcome {
+        h1 {
+          font-size: clamp(58px, 5.1vw, 82px);
+          line-height: 1.08;
+        }
+
+        h3 {
+          margin-top: 10px;
+          font-size: clamp(24px, 1.9vw, 30px);
+        }
+      }
+
+      .wideTownLaw {
+        display: block;
+      }
+    }
+
+    main.mainTwoCol {
+      grid-template-columns: minmax(360px, 1fr) minmax(620px, 760px);
+      column-gap: clamp(28px, 3.5vw, 72px);
+      align-items: start;
+      padding-top: 14rem;
+
+      > *:last-child {
+        width: 100%;
+        justify-self: end;
+      }
+
+      div.welcome,
+      div.welComeFloat {
+        margin-top: 10rem;
+        transform: none;
+      }
+
+      div.welcome {
+        align-items: center;
+        text-align: center;
+        max-width: min(48vw, 700px);
+      }
+    }
+  }
+
 
   main {
     --transition: .15s;
     width: 100%;
     height: 100%;
+    min-height: 0;
 
     display: flex;
     justify-content: space-between;
@@ -88,9 +173,25 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      text-align: center;
+      max-width: min(92vw, 760px);
+      padding-inline: 8px;
 
       transform: translateY(-25rem);
       transition: var(--transition);
+
+      h1 {
+        font-size: clamp(44px, 8vw, 68px);
+        line-height: 1.1;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      h3 {
+        margin-top: 8px;
+        font-size: clamp(18px, 3.6vw, 24px);
+        line-height: 1.35;
+      }
     }
 
     div.welComeFloat {
@@ -127,28 +228,38 @@
     padding: 0 4vw;
 
     nav {
-      height: auto;
-      min-height: 40rem;
-      padding: 8rem 0;
+      height: 40rem;
+      margin: 8px 0 10px;
+      align-items: center;
+      flex-wrap: nowrap;
+      row-gap: 0;
 
       img {
-        height: 36rem;
+        height: 100%;
       }
     }
 
     .navRight {
+      width: auto;
+      flex: 0 1 auto;
+      justify-content: flex-end;
       gap: 8px;
     }
 
     main {
       overflow-y: auto;
 
+      .wideTownLaw {
+        display: none;
+      }
+
       div.welcome {
-        transform: translateY(-12rem);
+        transform: none;
+        margin-top: 4px;
       }
 
       div.welComeFloat {
-        transform: translateY(-20rem);
+        transform: none;
       }
     }
 
@@ -166,6 +277,10 @@
         width: 100%;
       }
 
+      > *:last-child {
+        max-width: 860px;
+      }
+
       div.welcome,
       div.welComeFloat {
         transform: none;
@@ -178,10 +293,12 @@
     padding: 0 12px;
 
     nav {
-      min-height: 36rem;
+      height: 36rem;
+      margin: 8px 0 12px;
+      flex-wrap: nowrap;
 
       img {
-        height: 32rem;
+        height: 100%;
       }
     }
 
@@ -190,14 +307,36 @@
       padding: 2px;
     }
 
+    .navRight {
+      width: auto;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
     .localeBtn {
       padding: 5px 8px;
-      font-size: 12px;
+      font-size: 15px;
     }
 
     main.mainTwoCol {
       gap: 12rem;
       padding-top: 4rem;
+    }
+
+    main {
+      div.welcome {
+        max-width: 100%;
+
+        h1 {
+          font-size: clamp(28px, 10.2vw, 38px);
+          line-height: 1.18;
+        }
+
+        h3 {
+          font-size: clamp(14px, 4.2vw, 18px);
+          margin-top: 6px;
+        }
+      }
     }
   }
 }

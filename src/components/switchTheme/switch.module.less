@@ -1,10 +1,9 @@
 .entire {
-  margin: var(--switchCommon-margin);
+  margin: 0;
   font-size: var(--h4-fontsize);
-  --toggle-size: 16px;
   --transition: 0.4s;
-  --size: var(--h4-fontsize);
-  --width: calc(2.7 * var(--size));
+  --size: clamp(16px, 2.2vw, 20px);
+  --width: calc(2.55 * var(--size));
   --height: calc(var(--width) / 2);
   --block: calc((var(--height) - var(--size)) / 2);
 }
@@ -12,6 +11,8 @@
 .track {
   display: block;
   position: relative;
+  min-width: 44px;
+  min-height: 24px;
   width: var(--width);
   height: var(--height);
   background: linear-gradient(to right, #efefef 50%, #2a2a2a 50%) no-repeat;
@@ -63,9 +64,15 @@
 /* 图标：占满圆钮中心，避免被压成 0 */
 .iconSvg {
   display: block;
-  width: 65%;
-  height: 65%;
+  width: 62%;
+  height: 62%;
   min-width: 6px;
   min-height: 6px;
   flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .entire {
+    --size: 18px;
+  }
 }
