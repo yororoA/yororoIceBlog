@@ -412,6 +412,7 @@
 @media (max-width: 900px) {
   .container {
     max-width: 100%;
+    padding: 18px 14px 24px;
   }
 
   .homeGrid {
@@ -436,5 +437,201 @@
 
   .previewCard {
     padding: 16px 16px 10px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 14px 10px 20px;
+  }
+
+  .homeGrid,
+  .latestGrid {
+    gap: 12px;
+  }
+
+  .profileCard {
+    border-radius: 14px;
+    padding: 18px 14px 16px;
+  }
+
+  .avatarAndBines {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .avatar,
+  .avatarPlaceholder {
+    width: 88px;
+    height: 88px;
+    border-width: 3px;
+  }
+
+  .avatarPlaceholder {
+    font-size: 34px;
+  }
+
+  .binesRow {
+    margin-top: 4px;
+    margin-bottom: 2px;
+    gap: 8px;
+  }
+
+  .binesAvatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .authorName {
+    font-size: clamp(20px, 5.2vw, 26px);
+    margin-bottom: 6px;
+  }
+
+  .description {
+    font-size: clamp(14px, 3.8vw, 16px);
+    line-height: 1.55;
+    margin-bottom: 8px;
+  }
+
+  .bio {
+    font-size: 13px;
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+
+  .emailDisplay {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .socialLinks {
+    gap: 8px;
+  }
+
+  .socialLink {
+    padding: 8px 12px;
+    border-radius: 18px;
+    font-size: 13px;
+  }
+
+  .profileCardFooter {
+    padding-top: 12px;
+    gap: 2px;
+  }
+
+  .profileTimeLabel {
+    font-size: 12px;
+  }
+
+  .profileTimeValue {
+    font-size: 13px;
+  }
+
+  .infoCard,
+  .previewCard {
+    border-radius: 14px;
+    padding: 14px 12px;
+  }
+
+  .sectionTitle {
+    margin-bottom: 8px;
+    font-size: clamp(16px, 4.6vw, 20px);
+  }
+
+  .tags {
+    gap: 8px;
+  }
+
+  .tag {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 16px;
+  }
+
+  .shortcutStrip {
+    margin-top: 12px;
+    gap: 8px;
+  }
+
+  .shortcutTag {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 16px;
+  }
+
+  .previewTitle {
+    margin-bottom: 6px;
+    font-size: 15px;
+  }
+
+  .previewText {
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-line-clamp: 3;
+  }
+
+  .previewMeta,
+  .previewEmpty {
+    font-size: 12px;
+  }
+
+  .articlePreviewCover img {
+    height: 74px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px 8px 16px;
+  }
+
+  .profileCard {
+    padding: 14px 10px 12px;
+  }
+
+  .avatar,
+  .avatarPlaceholder {
+    width: 72px;
+    height: 72px;
+  }
+
+  .avatarPlaceholder {
+    font-size: 28px;
+  }
+
+  .authorName {
+    font-size: 20px;
+  }
+
+  .description {
+    font-size: 13px;
+  }
+
+  .binesName,
+  .binesStatus {
+    font-size: 12px;
+  }
+
+  .infoCard,
+  .previewCard {
+    padding: 12px 10px;
+  }
+
+  .sectionTitle {
+    font-size: 16px;
+  }
+
+  .previewTitle {
+    font-size: 14px;
+  }
+
+  .previewText,
+  .previewMeta,
+  .previewEmpty {
+    font-size: 12px;
+  }
+
+  .articlePreviewCover img {
+    height: 66px;
   }
 }
