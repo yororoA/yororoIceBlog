@@ -42,6 +42,66 @@ const SettingsIcon = () => (
 	</svg>
 );
 
+const HomeIcon = () => (
+	<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+		<path d="M3 10.5L12 3l9 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+		<path d="M5 9.5V20h14V9.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+	</svg>
+);
+const MomentIcon = () => (
+	<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+		<path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+	</svg>
+);
+const ArticleIcon = () => (
+	<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+		<path d="M6 4h12M6 10h12M6 16h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+	</svg>
+);
+const GalleryIcon = () => (
+	<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+		<rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="2" />
+		<circle cx="9" cy="10" r="2" fill="currentColor" />
+		<path d="M21 16l-5-5-8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+	</svg>
+);
+const ArchiveIcon = () => (
+	<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+		<rect x="3" y="4" width="18" height="4" rx="1" stroke="currentColor" strokeWidth="2" />
+		<path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8" stroke="currentColor" strokeWidth="2" />
+		<path d="M10 13h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+	</svg>
+);
+const ChatIcon = () => (
+	<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+		<path d="M21 12a8 8 0 0 1-8 8H7l-4 3v-7a8 8 0 1 1 18-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+	</svg>
+);
+const OtherIcon = () => (
+	<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+		<circle cx="12" cy="12" r="2" fill="currentColor" />
+		<circle cx="5" cy="12" r="2" fill="currentColor" />
+		<circle cx="19" cy="12" r="2" fill="currentColor" />
+	</svg>
+);
+const LogoutIcon = () => (
+	<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+		<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+		<path d="M16 17l5-5-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+		<path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+	</svg>
+);
+
+const NAV_ITEMS = [
+	{ id: 'home', labelKey: 'navHome', icon: HomeIcon },
+	{ id: 'moments', labelKey: 'navMoments', icon: MomentIcon },
+	{ id: 'articles', labelKey: 'navArticles', icon: ArticleIcon },
+	{ id: 'gallery', labelKey: 'navGallery', icon: GalleryIcon },
+	{ id: 'archive', labelKey: 'navArchive', icon: ArchiveIcon },
+	{ id: 'chat', labelKey: 'navChat', icon: ChatIcon },
+	{ id: 'other', labelKey: 'navOther', icon: OtherIcon },
+];
+
 const DisplayZone = () => {
 	const uid = getUid();
 	const guest = isGuest();
@@ -85,6 +145,8 @@ const DisplayZone = () => {
 	const [showLocaleSubmenu, setShowLocaleSubmenu] = useState(false);
 	const [showGuestModal, setShowGuestModal] = useState(false);
 	const [guestSubmitting, setGuestSubmitting] = useState(false);
+	const [mobileNavOpen, setMobileNavOpen] = useState(false);
+	const [isMobileNavLayout, setIsMobileNavLayout] = useState(() => window.innerWidth <= 768);
 	const hasAuth = !!(localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken'));
 	useEffect(() => {
 		if (!hasAuth) {
@@ -112,7 +174,18 @@ const DisplayZone = () => {
 	const isHomeRoute = location.pathname === '/town' || location.pathname === '/town/';
 	const scrollContainerRef = useRef(null);
 	const settingsMenuRef = useRef(null);
+	const mobileDrawerRef = useRef(null);
 	useWheelInertia(scrollContainerRef);
+
+	useEffect(() => {
+		const onResize = () => {
+			const isMobile = window.innerWidth <= 768;
+			setIsMobileNavLayout(isMobile);
+			if (!isMobile) setMobileNavOpen(false);
+		};
+		window.addEventListener('resize', onResize);
+		return () => window.removeEventListener('resize', onResize);
+	}, []);
 
 	// 首次进入 DisplayZone 时拉取首页/列表所需数据，避免切到首页或 other 时重复请求
 	const initialLoadDoneRef = useRef(false);
@@ -179,8 +252,15 @@ const DisplayZone = () => {
 
 	// 手动打开公告（通过按钮）
 	const handleOpenAnnouncement = useCallback(() => {
+		setMobileNavOpen(false);
 		setShowAnnouncement(true);
 	}, []);
+
+	useEffect(() => {
+		if (mobileNavOpen) return;
+		setShowSettingsMenu(false);
+		setShowLocaleSubmenu(false);
+	}, [mobileNavOpen]);
 
 	const handleToggleSettingsMenu = useCallback(() => {
 		setShowSettingsMenu(prev => { if (!prev) setShowLocaleSubmenu(false); return !prev; });
@@ -212,16 +292,78 @@ const DisplayZone = () => {
 	// }, [pathname, navigate]);
 	// click to nav link
 	const handleRedirect = useCallback(e => {
-		if (e.target.id === 'home') {
+		setMobileNavOpen(false);
+		const navTarget = e.target.closest?.('[data-nav-id]');
+		const targetId = navTarget?.getAttribute('data-nav-id');
+		if (!targetId) return;
+		if (targetId === 'home') {
 			navigate('/town');
-		} else if (e.target.id) {
-			navigate(e.target.id);
+		} else {
+			navigate(targetId);
 		}
 	}, [navigate]);
 	const handleLogout = useCallback(() => {
+		setMobileNavOpen(false);
 		logout();
 		navigate('/account/login');
 	}, [navigate]);
+
+	useEffect(() => {
+		setMobileNavOpen(false);
+	}, [location.pathname]);
+
+	useEffect(() => {
+		if (!mobileNavOpen) return;
+		const onKeyDown = (e) => {
+			if (e.key === 'Escape') setMobileNavOpen(false);
+		};
+		window.addEventListener('keydown', onKeyDown);
+		return () => window.removeEventListener('keydown', onKeyDown);
+	}, [mobileNavOpen]);
+
+	useEffect(() => {
+		if (!isMobileNavLayout) return;
+		const root = scrollContainerRef.current;
+		const previousBodyOverflow = document.body.style.overflow;
+		if (mobileNavOpen) {
+			if (root) root.style.overflow = 'hidden';
+			document.body.style.overflow = 'hidden';
+		} else {
+			if (root) root.style.overflow = '';
+			document.body.style.overflow = previousBodyOverflow;
+		}
+		return () => {
+			if (root) root.style.overflow = '';
+			document.body.style.overflow = previousBodyOverflow;
+		};
+	}, [mobileNavOpen, isMobileNavLayout]);
+
+	useEffect(() => {
+		if (!mobileNavOpen || !isMobileNavLayout) return;
+		const drawer = mobileDrawerRef.current;
+		const stopInsideDrawer = (e) => {
+			e.stopPropagation();
+		};
+		const blockIfOutsideDrawer = (e) => {
+			if (!drawer) return;
+			const target = e.target;
+			if (!(target instanceof Node)) return;
+			if (!drawer.contains(target)) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+		};
+		drawer?.addEventListener('wheel', stopInsideDrawer);
+		drawer?.addEventListener('touchmove', stopInsideDrawer);
+		window.addEventListener('wheel', blockIfOutsideDrawer, { passive: false, capture: true });
+		window.addEventListener('touchmove', blockIfOutsideDrawer, { passive: false, capture: true });
+		return () => {
+			drawer?.removeEventListener('wheel', stopInsideDrawer);
+			drawer?.removeEventListener('touchmove', stopInsideDrawer);
+			window.removeEventListener('wheel', blockIfOutsideDrawer, true);
+			window.removeEventListener('touchmove', blockIfOutsideDrawer, true);
+		};
+	}, [mobileNavOpen, isMobileNavLayout]);
 
 	// 标记 moment 为删除中：先淡出，动画结束后再从列表与缓存移除
 	const DELETE_ANIM_MS = 450;
@@ -428,97 +570,151 @@ const DisplayZone = () => {
 			)}
 			<div className={`${page.entire}${isHomeRoute ? ` ${page.entireWide}` : ''}`} ref={scrollContainerRef}>
 				<div className={page.navBox}>
-					<nav>
-						<img src={logo} className={page.logo} alt="logo" onClick={() => navigate('/town')} style={{ cursor: 'pointer' }} />
-						<div className={page.link} onClick={handleRedirect}>
-							<span
-								id="home"
-								className={location.pathname === '/town' || location.pathname === '/town/' ? page.activeLink : ''}
-							>
-								{t(locale, 'navHome')}
-							</span>
-							{[
-								{ id: 'moments', labelKey: 'navMoments' },
-								{ id: 'articles', labelKey: 'navArticles' },
-								{ id: 'gallery', labelKey: 'navGallery' },
-								{ id: 'archive', labelKey: 'navArchive' },
-								{ id: 'chat', labelKey: 'navChat' },
-								{ id: 'other', labelKey: 'navOther' },
-							].map(item => (
+					{mobileNavOpen && (
+						<button
+							type="button"
+							className={page.mobileNavOverlay}
+							aria-label="close navigation"
+							onClick={() => setMobileNavOpen(false)}
+							onWheel={(e) => e.preventDefault()}
+							onTouchMove={(e) => e.preventDefault()}
+						/>
+					)}
+					<nav className={mobileNavOpen ? page.navMobileOpen : ''}>
+						<img src={logo} className={page.logo} alt="logo" onClick={() => {
+							setMobileNavOpen(false);
+							navigate('/town');
+						}} style={{ cursor: 'pointer' }} />
+						<button
+							type="button"
+							className={page.mobileMenuBtn}
+							onClick={() => setMobileNavOpen(prev => !prev)}
+							aria-label="toggle navigation"
+							aria-expanded={mobileNavOpen}
+						>
+							<span />
+							<span />
+							<span />
+						</button>
+						<div className={page.navContent} ref={mobileDrawerRef}>
+							<div className={page.link} onClick={handleRedirect}>
+							{NAV_ITEMS.map(item => {
+								const Icon = item.icon;
+								const isActive = item.id === 'home'
+									? (location.pathname === '/town' || location.pathname === '/town/')
+									: location.pathname.includes(item.id);
+								return (
 								<span
 									key={item.id}
-									id={item.id}
-									className={location.pathname.includes(item.id) ? page.activeLink : ''}
+										data-nav-id={item.id}
+										className={isActive ? page.activeLink : ''}
 								>
+										{isMobileNavLayout && <Icon />}
 									{t(locale, item.labelKey)}
 								</span>
-							))}
-						</div>
-						<div className={page.navRight}>
-							<span className={page.announcementBtn} onClick={handleOpenAnnouncement} title={t(locale, 'viewAnnouncement')}>
-								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16ZM11 11H13V13H11V11ZM11 7H13V9H11V7Z" fill="currentColor" />
-								</svg>
-							</span>
-							<div className={page.navUserSection}>
-								{displayName && <span className={page.navUsername} title={displayName}>{displayName}</span>}
-								{avatarImg ? (
-									<img src={avatarImg} alt="" className={page.navAvatarImg} />
-								) : avatarLetter ? (
-									<span className={page.navAvatarLetter} style={{ backgroundColor: avatarColor }}>{avatarLetter}</span>
-								) : null}
-								<div className={page.settingsWrap} ref={settingsMenuRef}>
-									<button
-										type="button"
-										className={page.settingsBtn}
-										onClick={handleToggleSettingsMenu}
-										title={t(locale, 'navSettings')}
-										aria-haspopup="menu"
-										aria-expanded={showSettingsMenu}
-									>
-										<SettingsIcon />
-									</button>
-									{showSettingsMenu && (
-										<>
-											<div className={page.settingsDropdown} role="menu">
-												<div className={page.settingsItemTheme}>
-													<span className={page.settingsItemLabel}>{t(locale, 'navTheme')}</span>
-													<SwitchTheme />
-												</div>
-												<div className={page.settingsItemWithSub}>
-													<button
-														type="button"
-														className={page.settingsItem}
-														role="menuitem"
-														aria-haspopup="true"
-														aria-expanded={showLocaleSubmenu}
-														onClick={() => setShowLocaleSubmenu(prev => !prev)}
-													>
-														{t(locale, 'languageToggle')}
+								);
+							})}
+							</div>
+							<div className={page.navRight}>
+								<span className={page.announcementBtn} onClick={handleOpenAnnouncement} title={t(locale, 'viewAnnouncement')}>
+									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16ZM11 11H13V13H11V11ZM11 7H13V9H11V7Z" fill="currentColor" />
+									</svg>
+									{isMobileNavLayout && <span>{t(locale, 'navAnnouncement')}</span>}
+								</span>
+								<div className={page.navUserSection}>
+									{isMobileNavLayout && (
+										<div className={page.mobileUserInfo}>
+											{avatarImg ? (
+												<img src={avatarImg} alt="" className={page.navAvatarImg} />
+											) : avatarLetter ? (
+												<span className={page.navAvatarLetter} style={{ backgroundColor: avatarColor }}>{avatarLetter}</span>
+											) : null}
+											{displayName && <span className={page.navUsername} title={displayName}>{displayName}</span>}
+										</div>
+									)}
+									{!isMobileNavLayout && displayName && <span className={page.navUsername} title={displayName}>{displayName}</span>}
+									{!isMobileNavLayout && (avatarImg ? (
+										<img src={avatarImg} alt="" className={page.navAvatarImg} />
+									) : avatarLetter ? (
+										<span className={page.navAvatarLetter} style={{ backgroundColor: avatarColor }}>{avatarLetter}</span>
+									) : null)}
+									{!isMobileNavLayout && <div className={page.settingsWrap} ref={settingsMenuRef}>
+										<button
+											type="button"
+											className={page.settingsBtn}
+											onClick={handleToggleSettingsMenu}
+											title={t(locale, 'navSettings')}
+											aria-haspopup="menu"
+											aria-expanded={showSettingsMenu}
+										>
+											<SettingsIcon />
+										</button>
+										{showSettingsMenu && (
+											<>
+												<div className={page.settingsDropdown} role="menu">
+													<div className={page.settingsItemTheme}>
+														<span className={page.settingsItemLabel}>{t(locale, 'navTheme')}</span>
+														<SwitchTheme />
+													</div>
+													<div className={page.settingsItemWithSub}>
+														<button
+															type="button"
+															className={page.settingsItem}
+															role="menuitem"
+															aria-haspopup="true"
+															aria-expanded={showLocaleSubmenu}
+															onClick={() => setShowLocaleSubmenu(prev => !prev)}
+														>
+															{t(locale, 'languageToggle')}
+														</button>
+														{showLocaleSubmenu && (
+															<div className={page.localeSubmenu} role="menu">
+																{LOCALE_ORDER.map((item) => (
+																	<button
+																		key={item}
+																		type="button"
+																		role="menuitemradio"
+																		aria-checked={locale === item}
+																		className={`${page.localeMenuItem}${locale === item ? ` ${page.localeMenuItemActive}` : ''}`}
+																		onClick={() => handleSelectLocale(item)}
+																	>
+																		{item === 'en' ? t(locale, 'localeEn') : item === 'zh' ? t(locale, 'localeZh') : t(locale, 'localeJa')}
+																	</button>
+																))}
+															</div>
+														)}
+													</div>
+													<div className={page.settingsDivider} />
+													<button type="button" className={`${page.settingsItem} ${page.settingsItemDanger}`} role="menuitem" onClick={handleLogout}>
+														<LogoutIcon /> {t(locale, 'navLogout')}
 													</button>
-													{showLocaleSubmenu && (
-														<div className={page.localeSubmenu} role="menu">
-															{LOCALE_ORDER.map((item) => (
-																<button
-																	key={item}
-																	type="button"
-																	role="menuitemradio"
-																	aria-checked={locale === item}
-																	className={`${page.localeMenuItem}${locale === item ? ` ${page.localeMenuItemActive}` : ''}`}
-																	onClick={() => handleSelectLocale(item)}
-																>
-																	{item === 'en' ? t(locale, 'localeEn') : item === 'zh' ? t(locale, 'localeZh') : t(locale, 'localeJa')}
-																</button>
-															))}
-														</div>
-													)}
 												</div>
-												<div className={page.settingsDivider} />
-												<button type="button" className={`${page.settingsItem} ${page.settingsItemDanger}`} role="menuitem" onClick={handleLogout}>
-													{t(locale, 'navLogout')}
-												</button>
+											</>
+										)}
+									</div>}
+									{isMobileNavLayout && (
+										<div className={page.mobileSettingsDirect}>
+											<div className={page.settingsItemTheme}>
+												<span className={page.settingsItemLabel}>{t(locale, 'navTheme')}</span>
+												<SwitchTheme />
 											</div>
-										</>
+											<div className={page.mobileLocaleList}>
+												{LOCALE_ORDER.map((item) => (
+													<button
+														key={item}
+														type="button"
+														className={`${page.mobileLocaleBtn}${locale === item ? ` ${page.mobileLocaleBtnActive}` : ''}`}
+														onClick={() => handleSelectLocale(item)}
+													>
+														{item === 'en' ? t(locale, 'localeEn') : item === 'zh' ? t(locale, 'localeZh') : t(locale, 'localeJa')}
+													</button>
+												))}
+											</div>
+													<button type="button" className={`${page.settingsItem} ${page.settingsItemDanger}`} onClick={handleLogout}>
+														<LogoutIcon /> {t(locale, 'navLogout')}
+											</button>
+										</div>
 									)}
 								</div>
 							</div>
