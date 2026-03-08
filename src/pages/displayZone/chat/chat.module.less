@@ -482,6 +482,139 @@
   }
 }
 
+.mobileTopBar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .chatLayout {
+    height: calc(100dvh - var(--displayzone-footer-height) - 138px);
+    max-height: calc(100dvh - var(--displayzone-footer-height) - 138px);
+    border-radius: 12px;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+  }
+
+  .convList {
+    padding: 10px 8px;
+    gap: 6px;
+  }
+
+  .convItem {
+    padding: 11px 12px;
+  }
+
+  .main {
+    position: relative;
+  }
+
+  .mobileTopBar {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-bottom: var(--nm-input-border, 1px solid #e5e7eb);
+    background: var(--card-bgc, #fff);
+  }
+
+  .mobileBackBtn {
+    width: 34px;
+    height: 30px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .mobileTopTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .messages {
+    padding: 10px 10px 8px;
+    gap: 10px;
+  }
+
+  .messageBubbleWrap {
+    max-width: 95%;
+  }
+
+  .selectedMediaPreview {
+    padding: 8px 10px;
+  }
+
+  .inputBar {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .input {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .btnPlus {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .btnSend {
+    padding: 9px 14px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chatLayout {
+    height: calc(100dvh - var(--displayzone-footer-height) - 122px);
+    max-height: calc(100dvh - var(--displayzone-footer-height) - 122px);
+    border-radius: 10px;
+  }
+
+  .convAvatar,
+  .convAvatarImg,
+  .convAvatarLetter {
+    width: 36px;
+    height: 36px;
+  }
+
+  .convLabel {
+    font-size: 13px;
+  }
+
+  .msgAvatar,
+  .msgAvatarImg,
+  .msgAvatarLetter {
+    width: 28px;
+    height: 28px;
+  }
+
+  .bubble {
+    font-size: 13px;
+    padding: 7px 10px;
+  }
+
+  .mediaThumb {
+    width: 58px;
+  }
+}
+
 /* 深色模式下增强气泡、头像与选中会话可辨性 */
 :global(html[data-theme='dark']) {
   .convItemActive {

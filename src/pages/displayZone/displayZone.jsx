@@ -147,6 +147,7 @@ const DisplayZone = () => {
 	const [guestSubmitting, setGuestSubmitting] = useState(false);
 	const [mobileNavOpen, setMobileNavOpen] = useState(false);
 	const [isMobileNavLayout, setIsMobileNavLayout] = useState(() => window.innerWidth <= 768);
+	const [isAnnouncementPageLayout, setIsAnnouncementPageLayout] = useState(() => window.innerWidth < 600);
 	const hasAuth = !!(localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken'));
 	useEffect(() => {
 		if (!hasAuth) {
@@ -181,6 +182,7 @@ const DisplayZone = () => {
 		const onResize = () => {
 			const isMobile = window.innerWidth <= 768;
 			setIsMobileNavLayout(isMobile);
+			setIsAnnouncementPageLayout(window.innerWidth < 600);
 			if (!isMobile) setMobileNavOpen(false);
 		};
 		window.addEventListener('resize', onResize);
@@ -528,14 +530,29 @@ const DisplayZone = () => {
 
 	return (
 		<SuccessBoardContext.Provider value={{ showSuccess, showFailed }}>
-			{showAnnouncement && (
+			{showAnnouncement && (isAnnouncementPageLayout ? (
+				<div className={page.announcementPageWrap} onClick={() => handleCloseAnnouncement()}>
+					<section className={page.announcementPage} onClick={(e) => e.stopPropagation()}>
+						<header className={page.announcementPageHeader}>
+							<h2>{t(locale, 'announcementTitle')}</h2>
+							<button type="button" onClick={() => handleCloseAnnouncement()} aria-label="关闭公告">×</button>
+						</header>
+						<Announcement
+							showHeader={false}
+							className={page.announcementPageBody}
+							contentClassName={page.announcementPageMarkdown}
+							markdown={homeAnnouncementMarkdown[locale] || homeAnnouncementMarkdown.en}
+						/>
+					</section>
+				</div>
+			) : (
 				<Pop isLittle={false} onClose={handleCloseAnnouncement}>
 					<Announcement
 						title={t(locale, 'announcementTitle')}
 						markdown={homeAnnouncementMarkdown[locale] || homeAnnouncementMarkdown.en}
 					/>
 				</Pop>
-			)}
+			))}
 			{showGuestModal && (
 				<Pop isLittle={false} onClose={handleCloseGuestModal} closeOnBackdrop={false} showCloseButton={false}>
 					<div className={page.guestModal}>

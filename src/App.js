@@ -16,6 +16,8 @@ const PAGE_TITLES = {
 	'/town/archive': `Archive${TITLE_SUFFIX}`,
 	'/town/lol': `LOL${TITLE_SUFFIX}`,
 	'/town/chat': `Chat${TITLE_SUFFIX}`,
+	'/town/chat/group': `Chat${TITLE_SUFFIX}`,
+	'/town/chat/private': `Chat${TITLE_SUFFIX}`,
 	'/town/other': `Other${TITLE_SUFFIX}`,
 };
 
@@ -52,6 +54,10 @@ function AppContent() {
 
 	useEffect(() => {
 		const path = location.pathname.replace(/\/$/, '') || '/';
+		if (path.startsWith('/town/chat')) {
+			document.title = PAGE_TITLES['/town/chat'];
+			return;
+		}
 		document.title = PAGE_TITLES[path] ?? PAGE_TITLES[path + '/'] ?? 'YororoIce Town';
 	}, [location.pathname]);
 
@@ -66,7 +72,7 @@ function AppContent() {
 					<Route path='articles' element={<Knowledge />} />
 					<Route path='archive' element={<Archive />} />
 					<Route path='lol' element={<Lol />} />
-					<Route path='chat' element={<Chat />} />
+					<Route path='chat/*' element={<Chat />} />
 					<Route path='other' element={<About />} />
 				</Route>
 

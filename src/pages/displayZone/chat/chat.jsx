@@ -1,4 +1,5 @@
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import React, { useContext, useRef, useCallback, useState, useMemo, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './chat.module.less';
 import { UiPersistContext } from '../context/uiPersistContext';
 import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
@@ -68,6 +69,8 @@ function shouldShowTimeAbove(messages, index) {
 }
 
 function ChatContent() {
+	const location = useLocation();
+	const navigate = useNavigate();
 	const { locale } = useContext(UiPersistContext);
 	const { showFailed } = useContext(SuccessBoardContext) || {};
 	const {
@@ -88,6 +91,7 @@ function ChatContent() {
 	const [uploading, setUploading] = useState(false);
 	const [enlargedMsgId, setEnlargedMsgId] = useState(null);
 	const [enlargedIndex, setEnlargedIndex] = useState(null);
+	const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
 	const messagesRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const selectedMediaRef = useRef([]);
@@ -95,6 +99,29 @@ function ChatContent() {
 	const savedScrollTopRef = useRef(null);
 	const savedScrollHeightRef = useRef(null);
 	selectedMediaRef.current = selectedMedia;
+
+	useEffect(() => {
+		const onResize = () => setIsMobile(window.innerWidth <= 768);
+		window.addEventListener('resize', onResize);
+		return () => window.removeEventListener('resize', onResize);
+	}, []);
+
+	const routeMode = useMemo(() => {
+		const p = location.pathname.replace(/\/$/, '');
+		if (p.endsWith('/group')) return 'group';
+		if (p.endsWith('/private')) return 'private';
+		return 'index';
+	}, [location.pathname]);
+
+	const privateAnchor = useMemo(() => {
+		const raw = (location.hash || '').replace(/^#/, '').trim();
+		if (!raw) return '';
+		try {
+			return decodeURIComponent(raw);
+		} catch (_) {
+			return raw;
+		}
+	}, [location.hash]);
 
 	React.useEffect(() => () => {
 		selectedMediaRef.current.forEach((m) => {
@@ -197,11 +224,61 @@ function ChatContent() {
 		});
 	}, [inputValue, selectedMedia, sending, handleSend, locale, showFailed]);
 
-	const getConvLabel = (conv) => {
+	const getConvLabel = useCallback((conv) => {
 		if (conv.labelKey) return t(locale, conv.labelKey);
 		const { displayName } = getIdentityAvatar(conv.id, conv.label || conv.id || '', { stripGuestPrefixForGuest: true });
 		return displayName || conv.id;
-	};
+	}, [locale]);
+
+	const resolvePrivateConv = useCallback((anchorName = '') => {
+		const privateConvs = conversations.filter((c) => c.type === 'private');
+		if (privateConvs.length === 0) return null;
+		if (!anchorName) return privateConvs[0];
+		const normalized = anchorName.trim().toLowerCase();
+		const matched = privateConvs.find((c) => {
+			const convLabel = getConvLabel(c).trim().toLowerCase();
+			return c.id?.toLowerCase() === normalized || convLabel === normalized;
+		});
+		return matched || privateConvs[0];
+	}, [conversations, getConvLabel]);
+
+	useEffect(() => {
+		if (!conversations.length) return;
+		if (routeMode === 'group') {
+			if (activeId !== 'group') selectConversation('group', 'group');
+			return;
+		}
+		if (routeMode === 'private') {
+			const conv = resolvePrivateConv(privateAnchor);
+			if (conv && activeId !== conv.id) selectConversation(conv.id, 'private');
+			return;
+		}
+		if (!isMobile && activeId !== 'group') {
+			selectConversation('group', 'group');
+		}
+	}, [routeMode, privateAnchor, conversations, activeId, isMobile, selectConversation, resolvePrivateConv]);
+
+	const activeConversation = useMemo(
+		() => conversations.find((c) => c.id === activeId) || null,
+		[conversations, activeId]
+	);
+	const mobileConvTitle = activeConversation ? getConvLabel(activeConversation) : t(locale, 'chatGroup');
+
+	const handleSelectConvByRoute = useCallback((conv) => {
+		if (!conv) return;
+		if (conv.type === 'group') {
+			navigate('/town/chat/group');
+			selectConversation('group', 'group');
+			return;
+		}
+		const label = getConvLabel(conv);
+		const hash = label ? `#${encodeURIComponent(label)}` : '';
+		navigate(`/town/chat/private${hash}`);
+		selectConversation(conv.id, 'private');
+	}, [navigate, selectConversation, getConvLabel]);
+
+	const showSidebar = !isMobile || routeMode === 'index';
+	const showMain = !isMobile || routeMode !== 'index';
 
 	return (
 		<div className="page-enter">
@@ -209,16 +286,19 @@ function ChatContent() {
 				<span>{t(locale, 'navChat')}</span>
 			</section>
 			<div className={styles.chatLayout} role="main">
-				<aside className={styles.sidebar}>
+				{showSidebar && <aside className={styles.sidebar}>
 					<div className={styles.convList}>
 						{conversations.map((conv) => {
 							const { avatarImg, avatarLetter, avatarColor } = getConvAvatar(conv);
+							const isActiveRoute = conv.type === 'group'
+								? routeMode === 'group'
+								: routeMode === 'private' && activeId === conv.id;
 							return (
 								<button
 									key={conv.id}
 									type="button"
-									className={`${styles.convItem} ${activeId === conv.id ? styles.convItemActive : ''}`}
-									onClick={() => selectConversation(conv.id, conv.type)}
+									className={`${styles.convItem} ${(isMobile ? isActiveRoute : activeId === conv.id) ? styles.convItemActive : ''}`}
+									onClick={() => handleSelectConvByRoute(conv)}
 								>
 									{avatarImg ? (
 										<img src={avatarImg} alt="" className={styles.convAvatarImg} />
@@ -232,9 +312,22 @@ function ChatContent() {
 							);
 						})}
 					</div>
-				</aside>
+				</aside>}
 
-				<section className={styles.main}>
+				{showMain && <section className={styles.main}>
+					{isMobile && (
+						<div className={styles.mobileTopBar}>
+							<button
+								type="button"
+								className={styles.mobileBackBtn}
+								onClick={() => navigate('/town/chat')}
+								aria-label="返回会话列表"
+							>
+								←
+							</button>
+							<span className={styles.mobileTopTitle}>{mobileConvTitle}</span>
+						</div>
+					)}
 					<div
 						className={styles.messages}
 						ref={messagesRef}
@@ -383,7 +476,7 @@ function ChatContent() {
 							{uploading ? t(locale, 'uploading') : t(locale, 'chatSend')}
 						</button>
 					</div>
-				</section>
+				</section>}
 			</div>
 		</div>
 	);
