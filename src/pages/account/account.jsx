@@ -43,7 +43,7 @@ const Account = () => {
 	const isAuthFormRoute = pathname === 'login' || pathname === 'register';
 	const isTownLawRoute = pathname === 'town-law';
 	const lawBgText = (townLawMarkdown[locale] || townLawMarkdown.en)
-		.replace(/[>#*`\-]/g, ' ')
+		.replace(/[>#*`-]/g, ' ')
 		.replace(/\n+/g, ' ')
 		.trim();
 	const lawBgRows = Array.from({ length: 8 }, (_, i) => `${lawBgText}   •   ${lawBgText.slice(0, 220)}   •   ${i + 1}`);
