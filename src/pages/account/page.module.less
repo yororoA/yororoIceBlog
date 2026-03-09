@@ -178,6 +178,7 @@
     align-items: center;
 
     overflow: visible;
+    overflow-x: hidden;
 
     div.welcome {
       margin: 0 auto;
@@ -282,6 +283,7 @@
       justify-items: center;
       gap: 16rem;
       padding: 8rem 0 20rem;
+      overflow-x: hidden;
 
       > *:first-child,
       > *:last-child {
@@ -388,6 +390,7 @@
   animation: lawAutoScroll 34s linear infinite;
   filter: blur(14px);
   opacity: 0.42;
+  overflow: hidden;
 
   p {
     margin: 0;
@@ -397,6 +400,9 @@
     letter-spacing: 0.06em;
     word-break: break-word;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    width: 100%;
   }
 }
 

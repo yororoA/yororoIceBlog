@@ -96,6 +96,7 @@
 .messages {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px 20px 12px;
   display: flex;
   flex-direction: column;
@@ -267,6 +268,10 @@
 .msgUsername {
   font-size: 12px;
   color: var(--text-color-secondary);
+  max-width: min(52vw, 260px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .msgMetaRow {
@@ -321,8 +326,10 @@
   padding: 8px 12px;
   border-radius: 12px;
   font-size: var(--p-fontsize, 14px);
+  font-weight: 500;
   line-height: 1.45;
   word-break: break-word;
+  overflow-wrap: anywhere;
   // max-width: 100%;
   // width: max-content;
 }
@@ -499,12 +506,15 @@
   }
 
   .convList {
-    padding: 10px 8px;
-    gap: 6px;
+    padding: 8px 8px;
+    gap: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .convItem {
     padding: 11px 12px;
+    border-radius: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   }
 
   .main {
@@ -552,6 +562,35 @@
 
   .messageBubbleWrap {
     max-width: 95%;
+  }
+
+  .msgTimeHover {
+    display: none;
+  }
+
+  .msgUsername {
+    font-size: 13px;
+    font-weight: 600;
+    max-width: min(56vw, 300px);
+  }
+
+  .msgRoleTag {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .bubble {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.52;
+  }
+
+  .messageRowReceived .bubble {
+    background: rgba(0, 0, 0, 0.09);
+  }
+
+  .messageRowSent .bubble {
+    background: rgba(0, 0, 0, 0.12);
   }
 
   .selectedMediaPreview {
@@ -606,8 +645,14 @@
   }
 
   .bubble {
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 600;
     padding: 7px 10px;
+  }
+
+  .msgUsername {
+    font-size: 12px;
+    max-width: 56vw;
   }
 
   .mediaThumb {
