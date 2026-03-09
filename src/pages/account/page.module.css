@@ -8,11 +8,23 @@
     transform: translateY(0);
   }
 }
+@keyframes lawAutoScroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
 .entire {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
   background-color: transparent;
-  padding: 0 6vw;
+  padding: 0 max(6vw, 12px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -26,8 +38,12 @@
   }
 }
 .entire nav {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 45rem;
+  margin: 6px 0 10px;
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,10 +51,15 @@
 }
 .entire nav img {
   height: 100%;
+  width: auto;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 .entire .navRight {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
   gap: 12px;
 }
 .entire .localeSwitch {
@@ -68,14 +89,77 @@
   color: var(--text-color);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
+.entire .wideTownLaw {
+  display: none;
+}
+@media (min-width: 961px) {
+  .entire {
+    max-width: 1560px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 3.6vw, 56px);
+  }
+  .entire nav {
+    height: 52rem;
+    margin: 10px 0 16px;
+  }
+  .entire nav img {
+    height: 100%;
+  }
+  .entire .navRight {
+    gap: 12px;
+  }
+  .entire .localeSwitch {
+    padding: 3px;
+    border-radius: 10px;
+  }
+  .entire .localeBtn {
+    padding: 7px 14px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+  .entire main div.welcome h1 {
+    font-size: clamp(58px, 5.1vw, 82px);
+    line-height: 1.08;
+  }
+  .entire main div.welcome h3 {
+    margin-top: 10px;
+    font-size: clamp(24px, 1.9vw, 30px);
+  }
+  .entire main .wideTownLaw {
+    display: block;
+  }
+  .entire main.mainTwoCol {
+    grid-template-columns: minmax(360px, 1fr) minmax(620px, 760px);
+    column-gap: clamp(28px, 3.5vw, 72px);
+    align-items: start;
+    padding-top: 14rem;
+  }
+  .entire main.mainTwoCol > *:last-child {
+    width: 100%;
+    justify-self: end;
+  }
+  .entire main.mainTwoCol div.welcome,
+  .entire main.mainTwoCol div.welComeFloat {
+    margin-top: 10rem;
+    transform: none;
+  }
+  .entire main.mainTwoCol div.welcome {
+    align-items: center;
+    text-align: center;
+    max-width: min(48vw, 700px);
+  }
+}
 .entire main {
+  position: relative;
+  z-index: 2;
   --transition: 0.15s;
   width: 100%;
   height: 100%;
+  min-height: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  overflow: hidden;
+  overflow: visible;
 }
 .entire main div.welcome {
   margin: 0 auto;
@@ -83,12 +167,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  transform: translateY(-25rem);
+  text-align: center;
+  max-width: min(92vw, 760px);
+  padding-inline: 8px;
+  transform: translateY(0);
   transition: var(--transition);
+}
+.entire main div.welcome h1 {
+  font-size: clamp(44px, 8vw, 68px);
+  line-height: 1.1;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.entire main div.welcome h3 {
+  margin-top: 8px;
+  font-size: clamp(18px, 3.6vw, 24px);
+  line-height: 1.35;
 }
 .entire main div.welComeFloat {
   position: relative;
-  transform: translateY(-75rem);
+  transform: translateY(-12rem);
 }
 .entire main.mainTwoCol {
   display: grid;
@@ -108,4 +206,158 @@
 .entire main.mainTwoCol div.welcome {
   margin: 0;
   justify-self: center;
+}
+@media (max-width: 960px) {
+  .entire {
+    padding: 0 4vw;
+  }
+  .entire nav {
+    height: 40rem;
+    margin: 8px 0 10px;
+    align-items: center;
+    flex-wrap: nowrap;
+    row-gap: 0;
+  }
+  .entire nav img {
+    height: 100%;
+  }
+  .entire .navRight {
+    width: auto;
+    flex: 0 1 auto;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .entire main {
+    overflow-y: auto;
+  }
+  .entire main .wideTownLaw {
+    display: none;
+  }
+  .entire main div.welcome {
+    transform: none;
+    margin-top: 4px;
+  }
+  .entire main div.welComeFloat {
+    transform: none;
+  }
+  .entire main.mainTwoCol {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-content: start;
+    justify-items: center;
+    gap: 16rem;
+    padding: 8rem 0 20rem;
+  }
+  .entire main.mainTwoCol > *:first-child,
+  .entire main.mainTwoCol > *:last-child {
+    grid-column: 1;
+    width: 100%;
+  }
+  .entire main.mainTwoCol > *:last-child {
+    max-width: 860px;
+  }
+  .entire main.mainTwoCol div.welcome,
+  .entire main.mainTwoCol div.welComeFloat {
+    transform: none;
+    margin-top: 6rem;
+  }
+}
+@media (max-width: 640px) {
+  .entire {
+    padding: 0 12px;
+  }
+  .entire nav {
+    height: 36rem;
+    margin: 8px 0 12px;
+    flex-wrap: nowrap;
+  }
+  .entire nav img {
+    height: 100%;
+  }
+  .entire .localeSwitch {
+    gap: 0;
+    padding: 2px;
+  }
+  .entire .navRight {
+    width: auto;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .entire .localeBtn {
+    padding: 5px 8px;
+    font-size: 15px;
+  }
+  .entire main.mainTwoCol {
+    gap: 12rem;
+    padding-top: 4rem;
+  }
+  .entire main div.welcome {
+    max-width: 100%;
+  }
+  .entire main div.welcome h1 {
+    font-size: clamp(28px, 10.2vw, 38px);
+    line-height: 1.18;
+  }
+  .entire main div.welcome h3 {
+    font-size: clamp(14px, 4.2vw, 18px);
+    margin-top: 6px;
+  }
+}
+.backgroundCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.92;
+}
+.backgroundLawMarquee {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 46vh;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.98), rgba(0, 0, 0, 0.86) 52%, transparent 100%);
+}
+.backgroundLawTrack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -30%;
+  width: min(1200px, 90vw);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: lawAutoScroll 34s linear infinite;
+  filter: blur(14px);
+  opacity: 0.42;
+}
+.backgroundLawTrack p {
+  margin: 0;
+  font-size: clamp(12px, 1.1vw, 15px);
+  line-height: 1.5;
+  color: var(--text-color);
+  letter-spacing: 0.06em;
+  word-break: break-word;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .backgroundLawMarquee {
+    height: 38vh;
+  }
+  .backgroundLawTrack {
+    width: 94vw;
+    gap: 12px;
+    filter: blur(10px);
+    opacity: 0.36;
+  }
+  .backgroundLawTrack p {
+    font-size: 12px;
+    line-height: 1.45;
+  }
 }

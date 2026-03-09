@@ -97,8 +97,13 @@ const LoginCard = () => {
 				<div className={entireCard.suggestionHead}>
 					<h2>{t(lang, 'accountLoginTitle')}</h2>
 				</div>
-				<h3>{t(lang, 'accountLoginNoAccount')}</h3>
-				<h3 className={entireCard.lr} onClick={() => navigate('/account/register')}>{t(lang, 'accountLoginSignUp')}</h3>
+				<h3>
+					{t(lang, 'accountLoginNoAccount')}
+					{' '}
+					<button type="button" className={entireCard.lrBtn} onClick={() => navigate('/account/register')}>
+						{t(lang, 'accountLoginSignUp')}
+					</button>
+				</h3>
 			</section>
 			<section className={lr.lr}>
 				<form onChange={checkCompletion} onKeyDown={disableSpace} onSubmit={handleLoginSubmit} action={`${process.env.REACT_APP_SERVER_HOST}/api/login`} method="POST">

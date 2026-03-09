@@ -152,8 +152,13 @@ const RegisterCard = () => {
 				<div className={entireCard.suggestionHead}>
 					<h2>{t(lang, 'accountRegisterTitle')}</h2>
 				</div>
-				<h3>{t(lang, 'accountRegisterHaveAccount')}</h3>
-				<h3 className={entireCard.lr} onClick={() => navigate('/account/login')}>{t(lang, 'accountRegisterLoginNow')}</h3>
+				<h3>
+					{t(lang, 'accountRegisterHaveAccount')}
+					{' '}
+					<button type="button" className={entireCard.lrBtn} onClick={() => navigate('/account/login')}>
+						{t(lang, 'accountRegisterLoginNow')}
+					</button>
+				</h3>
 			</section>
 			<section className={lr.lr}>
 				<form onChange={checkCompletion} onKeyDown={disableSpace} onSubmit={handleRegisterSubmit}
