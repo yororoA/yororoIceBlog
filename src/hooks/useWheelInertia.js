@@ -14,6 +14,23 @@ export function useWheelInertia(scrollContainerRef, enabled = true) {
 	const rafIdRef = useRef(null);
 	const listenerTargetRef = useRef(null);
 
+	const hasScrollableAncestor = (fromNode, container, deltaY) => {
+		if (!(fromNode instanceof Node) || !(container instanceof Node)) return false;
+		let node = fromNode instanceof Element ? fromNode : fromNode.parentElement;
+		while (node && node !== container) {
+			const style = window.getComputedStyle(node);
+			const overflowY = style.overflowY;
+			const canOverflowY = overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay';
+			if (canOverflowY && node.scrollHeight > node.clientHeight + 1) {
+				const top = node.scrollTop;
+				const max = node.scrollHeight - node.clientHeight;
+				if ((deltaY < 0 && top > 0) || (deltaY > 0 && top < max)) return true;
+			}
+			node = node.parentElement;
+		}
+		return false;
+	};
+
 	useEffect(() => {
 		if (!enabled) return;
 		const getScrollElement = () => {
@@ -64,6 +81,7 @@ export function useWheelInertia(scrollContainerRef, enabled = true) {
 		};
 
 		const onWheel = (e) => {
+			if (hasScrollableAncestor(e.target, target, e.deltaY)) return;
 			const scrollEl = getScrollElement();
 			const maxScroll = Math.max(0, getMaxScroll(scrollEl));
 			const top = getScrollTop(scrollEl);

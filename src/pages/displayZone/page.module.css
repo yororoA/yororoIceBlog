@@ -38,8 +38,19 @@
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
   backdrop-filter: blur(12px) saturate(1.2);
 }
+.entire .navBox .mobileNavOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
 .entire .navBox nav {
   display: flex;
+  position: relative;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
@@ -50,6 +61,17 @@
   margin: 0 auto;
   padding: 6px 20px;
   box-sizing: border-box;
+}
+.entire .navBox nav .mobileMenuBtn {
+  display: none;
+}
+.entire .navBox nav .navContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 .entire .navBox nav img.logo {
   height: var(--logo-height);
@@ -84,6 +106,9 @@
   white-space: nowrap;
   transition: all var(--transition-type);
 }
+.entire .navBox nav div.link span svg {
+  display: none;
+}
 .entire .navBox nav div.link span:hover {
   color: var(--text-color);
   background-color: rgba(0, 0, 0, 0.05);
@@ -115,6 +140,9 @@
   transition: all var(--transition-type);
   user-select: none;
 }
+.entire .navBox nav .announcementBtn span {
+  display: none;
+}
 .entire .navBox nav .announcementBtn:hover {
   color: var(--text-color);
   background-color: rgba(0, 0, 0, 0.05);
@@ -125,6 +153,11 @@
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+}
+.entire .navBox nav .mobileUserInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .entire .navBox nav .navUsername {
   max-width: 120px;
@@ -189,6 +222,10 @@
   z-index: 25;
 }
 .entire .navBox nav .settingsItem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
   border: none;
   background: transparent;
   font-size: var(--h6-fontsize);
@@ -199,6 +236,10 @@
   cursor: pointer;
   transition: all var(--transition-type);
   width: 100%;
+}
+.entire .navBox nav .settingsItem svg {
+  flex-shrink: 0;
+  display: block;
 }
 .entire .navBox nav .settingsItem:hover {
   color: var(--text-color);
@@ -218,6 +259,19 @@
 }
 .entire .navBox nav .settingsItemWithSub {
   position: relative;
+}
+.entire .navBox nav .settingsDivider {
+  height: 1px;
+  margin: 6px 4px 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.entire .navBox nav .settingsItemDanger {
+  color: #e5484d;
+}
+.entire .navBox nav .settingsItemDanger:hover {
+  color: #ff5a5f;
+  background-color: rgba(229, 72, 77, 0.12);
 }
 .entire .navBox nav .localeSubmenu {
   position: absolute;
@@ -311,6 +365,11 @@
   color: var(--accent-color);
   background: var(--accent-color-light);
 }
+.entire .navBox nav .mobileSettingsDirect,
+.entire .navBox nav .mobileLocaleList,
+.entire .navBox nav .mobileLocaleBtn {
+  display: none;
+}
 .entire main {
   width: 60%;
   min-width: 0;
@@ -387,6 +446,66 @@
   filter: brightness(1.08);
   color: #fff;
 }
+.announcementPageWrap {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  background: var(--displayzone-bgc);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+.announcementPage {
+  width: min(100%, 760px);
+  height: 100%;
+  border-radius: 14px;
+  background: var(--pop-bgc);
+  border: var(--nm-input-border);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.announcementPageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: var(--nm-input-border);
+}
+.announcementPageHeader h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--heading-color);
+}
+.announcementPageHeader button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-color-secondary);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.announcementPageBody {
+  min-width: 100%;
+  max-width: 100%;
+  max-height: none;
+  height: 100%;
+  padding: 0;
+  gap: 0;
+}
+.announcementPageMarkdown {
+  padding: 10px 12px 14px;
+  font-size: 14px;
+  line-height: 1.65;
+}
 @media (max-width: 1024px) {
   .entire main {
     width: 85%;
@@ -410,58 +529,300 @@
   }
 }
 @media (max-width: 768px) {
-  .navBox nav {
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 8px 12px;
+  .entire .navBox {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
-  .navBox nav img.logo {
-    height: calc(var(--logo-height) * 0.9);
+  .entire main {
+    width: 92%;
   }
-  .navBox nav div.link {
-    order: 3;
+  .entire main section[id='header'] {
+    padding: 12px 0 10px 0;
+    margin-bottom: 10px;
+  }
+  .entire main section[id='header'] span {
+    font-size: clamp(30px, 7vw, 38px);
+    line-height: 1.2;
+  }
+  .entire main section[id='header'] button {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 8px;
+    line-height: 1.25;
+  }
+  .entire.entireWide main {
+    width: 94%;
+  }
+  .entire .navBox nav {
     width: 100%;
-    justify-content: flex-start;
-    gap: 4px;
-    overflow-x: auto;
-    padding: 4px 0;
-    scrollbar-width: thin;
-  }
-  .navBox nav div.link::-webkit-scrollbar {
-    height: 4px;
-  }
-  .navBox nav div.link span {
+    max-width: none;
     padding: 6px 10px;
-    font-size: var(--h6-fontsize);
-    white-space: nowrap;
-  }
-  .navBox nav .navRight {
-    order: 2;
     gap: 8px;
   }
-  .navBox nav .navUserSection {
+  .entire .navBox nav img.logo {
+    height: clamp(26px, 7vw, 32px);
+  }
+  .entire .navBox nav .mobileMenuBtn {
+    margin-left: auto;
+    display: inline-flex;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    width: 34px;
+    height: 30px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-color-secondary);
+    cursor: pointer;
+  }
+  .entire .navBox nav .mobileMenuBtn span {
+    width: 16px;
+    height: 2px;
+    margin: 0 auto;
+    border-radius: 999px;
+    background: currentColor;
+  }
+  .entire .navBox nav .navContent {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1001;
+    width: min(82vw, 304px);
+    height: 100vh;
+    height: 100dvh;
+    padding: max(10px, env(safe-area-inset-top)) 10px 14px;
+    box-sizing: border-box;
+    background: var(--displayzone-bgc);
+    border-right: var(--nm-input-border);
+    box-shadow: 6px 0 24px rgba(0, 0, 0, 0.18);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    transform: translateX(-110%);
+    transition: transform 0.24s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 10px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .entire .navBox nav.navMobileOpen .navContent {
+    transform: translateX(0);
+  }
+  .entire .navBox nav div.link {
+    flex: 0 0 auto;
+    max-width: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     gap: 6px;
   }
-  .navBox nav .navUsername {
-    max-width: 80px;
-    font-size: var(--h6-fontsize);
+  .entire .navBox nav div.link span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+    text-align: left;
   }
-  .navBox nav .navAvatarImg,
-  .navBox nav .navAvatarLetter {
-    width: 24px;
-    height: 24px;
+  .entire .navBox nav div.link span svg {
+    display: inline-block;
+    flex: 0 0 auto;
   }
-  .navBox nav .settingsBtn {
+  .entire .navBox nav .navRight {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 8px;
+  }
+  .entire .navBox nav .announcementBtn {
+    justify-content: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 9px;
+    font-size: 13px;
+  }
+  .entire .navBox nav .announcementBtn span {
+    display: inline;
+    font-size: 13px;
+    color: var(--text-color-secondary);
+  }
+  .entire .navBox nav .navUserSection {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .entire .navBox nav .mobileUserInfo {
+    justify-content: flex-start;
+  }
+  .entire .navBox nav .navUsername {
+    max-width: 200px;
+    font-size: 12px;
+  }
+  .entire .navBox nav .navAvatarImg,
+  .entire .navBox nav .navAvatarLetter {
+    width: 30px;
+    height: 30px;
+  }
+  .entire .navBox nav .navAvatarLetter {
+    font-size: 14px;
+  }
+  .entire .navBox nav .settingsBtn {
+    width: 34px;
+    height: 30px;
+  }
+  .entire .navBox nav .settingsDropdown {
+    position: static;
+    margin-top: 6px;
+    box-shadow: none;
+  }
+  .entire .navBox nav .localeSubmenu {
+    position: static;
+    margin-left: 0;
+    margin-top: 6px;
+    box-shadow: none;
+  }
+  .entire .navBox nav .mobileSettingsDirect {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 8px;
+  }
+  .entire .navBox nav .mobileSettingsDirect .settingsItemTheme {
+    padding: 8px 10px;
+  }
+  .entire .navBox nav .mobileSettingsDirect .settingsItemLabel {
+    font-size: 13px;
+    color: var(--text-color);
+  }
+  .entire .navBox nav .mobileSettingsDirect .settingsItem {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+  .entire .navBox nav .mobileLocaleList {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .entire .navBox nav .mobileLocaleBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--text-color-secondary);
+    border-radius: 7px;
+    padding: 6px 10px;
+    min-height: 30px;
+    line-height: 1;
+    cursor: pointer;
+    font-size: 11px;
+  }
+  .entire .navBox nav .mobileLocaleBtn:hover {
+    color: var(--text-color);
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  .entire .navBox nav .mobileLocaleBtnActive {
+    color: var(--accent-color);
+    background: var(--accent-color-light);
+    box-shadow: inset 0 0 0 1px var(--accent-color-border);
+  }
+  .entire .navBox .mobileNavOverlay {
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.4);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    pointer-events: auto;
+  }
+}
+@media (max-width: 480px) {
+  .entire .navBox nav {
+    padding: 5px 8px;
+  }
+  .entire .navBox nav img.logo {
+    height: clamp(22px, 7vw, 28px);
+  }
+  .entire .navBox nav .mobileMenuBtn {
     width: 32px;
     height: 28px;
   }
-  .navBox nav .linkLogout {
-    padding: 4px 10px;
-    font-size: var(--h6-fontsize);
+  .entire .navBox nav .mobileMenuBtn span {
+    width: 15px;
   }
-  .navBox nav .localeIconBtn {
-    width: 32px;
+  .entire .navBox nav .navContent {
+    width: min(86vw, 292px);
+    padding: max(8px, env(safe-area-inset-top)) 8px 12px;
+  }
+  .entire .navBox nav div.link span {
+    padding: 8px 9px;
+    font-size: 12px;
+  }
+  .entire .navBox nav .announcementBtn {
+    font-size: 12px;
+  }
+  .entire .navBox nav .announcementBtn span {
+    font-size: 12px;
+  }
+  .entire .navBox nav .navAvatarImg,
+  .entire .navBox nav .navAvatarLetter {
+    width: 28px;
     height: 28px;
+  }
+  .entire .navBox nav .navAvatarLetter {
+    font-size: 13px;
+  }
+  .entire .navBox nav .mobileSettingsDirect .settingsItemLabel,
+  .entire .navBox nav .mobileSettingsDirect .settingsItem {
+    font-size: 12px;
+  }
+  .entire .navBox nav .mobileLocaleBtn {
+    min-height: 28px;
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+  .entire .navBox section[id='header'] {
+    padding: 10px 0 8px 0;
+    margin-bottom: 8px;
+  }
+  .entire .navBox section[id='header'] span {
+    font-size: clamp(26px, 8vw, 32px);
+  }
+  .entire .navBox section[id='header'] button {
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 7px;
+  }
+  .announcementPageWrap {
+    padding: max(6px, env(safe-area-inset-top)) 6px max(6px, env(safe-area-inset-bottom));
+  }
+  .announcementPage {
+    border-radius: 10px;
+  }
+  .announcementPageHeader {
+    padding: 8px 10px;
+  }
+  .announcementPageHeader h2 {
+    font-size: 16px;
+  }
+  .announcementPageHeader button {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+  }
+  .announcementPageMarkdown {
+    padding: 8px 10px 12px;
+    font-size: 13px;
   }
 }
 /* 固定页脚：与导航栏对称，始终贴在视口底部（通过 Portal 挂到 body），高度与 --displayzone-footer-height 一致 */
@@ -494,4 +855,29 @@
   color: var(--text-color-secondary);
   font-size: var(--h6-fontsize);
   opacity: 0.8;
+}
+@media (max-width: 768px) {
+  .globalFooter {
+    min-height: calc(var(--displayzone-footer-height) - 6px);
+    padding: 6px 12px;
+  }
+  .globalFooterCopyright {
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.35;
+  }
+  .globalFooterLicense {
+    font-size: 11px;
+  }
+}
+@media (max-width: 480px) {
+  .globalFooter {
+    padding: 5px 8px;
+  }
+  .globalFooterCopyright {
+    font-size: 11px;
+  }
+  .globalFooterLicense {
+    font-size: 10px;
+  }
 }

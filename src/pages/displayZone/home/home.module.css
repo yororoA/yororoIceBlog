@@ -106,6 +106,42 @@
   gap: 18px;
   align-items: stretch;
 }
+.mobileAssistGrid {
+  display: none;
+}
+.mobileAssistCol {
+  min-width: 0;
+}
+.mobileCalendarPanel {
+  width: 100%;
+}
+.mobileCalendarTabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.mobileCalendarTab {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid var(--nm-input-border);
+  background: var(--input-bgc);
+  color: var(--text-color-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--hover-duration) var(--hover-ease);
+}
+.mobileCalendarTab:hover {
+  color: var(--text-color);
+  background: var(--accent-color-light);
+}
+.mobileCalendarTabActive {
+  color: var(--accent-color);
+  background: var(--accent-color-light);
+  border-color: var(--accent-color-border);
+}
 .infoCard {
   border: var(--nm-input-border);
   border-radius: 16px;
@@ -162,6 +198,7 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
 }
 .articlePreviewCover {
@@ -365,6 +402,7 @@
 @media (max-width: 900px) {
   .container {
     max-width: 100%;
+    padding: 18px 14px 24px;
   }
   .homeGrid {
     grid-template-columns: 1fr;
@@ -383,5 +421,266 @@
   }
   .previewCard {
     padding: 16px 16px 10px 16px;
+  }
+}
+@media (max-width: 1024px) {
+  .container {
+    padding: 14px 10px 20px;
+  }
+  .homeGrid,
+  .latestGrid {
+    gap: 12px;
+  }
+  .profileCard {
+    border-radius: 14px;
+    padding: 18px 14px 16px;
+  }
+  .avatarAndBines {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .avatar,
+  .avatarPlaceholder {
+    width: 88px;
+    height: 88px;
+    border-width: 3px;
+  }
+  .avatarPlaceholder {
+    font-size: 34px;
+  }
+  .binesRow {
+    margin-top: 4px;
+    margin-bottom: 2px;
+    gap: 8px;
+  }
+  .binesAvatar {
+    width: 32px;
+    height: 32px;
+  }
+  .authorName {
+    font-size: clamp(20px, 5.2vw, 26px);
+    margin-bottom: 6px;
+  }
+  .description {
+    font-size: clamp(14px, 3.8vw, 16px);
+    line-height: 1.55;
+    margin-bottom: 8px;
+  }
+  .bio {
+    font-size: 13px;
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+  .emailDisplay {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .socialLinks {
+    gap: 8px;
+  }
+  .socialLink {
+    padding: 8px 12px;
+    border-radius: 18px;
+    font-size: 13px;
+  }
+  .profileCardFooter {
+    padding-top: 12px;
+    gap: 2px;
+  }
+  .profileTimeLabel {
+    font-size: 12px;
+  }
+  .profileTimeValue {
+    font-size: 13px;
+  }
+  .infoCard,
+  .previewCard {
+    border-radius: 14px;
+    padding: 14px 12px;
+  }
+  .sectionTitle {
+    margin-bottom: 8px;
+    font-size: clamp(16px, 4.6vw, 20px);
+  }
+  .tags {
+    gap: 8px;
+  }
+  .tag {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 16px;
+  }
+  .shortcutStrip {
+    margin-top: 12px;
+    gap: 8px;
+  }
+  .shortcutTag {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 16px;
+  }
+  .mobileAssistGrid {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    align-items: start;
+  }
+  .mobileGithubEmbed,
+  .mobileCalendarEmbed {
+    width: 100%;
+  }
+  .previewTitle {
+    margin-bottom: 6px;
+    font-size: 15px;
+  }
+  .previewText {
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+  .previewMeta,
+  .previewEmpty {
+    font-size: 12px;
+  }
+  .articlePreviewCover img {
+    height: 74px;
+  }
+  .latestGrid .previewCard {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 12px 10px;
+  }
+  .latestGrid .previewCard .sectionTitle {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.25;
+  }
+  .latestGrid .previewCard .previewTitle {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  .latestGrid .previewCard .previewText {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-color-secondary);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  .latestGrid .previewCard .previewMeta {
+    margin: 2px 0 0;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(127, 127, 127, 0.28);
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  .latestGrid .previewCard .previewEmpty {
+    margin-top: 2px;
+    font-size: 12px;
+  }
+  .latestGrid .previewCard .articlePreviewCover {
+    margin-bottom: 2px;
+    border-radius: 10px;
+  }
+  .latestGrid .previewCard .articlePreviewCover img {
+    height: 72px;
+  }
+}
+@media (max-width: 480px) {
+  .container {
+    padding: 10px 8px 16px;
+  }
+  .profileCard {
+    padding: 14px 10px 12px;
+  }
+  .avatar,
+  .avatarPlaceholder {
+    width: 72px;
+    height: 72px;
+  }
+  .avatarPlaceholder {
+    font-size: 28px;
+  }
+  .authorName {
+    font-size: 20px;
+  }
+  .description {
+    font-size: 13px;
+  }
+  .binesName,
+  .binesStatus {
+    font-size: 12px;
+  }
+  .infoCard,
+  .previewCard {
+    padding: 12px 10px;
+  }
+  .sectionTitle {
+    font-size: 16px;
+  }
+  .previewTitle {
+    font-size: 14px;
+  }
+  .previewText,
+  .previewMeta,
+  .previewEmpty {
+    font-size: 12px;
+  }
+  .articlePreviewCover img {
+    height: 66px;
+  }
+  .mobileAssistGrid {
+    margin-top: 8px;
+    gap: 8px;
+  }
+  .mobileCalendarTabs {
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+  .mobileCalendarTab {
+    height: 28px;
+    font-size: 11px;
+  }
+  .latestGrid .previewCard {
+    gap: 5px;
+    padding: 10px 10px 9px;
+  }
+  .latestGrid .previewCard .sectionTitle {
+    font-size: 16px;
+  }
+  .latestGrid .previewCard .previewTitle {
+    font-size: 12px;
+  }
+  .latestGrid .previewCard .previewText {
+    font-size: 11px;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+  .latestGrid .previewCard .previewMeta {
+    font-size: 10px;
+    padding-top: 5px;
+  }
+  .latestGrid .previewCard .articlePreviewCover {
+    border-radius: 9px;
+  }
+  .latestGrid .previewCard .articlePreviewCover img {
+    height: 64px;
+  }
+}
+@media (max-width: 500px) {
+  .mobileAssistGrid {
+    grid-template-columns: 1fr;
   }
 }

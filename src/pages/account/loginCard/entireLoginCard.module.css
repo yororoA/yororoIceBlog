@@ -11,6 +11,7 @@
 .entire {
   width: 100%;
   height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,46 +25,92 @@
     animation: none;
   }
 }
+@media (min-width: 961px) {
+  .entire {
+    border-top-right-radius: 14rem;
+  }
+  .entire section.suggestion {
+    width: min(78%, 680px);
+    margin: 22rem 0 10rem;
+  }
+  .entire section.suggestion .suggestionHead {
+    margin-bottom: 10rem;
+  }
+  .entire section.suggestion .suggestionHead h2 {
+    font-size: clamp(44px, 2.9vw, 56px);
+    line-height: 1.15;
+  }
+  .entire section.suggestion h3 {
+    font-size: clamp(22px, 1.6vw, 28px);
+  }
+}
 .entire section.suggestion {
   margin: 20rem 0;
+  width: 70%;
 }
 .entire section.suggestion .suggestionHead {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8rem;
+  margin-bottom: 10rem;
 }
 .entire section.suggestion .suggestionHead h2 {
   margin: 0;
-}
-.entire section.suggestion .backBtn {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: none;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.06);
-  color: var(--text-color-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, color 0.2s;
-}
-.entire section.suggestion .backBtn svg {
-  width: 20px;
-  height: 20px;
-}
-.entire section.suggestion .backBtn:hover {
-  background: rgba(0, 0, 0, 0.1);
-  color: var(--text-color);
+  font-size: clamp(34px, 4.2vw, 44px);
+  line-height: 1.2;
 }
 .entire section.suggestion h3 {
   display: inline;
   margin-right: 5rem;
+  font-size: clamp(20px, 2.2vw, 26px);
+  line-height: 1.4;
 }
-.entire section.suggestion h3.lr {
+.entire section.suggestion .lrBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: transparent;
   color: #2691ef;
   cursor: pointer;
+  font: inherit;
+  line-height: inherit;
+  text-decoration: underline;
+}
+@media (max-width: 960px) {
+  .entire {
+    height: auto;
+    border-top-right-radius: 0;
+    border-radius: 14rem;
+    background: linear-gradient(to bottom, transparent 0%, var(--entire-bgc) 18%);
+    padding: 12rem 10rem;
+    box-sizing: border-box;
+  }
+  .entire section.suggestion {
+    margin: 8rem 0 4rem;
+    width: 100%;
+  }
+  .entire section.suggestion .suggestionHead {
+    margin-bottom: 8rem;
+  }
+  .entire section.suggestion .suggestionHead h2 {
+    font-size: clamp(32px, 7vw, 42px);
+  }
+  .entire section.suggestion h3 {
+    display: block;
+    margin: 0;
+    line-height: 1.5;
+    font-size: clamp(18px, 4.2vw, 24px);
+  }
+  .entire section.suggestion .lrBtn {
+    display: inline-flex;
+  }
+}
+@media (max-width: 640px) {
+  .entire {
+    padding: 10rem 8rem;
+    border-radius: 12rem;
+  }
+  .entire section.suggestion h3 {
+    font-size: clamp(16px, 4.6vw, 20px);
+  }
 }

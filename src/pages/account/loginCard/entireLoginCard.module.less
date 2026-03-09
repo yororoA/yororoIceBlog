@@ -66,11 +66,19 @@
       margin-right: 5rem;
       font-size: clamp(20px, 2.2vw, 26px);
       line-height: 1.4;
+    }
 
-      &.lr {
-        color: rgb(38, 145, 239);
-        cursor: pointer;
-      }
+    .lrBtn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: rgb(38, 145, 239);
+      cursor: pointer;
+      font: inherit;
+      line-height: inherit;
+      text-decoration: underline;
     }
   }
 
@@ -101,6 +109,10 @@
         margin: 0;
         line-height: 1.5;
         font-size: clamp(18px, 4.2vw, 24px);
+      }
+
+      .lrBtn {
+        display: inline-flex;
       }
     }
   }

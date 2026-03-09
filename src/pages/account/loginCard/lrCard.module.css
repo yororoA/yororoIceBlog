@@ -1,6 +1,27 @@
 section.lr {
   width: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
+}
+@media (min-width: 961px) {
+  section.lr form section {
+    width: min(78%, 680px);
+    font-size: 18px;
+    margin: 6rem 0;
+    --i_btn-height: 46px;
+  }
+  section.lr form section label {
+    margin: 4rem 0;
+    font-size: 18px;
+  }
+  section.lr form section input {
+    font-size: 17px;
+  }
+  section.lr form button {
+    width: min(78%, 680px);
+    height: 46px;
+    font-size: 17px;
+  }
 }
 section.lr form {
   display: flex;
@@ -9,13 +30,14 @@ section.lr form {
   justify-content: center;
 }
 section.lr form section {
-  width: 70%;
+  width: min(70%, 640px);
   display: flex;
   flex-direction: column;
-  font-size: var(--h4-fontsize);
-  line-height: var(--h4-fontsize);
+  font-size: 16px;
+  line-height: 1.45;
   margin: 5rem 0;
   --i_btn-height: 25rem;
+  --i_btn-height: 42px;
 }
 section.lr form section label {
   margin: 3rem 0;
@@ -23,19 +45,36 @@ section.lr form section label {
 section.lr form section.acknowledge {
   flex-direction: row;
   align-items: center;
+  column-gap: 8px;
 }
-section.lr form section.acknowledge span {
+section.lr form section.acknowledge label {
+  margin: 0;
+  line-height: 1.35;
+  display: inline-flex;
+  align-items: center;
+}
+section.lr form section.acknowledge .townLawLink {
+  display: inline-flex;
+  align-items: center;
   text-decoration: underline;
   cursor: pointer;
   color: rgba(0, 0, 0, 0.6);
+  font-size: inherit;
+  line-height: 1.35;
 }
-section.lr form section.acknowledge span:hover {
+section.lr form section.acknowledge .townLawLink:hover {
   color: var(--registerBtn-ableColor);
+}
+section.lr form section.acknowledge .anchorTarget {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 section.lr form section input {
   width: 100%;
   height: var(--i_btn-height);
-  font-size: var(--h4-fontsize);
+  font-size: 16px;
   box-sizing: border-box;
   border-color: rgba(76, 81, 89, 0.3);
   border-style: solid;
@@ -45,10 +84,11 @@ section.lr form section input {
   transition: 0.1s;
 }
 section.lr form section input[type=checkbox] {
-  width: var(--h4-fontsize);
+  width: 16px;
   font-size: 1em;
-  height: 1em;
-  margin-right: 5rem;
+  height: 16px;
+  margin: 0;
+  flex: 0 0 16px;
   cursor: pointer;
 }
 section.lr form section input:hover {
@@ -80,6 +120,7 @@ section.lr form section div.verify input.verification + span {
   display: flex;
   justify-content: center;
   align-items: center;
+  white-space: nowrap;
   background-color: rgba(76, 81, 89, 0);
   transition: all 0.1s;
 }
@@ -94,9 +135,9 @@ section.lr form section div.verify input.verification + span.unable {
   color: rgba(0, 0, 0, 0.2);
 }
 section.lr form button {
-  width: 80%;
+  width: min(80%, 680px);
   height: var(--i_btn-height);
-  font-size: var(--h4-fontsize);
+  font-size: 16px;
   border-color: gray;
   border-style: solid;
   outline: none;
@@ -137,4 +178,54 @@ section.lr form button.guest {
 section.lr form button.guest:hover {
   border-radius: var(--btn-border-radius-hover);
   background-color: rgba(76, 81, 89, 0.4);
+}
+section.lr .townLawPop {
+  width: min(92vw, 760px);
+}
+@media (max-width: 960px) {
+  section.lr form section {
+    width: min(92%, 780px);
+    margin: 4rem 0;
+  }
+  section.lr form section label {
+    margin: 2rem 0;
+  }
+  section.lr form button {
+    width: min(92%, 780px);
+  }
+}
+@media (max-width: 640px) {
+  section.lr form section {
+    width: 100%;
+    margin: 6px 0;
+  }
+  section.lr form section label {
+    margin: 4px 0 6px;
+    font-size: 14px;
+  }
+  section.lr form section.acknowledge {
+    align-items: center;
+    margin-top: 10px;
+  }
+  section.lr form section.acknowledge label {
+    line-height: 1.4;
+    font-size: 13px;
+  }
+  section.lr form section input {
+    height: 40px;
+    font-size: 15px;
+  }
+  section.lr form section div.verify input.verification {
+    width: 66%;
+  }
+  section.lr form section div.verify input.verification + span {
+    width: 34%;
+    font-size: 14px;
+    padding: 0 6px;
+  }
+  section.lr form button {
+    width: 100%;
+    height: 40px;
+    font-size: 15px;
+  }
 }

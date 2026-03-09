@@ -280,6 +280,15 @@ function ChatContent() {
 	const showSidebar = !isMobile || routeMode === 'index';
 	const showMain = !isMobile || routeMode !== 'index';
 
+	useEffect(() => {
+		if (!isMobile || routeMode === 'index') return;
+		requestAnimationFrame(() => {
+			const el = messagesRef.current;
+			if (!el) return;
+			el.scrollTop = el.scrollHeight - el.clientHeight;
+		});
+	}, [isMobile, routeMode, activeId]);
+
 	return (
 		<div className="page-enter">
 			<section id="header">
