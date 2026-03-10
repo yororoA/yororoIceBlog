@@ -9,6 +9,7 @@ import { getUid, isGuest } from "../../../../../utils/auth";
 import {getAvatarColor} from '../../../../../utils/avatarColor';
 import { UiPersistContext } from "../../../context/uiPersistContext";
 import { t } from "../../../../../i18n/uiText";
+import { MomentsListContext } from "../../context/momentsListContext";
 import card from './content.module.less';
 
 
@@ -29,6 +30,7 @@ const Content = ({ headshotType }) => {
 	} = useContext(MomentDetailsCtx);
 	const { locale } = useContext(UiPersistContext);
 	const { showSuccess, showFailed } = useContext(SuccessBoardContext);
+	const [, setMomentsData, , setLikedMoments] = useContext(MomentsListContext);
 
 	// const {uid, username, content, title, createdAt, _id} = momentItem;
 	const {uid, username, content, title, _id} = momentItem;
@@ -49,9 +51,17 @@ const Content = ({ headshotType }) => {
 		const checked = e.target.checked;
 		setLike(checked);
 		setLikeNumbers(prev => checked ? prev + 1 : prev - 1);
+		setMomentsData(prev => prev.map(item => item._id === _id
+			? { ...item, likes: checked ? (item.likes || 0) + 1 : Math.max(0, (item.likes || 0) - 1) }
+			: item
+		));
+		setLikedMoments(prev => checked
+			? (prev.includes(_id) ? prev : [...prev, _id])
+			: prev.filter(id => id !== _id)
+		);
 		await sendMomentLike(_id, checked);
 		if (checked) showSuccess('Liked');
-	}, [_id, showSuccess, setLike, setLikeNumbers]);
+	}, [_id, showSuccess, setLike, setLikeNumbers, setMomentsData, setLikedMoments]);
 
 	const handleShare = useCallback((e) => {
 		e.stopPropagation();

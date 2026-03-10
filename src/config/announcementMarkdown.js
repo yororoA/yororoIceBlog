@@ -2,7 +2,7 @@
 // 支持 en / zh / ja 三语
 export const homeAnnouncementMarkdown = {
   en: `# Welcome to yororIce's Town
-test
+
 > 1. There used to be an issue in guest-mode identity handling; tokens could expire too quickly after entering the site as a guest.
 **Fixed**
 
