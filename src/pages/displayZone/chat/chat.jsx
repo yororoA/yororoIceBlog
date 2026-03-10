@@ -253,9 +253,6 @@ function ChatContent() {
 			if (conv && activeId !== conv.id) selectConversation(conv.id, 'private');
 			return;
 		}
-		if (!isMobile && activeId !== 'group') {
-			selectConversation('group', 'group');
-		}
 	}, [routeMode, privateAnchor, conversations, activeId, isMobile, selectConversation, resolvePrivateConv]);
 
 	const activeConversation = useMemo(
@@ -266,6 +263,14 @@ function ChatContent() {
 
 	const handleSelectConvByRoute = useCallback((conv) => {
 		if (!conv) return;
+		if (!isMobile) {
+			if (conv.type === 'group') {
+				selectConversation('group', 'group');
+				return;
+			}
+			selectConversation(conv.id, 'private');
+			return;
+		}
 		if (conv.type === 'group') {
 			navigate('/town/chat/group');
 			selectConversation('group', 'group');
@@ -275,7 +280,7 @@ function ChatContent() {
 		const hash = label ? `#${encodeURIComponent(label)}` : '';
 		navigate(`/town/chat/private${hash}`);
 		selectConversation(conv.id, 'private');
-	}, [navigate, selectConversation, getConvLabel]);
+	}, [navigate, selectConversation, getConvLabel, isMobile]);
 
 	const showSidebar = !isMobile || routeMode === 'index';
 	const showMain = !isMobile || routeMode !== 'index';

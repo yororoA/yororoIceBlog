@@ -29,6 +29,10 @@ const MomentItem = ({ data, liked, onOpenDetails, onRequestDetail, isDeleting, i
 	const [animFinished, setAnimFinished] = useState(false);
 	const ref = useRef(null);
 
+	useEffect(() => {
+		setDt(data);
+	}, [data]);
+
 	useLayoutEffect(() => {
 		const el = ref.current;
 		if (!el) { setVisible(true); return; }
