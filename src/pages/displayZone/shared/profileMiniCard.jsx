@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import styles from './profileMiniCard.module.less';
 import { PROFILE, SOCIAL_LINKS } from './profileInfo';
 import { UiPersistContext } from '../context/uiPersistContext';
@@ -212,9 +212,18 @@ const ProfileMiniCard = ({ visible = true, embedded = false, githubOnly = false,
   }, [pieSegments]);
 
   const rootClass = embedded ? styles.embeddedLane : styles.leftLane;
+  const stopScrollBubble = useCallback((e) => {
+    // Keep side lane scroll independent from DisplayZone main scroll container.
+    e.stopPropagation();
+  }, []);
 
   return (
-    <aside className={`${rootClass}${visible ? '' : ` ${styles.leftLaneHidden}`}${className ? ` ${className}` : ''}`} aria-label="profile snippet">
+    <aside
+      className={`${rootClass}${visible ? '' : ` ${styles.leftLaneHidden}`}${className ? ` ${className}` : ''}`}
+      aria-label="profile snippet"
+      onWheelCapture={stopScrollBubble}
+      onTouchMoveCapture={stopScrollBubble}
+    >
       <div className={styles.stack}>
         {!githubOnly && (
           <div className={`${styles.card} page-enter`}>

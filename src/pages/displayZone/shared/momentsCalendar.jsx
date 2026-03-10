@@ -192,9 +192,18 @@ const MomentsCalendar = ({ visible = true, mode = 'moments', embedded = false, c
   const goNext = () => setViewDate((d) => new Date(d.getFullYear(), d.getMonth() + 1));
 
   const rootClass = embedded ? styles.embeddedLane : styles.rightLane;
+  const stopScrollBubble = useCallback((e) => {
+    // Keep side lane scroll independent from DisplayZone main scroll container.
+    e.stopPropagation();
+  }, []);
 
   return (
-    <aside className={`${rootClass}${visible ? '' : ` ${styles.rightLaneHidden}`}${className ? ` ${className}` : ''}`} aria-label={t(locale, 'calendarTitle')}>
+    <aside
+      className={`${rootClass}${visible ? '' : ` ${styles.rightLaneHidden}`}${className ? ` ${className}` : ''}`}
+      aria-label={t(locale, 'calendarTitle')}
+      onWheelCapture={stopScrollBubble}
+      onTouchMoveCapture={stopScrollBubble}
+    >
       <div className={styles.stack}>
         <div className={`${styles.card} page-enter`}>
           <div className={styles.calendarHeader}>
