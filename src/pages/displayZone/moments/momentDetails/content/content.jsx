@@ -50,7 +50,7 @@ const Content = ({ headshotType }) => {
 	const onFeedBackChange = useCallback(async e => {
 		const checked = e.target.checked;
 		setLike(checked);
-		setLikeNumbers(prev => checked ? prev + 1 : prev - 1);
+		setLikeNumbers(prev => checked ? prev + 1 : Math.max(0, prev - 1));
 		setMomentsData(prev => prev.map(item => item._id === _id
 			? { ...item, likes: checked ? (item.likes || 0) + 1 : Math.max(0, (item.likes || 0) - 1) }
 			: item
@@ -60,7 +60,7 @@ const Content = ({ headshotType }) => {
 			: prev.filter(id => id !== _id)
 		);
 		await sendMomentLike(_id, checked);
-		if (checked) showSuccess('Liked');
+		showSuccess(checked ? 'Liked' : 'Unliked');
 	}, [_id, showSuccess, setLike, setLikeNumbers, setMomentsData, setLikedMoments]);
 
 	const handleShare = useCallback((e) => {
