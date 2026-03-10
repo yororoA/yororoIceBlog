@@ -24,7 +24,16 @@ const MomentsCard = ({ liked, preview, onOpenDetails, onRequestDetail, isActiveD
 	// {uid,username, comments, content, title, createdAt, _id, likes, filenames, updatedAt}
 	const {momentItem} = useContext(MomentIdContext);
 	const { locale } = useContext(UiPersistContext);
-	const [, , , , momentsFilesCache, setMomentsFilesCache, , markMomentDeleting] = useContext(MomentsListContext);
+	const [
+		,
+		setMomentsData,
+		,
+		setLikedMoments,
+		momentsFilesCache,
+		setMomentsFilesCache,
+		,
+		markMomentDeleting,
+	] = useContext(MomentsListContext);
 	const { showSuccess, showFailed } = useContext(SuccessBoardContext);
 	const {uid, username, content, title, createdAt, _id, likes, filenames} = momentItem;
 	const admin = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
@@ -97,14 +106,29 @@ const MomentsCard = ({ liked, preview, onOpenDetails, onRequestDetail, isActiveD
 	// 点赞
 	const [like, setLike] = useState(liked); // 是否点赞
 	const [likeNumbers, setLikeNumbers] = useState(likes); // 点赞数量
+	useEffect(() => {
+		setLike(!!liked);
+	}, [liked]);
+	useEffect(() => {
+		setLikeNumbers(Number(momentItem.likes || 0));
+	}, [momentItem.likes]);
+
 	const onFeedBackChange = useCallback(async e => {
 		const checked = e.target.checked;
 		setLike(checked);
 		setLikeNumbers(prev => checked ? prev + 1 : prev - 1);
 		setViewCount(prev => prev + 1);
+		setMomentsData(prev => prev.map(item => item._id === _id
+			? { ...item, likes: checked ? (item.likes || 0) + 1 : Math.max(0, (item.likes || 0) - 1), views: (item.views || 0) + 1 }
+			: item
+		));
+		setLikedMoments(prev => checked
+			? (prev.includes(_id) ? prev : [...prev, _id])
+			: prev.filter(id => id !== _id)
+		);
 		await sendMomentLike(_id, checked);
 		if (checked) showSuccess('Liked');
-	}, [_id, showSuccess]);
+	}, [_id, showSuccess, setMomentsData, setLikedMoments]);
 
 
 	// 展示时间：与日历一致，统一使用 createdAt（创建/发布时间）
