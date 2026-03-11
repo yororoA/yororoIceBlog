@@ -225,17 +225,29 @@ const Home = () => {
 						)}
 						<div className={homeStyles.socialLinks}>
 							{SOCIAL_LINKS.map(link => (
-								<a
-									key={link.name}
-									href={link.url}
-									target="_blank"
-									rel="noopener noreferrer"
-									className={homeStyles.socialLink}
-									title={link.name}
-								>
-									<span className={homeStyles.linkIcon}>{renderSocialIcon(link.name)}</span>
-									<span className={homeStyles.linkText}>{link.name}</span>
-								</a>
+								String(link.name || '').toLowerCase().includes('steam') ? (
+									<span
+										key={link.name}
+										className={`${homeStyles.socialLink} ${homeStyles.socialLinkDisabled}`}
+										title={link.name}
+										aria-disabled="true"
+									>
+										<span className={homeStyles.linkIcon}>{renderSocialIcon(link.name)}</span>
+										<span className={homeStyles.linkText}>{link.name}</span>
+									</span>
+								) : (
+									<a
+										key={link.name}
+										href={link.url}
+										target="_blank"
+										rel="noopener noreferrer"
+										className={homeStyles.socialLink}
+										title={link.name}
+									>
+										<span className={homeStyles.linkIcon}>{renderSocialIcon(link.name)}</span>
+										<span className={homeStyles.linkText}>{link.name}</span>
+									</a>
+								)
 							))}
 						</div>
 						<div className={homeStyles.profileCardFooter}>
