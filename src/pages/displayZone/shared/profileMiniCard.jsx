@@ -220,7 +220,7 @@ const ProfileMiniCard = ({ visible = true, embedded = false, githubOnly = false,
   return (
     <aside
       className={`${rootClass}${visible ? '' : ` ${styles.leftLaneHidden}`}${className ? ` ${className}` : ''}`}
-      aria-label="profile snippet"
+      aria-label={t(locale, 'profileSnippet')}
       onWheelCapture={stopScrollBubble}
       onTouchMoveCapture={stopScrollBubble}
     >
@@ -317,7 +317,7 @@ const ProfileMiniCard = ({ visible = true, embedded = false, githubOnly = false,
                       aria-hidden={langViewMode !== 'pie'}
                     >
                       <div className={styles.pieWrap}>
-                        <svg viewBox={`0 ${PIE_VIEWBOX_Y} ${PIE_VIEWBOX_W} ${PIE_VIEWBOX_H}`} className={styles.pieSvg} role="img" aria-label="GitHub language distribution donut chart">
+                        <svg viewBox={`0 ${PIE_VIEWBOX_Y} ${PIE_VIEWBOX_W} ${PIE_VIEWBOX_H}`} className={styles.pieSvg} role="img" aria-label={t(locale, 'githubLangDonutAria')}>
                           {pieSegments.length === 1 ? (
                             <path
                               d={describeDonutSegment(PIE_CX, PIE_CY, PIE_R, PIE_R_INNER, -90, 270)}

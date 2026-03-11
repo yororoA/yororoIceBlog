@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import styles from './townLaw.module.less';
 
-const TownLaw = ({ markdown, title, className = '', id, showHeader = true, style, usePageScroll = false }) => {
+const TownLaw = ({ markdown, title, className = '', id, showHeader = true, style, usePageScroll = false, narrowScrollbar = false }) => {
 	const contentStyle = usePageScroll
 		? { maxHeight: 'none', overflow: 'visible' }
 		: undefined;
@@ -15,7 +15,7 @@ const TownLaw = ({ markdown, title, className = '', id, showHeader = true, style
 					<h3>{title}</h3>
 				</header>
 			)}
-			<article className={styles.content} style={contentStyle}>
+			<article className={`${styles.content}${narrowScrollbar ? ` ${styles.contentNarrowScrollbar}` : ''}`} style={contentStyle}>
 				<ReactMarkdown remarkPlugins={[remarkGfm]}>
 					{markdown || ''}
 				</ReactMarkdown>

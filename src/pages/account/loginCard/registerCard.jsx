@@ -220,6 +220,7 @@ const RegisterCard = () => {
 						title={t(lang, 'accountTownLaw')}
 						markdown={townLawMarkdown[lang] || townLawMarkdown.en}
 						className={lr.townLawPop}
+						narrowScrollbar
 						style={{ width: 'min(92vw, 860px)', marginTop: 0 }}
 					/>
 				</Pop>

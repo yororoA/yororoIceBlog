@@ -30,6 +30,7 @@ const TownLawPage = () => {
 				markdown={townLawMarkdown[lang] || townLawMarkdown.en}
 				showHeader={false}
 				usePageScroll={true}
+				narrowScrollbar
 				className={page.content}
 			/>
 		</section>

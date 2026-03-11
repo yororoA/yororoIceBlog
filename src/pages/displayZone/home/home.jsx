@@ -254,7 +254,7 @@ const Home = () => {
 					</div>
 					<div className={homeStyles.mobileAssistCol}>
 						<div className={homeStyles.mobileCalendarPanel}>
-							<div className={homeStyles.mobileCalendarTabs} role="tablist" aria-label="home calendar mode switch">
+							<div className={homeStyles.mobileCalendarTabs} role="tablist" aria-label={t(locale, 'homeCalendarModeSwitch')}>
 								<button
 									type="button"
 									role="tab"

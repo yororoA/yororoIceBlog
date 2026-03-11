@@ -260,6 +260,21 @@ const Moments = () => {
 		if (momentsData.length === 0 && !editing) fetchMoments();
 	}, [editing, momentsData.length, fetchMoments]);
 
+	// 若 moments 已由父级预加载（非 moments 首路由进入），补拉取点赞列表
+	useEffect(() => {
+		if (isGuest()) return;
+		if (likedMoments.length > 0) return;
+		let cancelled = false;
+		getLikesList()
+			.then((liked) => {
+				if (!cancelled) setLikedMoments(liked);
+			})
+			.catch(() => {});
+		return () => {
+			cancelled = true;
+		};
+	}, [likedMoments.length, setLikedMoments]);
+
 	// 虚拟列表：根据滚动位置仅渲染可视区附近的 items，减轻大列表渲染开销
 	useLayoutEffect(() => {
 		const el = listRef.current;

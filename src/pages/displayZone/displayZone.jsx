@@ -535,7 +535,7 @@ const DisplayZone = () => {
 					<section className={page.announcementPage} onClick={(e) => e.stopPropagation()}>
 						<header className={page.announcementPageHeader}>
 							<h2>{t(locale, 'announcementTitle')}</h2>
-							<button type="button" onClick={() => handleCloseAnnouncement()} aria-label="关闭公告">×</button>
+							<button type="button" onClick={() => handleCloseAnnouncement()} aria-label={t(locale, 'closeAnnouncement')}>×</button>
 						</header>
 						<Announcement
 							showHeader={false}
@@ -591,7 +591,7 @@ const DisplayZone = () => {
 						<button
 							type="button"
 							className={page.mobileNavOverlay}
-							aria-label="close navigation"
+							aria-label={t(locale, 'closeNavigation')}
 							onClick={() => setMobileNavOpen(false)}
 							onWheel={(e) => e.preventDefault()}
 							onTouchMove={(e) => e.preventDefault()}
@@ -606,7 +606,7 @@ const DisplayZone = () => {
 							type="button"
 							className={page.mobileMenuBtn}
 							onClick={() => setMobileNavOpen(prev => !prev)}
-							aria-label="toggle navigation"
+							aria-label={t(locale, 'toggleNavigation')}
 							aria-expanded={mobileNavOpen}
 						>
 							<span />
