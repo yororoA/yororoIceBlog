@@ -29,8 +29,9 @@ const TownLawPage = () => {
 				title={t(lang, 'accountTownLaw')}
 				markdown={townLawMarkdown[lang] || townLawMarkdown.en}
 				showHeader={false}
-				usePageScroll={true}
+				usePageScroll={false}
 				narrowScrollbar
+				contentMaxHeight="min(72vh, 760px)"
 				className={page.content}
 			/>
 		</section>

@@ -4,6 +4,8 @@ import { PROFILE, SOCIAL_LINKS } from './profileInfo';
 import { UiPersistContext } from '../context/uiPersistContext';
 import { t } from '../../../i18n/uiText';
 import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
+import { renderSocialIcon } from '../home/home';
+import homeStyles from '../home/home.module.less'
 
 const GITHUB_USERNAME = 'yororoA';
 const REFRESH_MS = 60 * 60 * 1000;
@@ -247,7 +249,7 @@ const ProfileMiniCard = ({ visible = true, embedded = false, githubOnly = false,
                   className={styles.link}
                   title={link.name}
                 >
-                  {link.name}
+                  <span className={homeStyles.linkIcon}>{renderSocialIcon(link.name)}</span>
                 </a>
               ))}
             </div>

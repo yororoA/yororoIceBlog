@@ -3,10 +3,10 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import styles from './townLaw.module.less';
 
-const TownLaw = ({ markdown, title, className = '', id, showHeader = true, style, usePageScroll = false, narrowScrollbar = false }) => {
+const TownLaw = ({ markdown, title, className = '', id, showHeader = true, style, usePageScroll = false, narrowScrollbar = false, contentMaxHeight }) => {
 	const contentStyle = usePageScroll
 		? { maxHeight: 'none', overflow: 'visible' }
-		: undefined;
+		: (contentMaxHeight ? { maxHeight: contentMaxHeight } : undefined);
 
 	return (
 		<section id={id} className={`${styles.entire} ${className}`} style={style}>
