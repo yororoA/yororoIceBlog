@@ -92,6 +92,7 @@ const Account = () => {
 									title={t(locale, 'accountTownLaw')}
 									markdown={townLawMarkdown[locale] || townLawMarkdown.en}
 									className={page.wideTownLaw}
+											narrowScrollbar
 								/>
 							</>
 						)}

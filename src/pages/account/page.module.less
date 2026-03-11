@@ -360,7 +360,7 @@
   inset: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
   opacity: 0.92;
 }
@@ -370,8 +370,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 46vh;
-  z-index: 1;
+  height: 54vh;
+  z-index: 0;
   pointer-events: none;
   overflow: hidden;
   mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.98), rgba(0, 0, 0, 0.86) 52%, transparent 100%);
@@ -381,23 +381,27 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -30%;
+  bottom: -10%;
   width: min(1200px, 90vw);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 14px;
   animation: lawAutoScroll 34s linear infinite;
-  filter: blur(14px);
-  opacity: 0.42;
+  filter: blur(8px);
+  opacity: 0.62;
   overflow: hidden;
+  transform-origin: 50% 100%;
+  transform: perspective(1200px) rotateX(18deg) scale(1.03);
 
   p {
     margin: 0;
-    font-size: clamp(12px, 1.1vw, 15px);
-    line-height: 1.5;
+    font-size: clamp(16px, 1.45vw, 22px);
+    // font-size: 50rem;
+    line-height: 1.72;
+    font-weight: 620;
     color: var(--text-color);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
     word-break: break-word;
     white-space: nowrap;
     overflow: hidden;
@@ -408,18 +412,20 @@
 
 @media (max-width: 640px) {
   .backgroundLawMarquee {
-    height: 38vh;
+    height: 44vh;
   }
 
   .backgroundLawTrack {
     width: 94vw;
     gap: 12px;
-    filter: blur(10px);
-    opacity: 0.36;
+    filter: blur(7px);
+    opacity: 0.58;
+    transform: perspective(1000px) rotateX(14deg) scale(1.02);
 
     p {
-      font-size: 12px;
-      line-height: 1.45;
+      font-size: 14px;
+      line-height: 1.62;
+      font-weight: 600;
     }
   }
 }

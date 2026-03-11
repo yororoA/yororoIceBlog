@@ -562,7 +562,12 @@
   .embeddedLane .dayListLink,
   .embeddedLane .dayListAuthor,
   .embeddedLane .dayListEmpty {
-    font-size: 10px;
+    font-size: 11px;
+  }
+
+  .embeddedLane .cellHasMoment .cellDot {
+    width: 5px;
+    height: 5px;
   }
 
   .embeddedLane .dayList {
@@ -575,5 +580,31 @@
     width: 26px;
     height: 26px;
     font-size: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .embeddedLane .navBtn {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
+
+  .embeddedLane .monthLabel {
+    font-size: 11px;
+  }
+
+  .embeddedLane .weekday,
+  .embeddedLane .cell,
+  .embeddedLane .dayListTitle,
+  .embeddedLane .dayListLink,
+  .embeddedLane .dayListAuthor,
+  .embeddedLane .dayListEmpty {
+    font-size: 10px;
+  }
+
+  .embeddedLane .cellHasMoment .cellDot {
+    width: 4.5px;
+    height: 4.5px;
   }
 }
