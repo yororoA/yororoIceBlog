@@ -8,8 +8,8 @@
   margin: 0 auto;
   width: 100%;
   max-width: 100vw;
-  min-height: calc(100vh - var(--displayzone-footer-height));
-  max-height: calc(100vh - var(--displayzone-footer-height));
+  min-height: calc(100dvh - var(--displayzone-footer-height));
+  max-height: calc(100dvh - var(--displayzone-footer-height));
   overflow: auto;
   scrollbar-width: none;
   box-sizing: border-box;
@@ -24,6 +24,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @supports not (height: 100dvh) {
+    min-height: calc(100vh - var(--displayzone-footer-height));
+    max-height: calc(100vh - var(--displayzone-footer-height));
+  }
 
   .navBox {
     position: sticky;
