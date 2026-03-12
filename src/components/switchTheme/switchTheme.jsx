@@ -22,11 +22,24 @@ const SwitchTheme = () => {
 		document.documentElement.setAttribute('data-theme', mode);
 	}, [mode]);
 
+	useEffect(() => {
+		const syncMode = () => {
+			setMode(localStorage.getItem('themeMode') || 'light');
+		};
+		window.addEventListener('storage', syncMode);
+		window.addEventListener('theme-mode-change', syncMode);
+		return () => {
+			window.removeEventListener('storage', syncMode);
+			window.removeEventListener('theme-mode-change', syncMode);
+		};
+	}, []);
+
 	// 将主题的更改存储到localstorage
 	const handleSwitch = useCallback(() => {
 		const newMode = mode === 'light' ? 'dark' : 'light';
 		setMode(newMode);
 		localStorage.setItem('themeMode', newMode);
+		window.dispatchEvent(new Event('theme-mode-change'));
 	}, [mode]);
 
 	return (

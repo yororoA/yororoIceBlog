@@ -1035,3 +1035,38 @@
     font-size: 10px;
   }
 }
+
+.globalContextMenu {
+  position: fixed;
+  z-index: 1200;
+  min-width: 180px;
+  border: var(--nm-input-border);
+  border-radius: 10px;
+  background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.globalContextMenuItem {
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  border-radius: 7px;
+  text-align: left;
+  font-size: var(--h6-fontsize);
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: background-color var(--transition-type), color var(--transition-type);
+
+  &:hover {
+    background: var(--accent-color-light);
+    color: var(--accent-color);
+  }
+}
+
+.globalContextMenuDanger {
+  color: #d64545;
+}

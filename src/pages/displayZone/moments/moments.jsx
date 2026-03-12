@@ -108,6 +108,7 @@ const Moments = () => {
 	const listRef = useRef(null);
 	const [viewportHeight, setViewportHeight] = useState(0);
 	const [scrollTop, setScrollTop] = useState(0);
+	const [isNarrowScreen, setIsNarrowScreen] = useState(() => window.innerWidth <= 768);
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	const midFromQuery = searchParams.get('mid');
@@ -148,6 +149,12 @@ const Moments = () => {
 		if (!momentItem?._id) return;
 		isManuallyClosedRef.current = false;
 		setDetailMomentId(momentItem._id);
+	}, []);
+
+	useEffect(() => {
+		const onResize = () => setIsNarrowScreen(window.innerWidth <= 768);
+		window.addEventListener('resize', onResize);
+		return () => window.removeEventListener('resize', onResize);
 	}, []);
 
 	useEffect(() => {
@@ -243,6 +250,21 @@ const Moments = () => {
 	const detailHeadshotType = detailMoment
 		? (['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'].includes(detailMoment.uid) ? adminImg : detailMoment.uid === 'u_mlkpl8fl_52a3d8c2068b281a' ? binesImg : null)
 		: null;
+
+	const detailCtxValue = detailMoment ? {
+		momentItem: detailMoment,
+		filesInfos: detailFilesInfos,
+		like: detailLike,
+		setLike: setDetailLike,
+		setLikeNumbers: setDetailLikeNumbers,
+		likeNumbers: detailLikeNumbers,
+		setCommentToDt,
+		onMomentDeleted,
+		hasPrevDetail,
+		hasNextDetail,
+		onPrevDetail: handlePrevDetail,
+		onNextDetail: handleNextDetail,
+	} : null;
 
 	// 首次无数据时拉取并写入 context；与 gallery 一致，避免切换路由重复加载
 	const fetchMoments = useCallback(async () => {
@@ -386,7 +408,7 @@ const Moments = () => {
 		<CommentsLikedContext value={{likedComments, commentLikedChange}}>
 			<div className="page-enter">
 				<section id={'header'}>
-					<span>{t(locale, 'navMoments')}</span>
+					<span>{detailMoment && isNarrowScreen ? t(locale, 'moment') : t(locale, 'navMoments')}</span>
 					{!isGuest() && <CommonBtn className={addContent.new} text={t(locale, 'newMoment')} onClick={() => setEditing(true)}/>}
 				</section>
 				{pendingCount > 0 && (
@@ -394,39 +416,39 @@ const Moments = () => {
 						{t(locale, 'pendingMomentsBanner', pendingCount)}
 					</button>
 				)}
-				<div
-					className={moments.entire}
-					ref={listRef}
-					onScroll={shouldVirtualize ? handleScroll : undefined}
-				>
-				{loading && momentsData.length === 0 ? (
-					<div className={moments.loading}>
-						<span className={moments.loadingDot} />
-						{t(locale, 'loading')}
+				{detailMoment && isNarrowScreen ? (
+					<div className={moments.mobileDetailPage}>
+						<div className={moments.mobileDetailHeader}>
+							<button type="button" className={moments.mobileDetailBackBtn} onClick={() => handleCloseDetailPop()}>
+								{t(locale, 'backToList')}
+							</button>
+						</div>
+						{detailCtxValue && (
+							<MomentDetailsCtx value={detailCtxValue}>
+								<MomentDetails headshotType={detailHeadshotType} forceSingleColumn={true} standalone={true} />
+							</MomentDetailsCtx>
+						)}
 					</div>
 				) : (
-					elements
-				)}
-				</div>
-			</div>
-			{detailMoment && (
-				<Pop isLittle={false} onClose={handleCloseDetailPop}>
-					<MomentDetailsCtx
-						value={{
-							momentItem: detailMoment,
-							filesInfos: detailFilesInfos,
-							like: detailLike,
-							setLike: setDetailLike,
-							setLikeNumbers: setDetailLikeNumbers,
-							likeNumbers: detailLikeNumbers,
-							setCommentToDt,
-							onMomentDeleted,
-							hasPrevDetail,
-							hasNextDetail,
-							onPrevDetail: handlePrevDetail,
-							onNextDetail: handleNextDetail,
-						}}
+					<div
+						className={moments.entire}
+						ref={listRef}
+						onScroll={shouldVirtualize ? handleScroll : undefined}
 					>
+					{loading && momentsData.length === 0 ? (
+						<div className={moments.loading}>
+							<span className={moments.loadingDot} />
+							{t(locale, 'loading')}
+						</div>
+					) : (
+						elements
+					)}
+					</div>
+				)}
+			</div>
+			{detailMoment && !isNarrowScreen && detailCtxValue && (
+				<Pop isLittle={false} onClose={handleCloseDetailPop}>
+					<MomentDetailsCtx value={detailCtxValue}>
 						<MomentDetails headshotType={detailHeadshotType} />
 					</MomentDetailsCtx>
 				</Pop>

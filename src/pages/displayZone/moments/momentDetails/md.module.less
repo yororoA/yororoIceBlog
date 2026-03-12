@@ -132,6 +132,13 @@
     }
   }
 
+  &.entireStandalone {
+    width: 100%;
+    max-width: none;
+    height: min(86dvh, 920px);
+    max-height: none;
+  }
+
   @media (max-width: 900px) {
     width: 96vw;
     height: 90vh;
@@ -148,5 +155,13 @@
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     transform: translateZ(0);
+
+    &.entireStandalone {
+      width: 100%;
+      height: auto;
+      min-height: 70dvh;
+      max-height: none;
+      border-radius: 12px;
+    }
   }
 }

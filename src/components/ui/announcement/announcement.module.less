@@ -199,3 +199,44 @@
   cursor: pointer;
 }
 
+@media (max-width: 768px) {
+  .entire {
+    min-width: min(92vw, 520px);
+    max-height: 80vh;
+    padding: 6rem 7rem;
+    gap: 4rem;
+  }
+
+  .header {
+    h3 {
+      font-size: calc(var(--h3-fontsize) * 1.08);
+    }
+  }
+
+  .content {
+    font-size: calc(var(--p-fontsize) * 1.08);
+    line-height: 1.72;
+
+    li {
+      line-height: 1.9;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .entire {
+    min-width: 94vw;
+    padding: 5rem 5rem;
+    gap: 3.5rem;
+  }
+
+  .content {
+    font-size: calc(var(--p-fontsize) * 1.12);
+    line-height: 1.8;
+
+    h1 { font-size: 1.72em; }
+    h2 { font-size: 1.42em; }
+    h3 { font-size: 1.22em; }
+  }
+}
+
