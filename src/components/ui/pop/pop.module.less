@@ -3,13 +3,17 @@
   inset: 0;
   z-index: 1000;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   background-color: var(--backdrop-bgc);
   backdrop-filter: var(--backdrop-filter);
   display: flex;
   justify-content: center;
   align-items: center;
   animation: fadeIn 0.2s ease-out;
+
+  @supports not (height: 100dvh) {
+    height: 100vh;
+  }
 
   &.closing {
     animation: fadeOut 0.2s ease-out;

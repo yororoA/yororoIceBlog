@@ -29,6 +29,15 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
 	const [isPanning, setIsPanning] = useState(false);
 	const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffsetX: 0, startOffsetY: 0 });
+	const pinchRef = useRef({
+		pinching: false,
+		startDistance: 0,
+		startScale: 1,
+		startMidX: 0,
+		startMidY: 0,
+		startOffsetX: 0,
+		startOffsetY: 0,
+	});
 
 	const viewIv = useCallback((e, index) => {
 		e.stopPropagation();
@@ -116,6 +125,21 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 		setImageScale((s) => Math.max(0.5, s - 0.25));
 	}, []);
 
+	const getTouchDistance = useCallback((touches) => {
+		if (!touches || touches.length < 2) return 0;
+		const dx = touches[0].clientX - touches[1].clientX;
+		const dy = touches[0].clientY - touches[1].clientY;
+		return Math.hypot(dx, dy);
+	}, []);
+
+	const getTouchMid = useCallback((touches) => {
+		if (!touches || touches.length < 2) return { x: 0, y: 0 };
+		return {
+			x: (touches[0].clientX + touches[1].clientX) / 2,
+			y: (touches[0].clientY + touches[1].clientY) / 2,
+		};
+	}, []);
+
 	const resetZoomPan = useCallback((e) => {
 		e?.stopPropagation?.();
 		setImageScale(1);
@@ -138,6 +162,23 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	// 放大后拖拽图片自由平移（translate，图片与展示区域边界可有空隙）
 	const onPanStart = useCallback((e) => {
 		if (!isImage) return;
+		if (e.touches && e.touches.length >= 2) {
+			e.preventDefault();
+			const distance = getTouchDistance(e.touches);
+			const mid = getTouchMid(e.touches);
+			dragRef.current.isDragging = false;
+			pinchRef.current = {
+				pinching: true,
+				startDistance: Math.max(1, distance),
+				startScale: imageScale,
+				startMidX: mid.x,
+				startMidY: mid.y,
+				startOffsetX: panOffset.x,
+				startOffsetY: panOffset.y,
+			};
+			setIsPanning(true);
+			return;
+		}
 		e.preventDefault();
 		setIsPanning(true);
 		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -149,8 +190,36 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 			startOffsetX: panOffset.x,
 			startOffsetY: panOffset.y,
 		};
-	}, [isImage, panOffset.x, panOffset.y]);
+	}, [getTouchDistance, getTouchMid, imageScale, isImage, panOffset.x, panOffset.y]);
 	const onPanMove = useCallback((e) => {
+		if (e.touches && e.touches.length >= 2) {
+			e.preventDefault();
+			if (!pinchRef.current.pinching) {
+				const distance = getTouchDistance(e.touches);
+				const mid = getTouchMid(e.touches);
+				pinchRef.current = {
+					pinching: true,
+					startDistance: Math.max(1, distance),
+					startScale: imageScale,
+					startMidX: mid.x,
+					startMidY: mid.y,
+					startOffsetX: panOffset.x,
+					startOffsetY: panOffset.y,
+				};
+			}
+			const dist = getTouchDistance(e.touches);
+			const mid = getTouchMid(e.touches);
+			const ratio = dist / Math.max(1, pinchRef.current.startDistance);
+			const nextScale = Math.max(0.5, Math.min(3, pinchRef.current.startScale * ratio));
+			setImageScale(nextScale);
+			setPanOffset({
+				x: pinchRef.current.startOffsetX + (mid.x - pinchRef.current.startMidX),
+				y: pinchRef.current.startOffsetY + (mid.y - pinchRef.current.startMidY),
+			});
+			return;
+		}
+
+		if (pinchRef.current.pinching) return;
 		if (!dragRef.current.isDragging) return;
 		e.preventDefault();
 		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -161,8 +230,10 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 			x: dragRef.current.startOffsetX + dx,
 			y: dragRef.current.startOffsetY + dy,
 		});
-	}, []);
-	const onPanEnd = useCallback(() => {
+	}, [getTouchDistance, getTouchMid, imageScale, panOffset.x, panOffset.y]);
+	const onPanEnd = useCallback((e) => {
+		if (e?.touches && e.touches.length >= 2) return;
+		pinchRef.current.pinching = false;
 		dragRef.current.isDragging = false;
 		setIsPanning(false);
 	}, []);
@@ -218,7 +289,7 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 								onMouseDown={isImage ? onPanStart : undefined}
 								onTouchStart={isImage ? onPanStart : undefined}
 								role={isImage ? 'img' : undefined}
-								aria-label={isImage ? '可拖拽平移、滚轮缩放' : undefined}
+								aria-label={isImage ? '可拖拽平移、滚轮与双指缩放' : undefined}
 							>
 								{currentItem[1] === 'image' ? (
 									<div
