@@ -98,28 +98,12 @@
     }
     /* 评论区占满剩余高度，输入框固定在弹窗底部；content 与 comments 共用一个滚动（仅根容器滚动） */
     > *:nth-child(3) {
-      flex: 1 1 auto;
+      flex: 0 0 auto;
       grid-column: unset;
       grid-row: unset;
       width: 100%;
       min-height: 0;
-      display: flex;
-      flex-direction: column;
       overflow: visible;
-    }
-    > *:nth-child(3) > *:first-child {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow: visible;
-    }
-    /* 滚动时评论框黏在弹窗底部 */
-    > *:nth-child(3) > *:last-child {
-      flex: 0 0 28rem;
-      position: sticky;
-      bottom: 0;
-      z-index: 2;
-      background: var(--moments-card-bgc);
-      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
     }
 
     &::before {
@@ -159,7 +143,6 @@
     &.entireStandalone {
       width: 100%;
       height: auto;
-      min-height: 70dvh;
       max-height: none;
       border-radius: 12px;
     }

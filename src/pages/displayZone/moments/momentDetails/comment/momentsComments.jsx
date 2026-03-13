@@ -32,6 +32,7 @@ const MomentsComments = () => {
 	const { showSuccess } = useContext(SuccessBoardContext);
 	const { _id } = momentItem;
 	const comments = momentItem.comments;
+	const guestMode = isGuest();
 
 	const [commentTree, setCommentTree] = useState([]);
 	useEffect(() => {
@@ -76,7 +77,7 @@ const MomentsComments = () => {
 	useWheelInertia(mainScrollRef);
 
 	return (
-		<div className={card.entire} onClick={e => e.stopPropagation()}>
+		<div className={`${card.entire}${guestMode ? ` ${card.readonly}` : ''}`} onClick={e => e.stopPropagation()}>
 			<div ref={mainScrollRef} className={card.main}>
 				<h3>{'Comments'}</h3>
 				<section className={card.body}>
@@ -87,7 +88,7 @@ const MomentsComments = () => {
 					)}
 				</section>
 			</div>
-			{!isGuest() && (
+			{!guestMode && (
 				<div className={card.cAll}>
 					<input type="textarea" id={'livComment'} placeholder={'Click to leave ur comment'} onChange={handleComment}
 								 value={content}/>
