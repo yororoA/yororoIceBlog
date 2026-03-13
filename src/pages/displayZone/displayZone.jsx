@@ -148,6 +148,7 @@ const DisplayZone = () => {
 	const [mobileNavOpen, setMobileNavOpen] = useState(false);
 	const [isMobileNavLayout, setIsMobileNavLayout] = useState(() => window.innerWidth <= 768);
 	const [isAnnouncementPageLayout, setIsAnnouncementPageLayout] = useState(() => window.innerWidth < 600);
+	const [contextMenu, setContextMenu] = useState({ open: false, x: 0, y: 0 });
 	const hasAuth = !!(localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken'));
 	useEffect(() => {
 		if (!hasAuth) {
@@ -176,6 +177,7 @@ const DisplayZone = () => {
 	const scrollContainerRef = useRef(null);
 	const settingsMenuRef = useRef(null);
 	const mobileDrawerRef = useRef(null);
+	const contextMenuRef = useRef(null);
 	useWheelInertia(scrollContainerRef);
 
 	useEffect(() => {
@@ -271,6 +273,37 @@ const DisplayZone = () => {
 		setLocale(nextLocale);
 		setShowLocaleSubmenu(false);
 	}, []);
+	const closeContextMenu = useCallback(() => {
+		setContextMenu((prev) => (prev.open ? { ...prev, open: false } : prev));
+	}, []);
+	const handleToggleTheme = useCallback(() => {
+		const prevMode = localStorage.getItem('themeMode') || 'light';
+		const nextMode = prevMode === 'light' ? 'dark' : 'light';
+		localStorage.setItem('themeMode', nextMode);
+		document.documentElement.setAttribute('data-theme', nextMode);
+		window.dispatchEvent(new Event('theme-mode-change'));
+	}, []);
+	const handleCycleLocale = useCallback(() => {
+		const idx = LOCALE_ORDER.indexOf(locale);
+		const nextLocale = LOCALE_ORDER[(idx + 1 + LOCALE_ORDER.length) % LOCALE_ORDER.length];
+		handleSelectLocale(nextLocale);
+	}, [handleSelectLocale, locale]);
+	const handleCopyCurrentPageLink = useCallback(async () => {
+		try {
+			await navigator.clipboard.writeText(window.location.href);
+			showSuccess(t(locale, 'contextMenuCopiedCurrentLink'));
+		} catch (_) {
+			showFailed(t(locale, 'contextMenuCopyLinkFailed'));
+		}
+	}, [locale, showFailed, showSuccess]);
+	const handleGlobalContextMenu = useCallback((e) => {
+		const target = e.target;
+		if (target instanceof Element && target.closest('input, textarea, [contenteditable="true"]')) return;
+		e.preventDefault();
+		setShowSettingsMenu(false);
+		setShowLocaleSubmenu(false);
+		setContextMenu({ open: true, x: e.clientX, y: e.clientY });
+	}, []);
 	useEffect(() => {
 		if (!showSettingsMenu) return undefined;
 		const onPointerDown = (e) => {
@@ -282,6 +315,29 @@ const DisplayZone = () => {
 		window.addEventListener('pointerdown', onPointerDown);
 		return () => window.removeEventListener('pointerdown', onPointerDown);
 	}, [showSettingsMenu]);
+
+	useEffect(() => {
+		if (!contextMenu.open) return undefined;
+		const onPointerDown = (e) => {
+			if (contextMenuRef.current && !contextMenuRef.current.contains(e.target)) {
+				closeContextMenu();
+			}
+		};
+		const onKeyDown = (e) => {
+			if (e.key === 'Escape') closeContextMenu();
+		};
+		const onScrollOrResize = () => closeContextMenu();
+		window.addEventListener('pointerdown', onPointerDown);
+		window.addEventListener('keydown', onKeyDown);
+		window.addEventListener('scroll', onScrollOrResize, true);
+		window.addEventListener('resize', onScrollOrResize);
+		return () => {
+			window.removeEventListener('pointerdown', onPointerDown);
+			window.removeEventListener('keydown', onKeyDown);
+			window.removeEventListener('scroll', onScrollOrResize, true);
+			window.removeEventListener('resize', onScrollOrResize);
+		};
+	}, [closeContextMenu, contextMenu.open]);
 
 	useEffect(() => {
 		localStorage.setItem('ui_locale', locale);
@@ -585,7 +641,7 @@ const DisplayZone = () => {
 					onRemoveFailed={removeFailed}
 				/>
 			)}
-			<div className={`${page.entire}${isHomeRoute ? ` ${page.entireWide}` : ''}`} ref={scrollContainerRef}>
+			<div className={`${page.entire}${isHomeRoute ? ` ${page.entireWide}` : ''}`} ref={scrollContainerRef} onContextMenu={handleGlobalContextMenu}>
 				<div className={page.navBox}>
 					{mobileNavOpen && (
 						<button
@@ -781,6 +837,68 @@ const DisplayZone = () => {
 						</MomentsListContext.Provider>
 					</UiPersistContext.Provider>}
 				</main>
+				{contextMenu.open && (
+					<div
+						ref={contextMenuRef}
+						className={page.globalContextMenu}
+						role="menu"
+						style={{
+							left: `${Math.max(8, Math.min(contextMenu.x, window.innerWidth - 220))}px`,
+							top: `${Math.max(8, Math.min(contextMenu.y, window.innerHeight - 240))}px`,
+						}}
+					>
+						<button
+							type="button"
+							className={page.globalContextMenuItem}
+							onClick={() => {
+								handleToggleTheme();
+								closeContextMenu();
+							}}
+						>
+							{t(locale, 'contextMenuToggleTheme')}
+						</button>
+						<button
+							type="button"
+							className={page.globalContextMenuItem}
+							onClick={() => {
+								handleCycleLocale();
+								closeContextMenu();
+							}}
+						>
+							{t(locale, 'contextMenuSwitchLanguage')}
+						</button>
+						<button
+							type="button"
+							className={page.globalContextMenuItem}
+							onClick={() => {
+								handleCopyCurrentPageLink();
+								closeContextMenu();
+							}}
+						>
+							{t(locale, 'contextMenuCopyCurrentLink')}
+						</button>
+						<button
+							type="button"
+							className={page.globalContextMenuItem}
+							onClick={() => {
+								handleOpenAnnouncement();
+								closeContextMenu();
+							}}
+						>
+							{t(locale, 'contextMenuOpenAnnouncement')}
+						</button>
+						<button
+							type="button"
+							className={`${page.globalContextMenuItem} ${page.globalContextMenuDanger}`}
+							onClick={() => {
+								handleLogout();
+								closeContextMenu();
+							}}
+						>
+							{t(locale, 'navLogout')}
+						</button>
+					</div>
+				)}
 			</div>
 			<BackToTop scrollContainerRef={scrollContainerRef} />
 			{createPortal(

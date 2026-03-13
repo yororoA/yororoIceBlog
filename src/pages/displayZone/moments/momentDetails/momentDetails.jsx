@@ -23,9 +23,10 @@ const IconSingleCol = () => (
 	</svg>
 );
 
-const MomentDetails = ({ headshotType }) => {
+const MomentDetails = ({ headshotType, forceSingleColumn = false, standalone = false }) => {
 	const { locale } = useContext(UiPersistContext);
 	const [layout, setLayout] = useState(() => {
+		if (forceSingleColumn) return LAYOUT_ONE;
 		try {
 			const v = localStorage.getItem(LAYOUT_KEY);
 			return v === LAYOUT_ONE ? LAYOUT_ONE : LAYOUT_TWO;
@@ -35,30 +36,37 @@ const MomentDetails = ({ headshotType }) => {
 	});
 
 	useEffect(() => {
+		if (forceSingleColumn) setLayout(LAYOUT_ONE);
+	}, [forceSingleColumn]);
+
+	useEffect(() => {
 		try {
 			localStorage.setItem(LAYOUT_KEY, layout);
 		} catch (_) {}
 	}, [layout]);
 
-	const isSingle = layout === LAYOUT_ONE;
+	const isSingle = forceSingleColumn || layout === LAYOUT_ONE;
 	const toggleLayout = useCallback(() => {
+		if (forceSingleColumn) return;
 		setLayout((prev) => (prev === LAYOUT_TWO ? LAYOUT_ONE : LAYOUT_TWO));
-	}, []);
+	}, [forceSingleColumn]);
 
 	const scrollRef = useRef(null);
 	useWheelInertia(scrollRef, isSingle);
 
 	return (
-		<div ref={scrollRef} className={`${mdc.entire} ${isSingle ? mdc.entireSingleCol : ''}`}>
-			<button
-				type="button"
-				className={mdc.layoutToggle}
-				onClick={toggleLayout}
-				title={isSingle ? t(locale, 'momentDetailLayoutToTwo') : t(locale, 'momentDetailLayoutToSingle')}
-				aria-label={isSingle ? t(locale, 'momentDetailLayoutToTwo') : t(locale, 'momentDetailLayoutToSingle')}
-			>
-				{isSingle ? <IconTwoCol /> : <IconSingleCol />}
-			</button>
+		<div ref={scrollRef} className={`${mdc.entire} ${isSingle ? mdc.entireSingleCol : ''} ${standalone ? mdc.entireStandalone : ''}`}>
+			{!forceSingleColumn && (
+				<button
+					type="button"
+					className={mdc.layoutToggle}
+					onClick={toggleLayout}
+					title={isSingle ? t(locale, 'momentDetailLayoutToTwo') : t(locale, 'momentDetailLayoutToSingle')}
+					aria-label={isSingle ? t(locale, 'momentDetailLayoutToTwo') : t(locale, 'momentDetailLayoutToSingle')}
+				>
+					{isSingle ? <IconTwoCol /> : <IconSingleCol />}
+				</button>
+			)}
 			<Content headshotType={headshotType} />
 			<MomentsComments />
 		</div>

@@ -122,7 +122,7 @@ const KnowledgeCard = ({ article, liked, onOpenDetail, locale, isDeleting = fals
             </svg>
             {views}
           </span>
-          <Like checked={liked} likes={likes} _id={article._id} type="article_card" disabled={true} size="sm" />
+          <Like checked={liked} likes={likes} _id={article._id} type="article_card" disabled={true} />
         </div>
       </div>
     </div>
@@ -154,7 +154,8 @@ const ArticleDetail = ({
   hasNextArticle,
   onPrevArticle,
   onNextArticle,
-  locale
+  locale,
+  standalone = false,
 }) => {
   const { title, category, tags, content, createdAt, updatedAt, _id } = article;
   const imageUrls = useMemo(() => extractImageUrlsFromMarkdown(content), [content]);
@@ -203,7 +204,7 @@ const ArticleDetail = ({
   }, [title, content]);
 
   return (
-    <div className={knowledge.detailContainer}>
+    <div className={`${knowledge.detailContainer} ${standalone ? knowledge.detailContainerStandalone : ''}`}>
       <div className={knowledge.detailHeader}>
         <h2 className={knowledge.detailTitle}>{title}</h2>
         <div className={knowledge.detailMeta}>
@@ -494,6 +495,7 @@ const Knowledge = () => {
   const [showNewForm, setShowNewForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [detailArticle, setDetailArticle] = useState(null);
+  const [isNarrowScreen, setIsNarrowScreen] = useState(() => window.innerWidth <= 768);
 
   const { showSuccess, showFailed } = useContext(SuccessBoardContext);
 
@@ -522,6 +524,12 @@ const Knowledge = () => {
 
   const currentUid = getUid();
   const isAdmin = ADMIN_UIDS.includes(currentUid);
+
+  useEffect(() => {
+    const onResize = () => setIsNarrowScreen(window.innerWidth <= 768);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   // 获取文章数据：首次无数据时拉取并写入 context，避免切换路由重复加载
   const fetchArticles = useCallback(async () => {
@@ -778,7 +786,32 @@ const Knowledge = () => {
         )}
         </div>
       </div>
-      {detailArticle && (
+      {detailArticle && isNarrowScreen && (
+        <div className={knowledge.mobileDetailPage}>
+          <div className={knowledge.mobileDetailHeader}>
+            <button type="button" className={knowledge.mobileDetailBackBtn} onClick={() => handleCloseDetail()}>
+              {t(locale, 'backToList')}
+            </button>
+          </div>
+          <ArticleDetail
+            article={detailArticle}
+            liked={detailLiked}
+            likeNumbers={detailLikes}
+            viewCount={detailViews}
+            hasPrevArticle={hasPrevArticle}
+            hasNextArticle={hasNextArticle}
+            onPrevArticle={handlePrevArticle}
+            onNextArticle={handleNextArticle}
+            locale={locale}
+            onLikeChange={handleLikeChange}
+            onShare={handleShare}
+            onDelete={handleDelete}
+            canDelete={canDelete}
+            standalone={true}
+          />
+        </div>
+      )}
+      {detailArticle && !isNarrowScreen && (
         <Pop isLittle={false} onClose={handleCloseDetail}>
           <ArticleDetail
             article={detailArticle}
