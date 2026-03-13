@@ -572,16 +572,17 @@ const Knowledge = () => {
   const autoOpenedKidRef = useRef(null);
   const isManuallyClosedRef = useRef(false);
   useEffect(() => {
-    if (!kidFromQuery || articlesData.length === 0) {
-      // 如果kid被清除，关闭详情并重置标记
-      if (!kidFromQuery && detailArticle) {
+    if (!kidFromQuery) {
+      // 仅在“手动关闭详情”后才清空，避免点击卡片时出现
+      // 详情 -> 列表 -> 详情 的闪动
+      if (isManuallyClosedRef.current && detailArticle) {
         autoOpenedKidRef.current = null;
         setDetailArticle(null);
-        // 如果用户手动关闭，重置手动关闭标记
-        if (isManuallyClosedRef.current) {
-          isManuallyClosedRef.current = false;
-        }
+        isManuallyClosedRef.current = false;
       }
+      return;
+    }
+    if (articlesData.length === 0) {
       return;
     }
     // 如果用户手动关闭过，不再自动打开
@@ -729,88 +730,91 @@ const Knowledge = () => {
     <>
       <div className="page-enter">
         <section id="header">
-          <span>{t(locale, 'navArticles')}</span>
+          <span>{detailArticle && isNarrowScreen ? t(locale, 'article') : t(locale, 'navArticles')}</span>
           {isAdmin && (
             <div className={addContent.container} onClick={() => setShowNewForm(true)}>
               <CommonBtn className={addContent.new} text={t(locale, 'newArticle')} />
             </div>
           )}
         </section>
-        <div className={knowledge.controls}>
-        <div className={knowledge.searchBox}>
-          <input
-            type="text"
-            placeholder="Search articles..."
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            className={knowledge.searchInput}
-          />
-        </div>
-        <div className={knowledge.categories}>
-          {categories.map(cat => (
-            <button
-              key={cat}
-              className={`${knowledge.categoryBtn} ${selectedCategory === cat ? knowledge.active : ''}`}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {getCategoryLabel(cat, locale)}
-            </button>
-          ))}
-        </div>
-        </div>
-        {pendingNewArticles.length > 0 && (
-          <button type="button" className={knowledge.newBanner} onClick={loadPendingNewArticles}>
-            {t(locale, 'pendingArticlesBanner', pendingNewArticles.length)}
-          </button>
-        )}
-
-        <div className={knowledge.articleList}>
-        {loading ? (
-          <div className={knowledge.loading}>
-            <span className={knowledge.loadingDot} />
-            {t(locale, 'loading')}
-          </div>
-        ) : filteredArticles.length === 0 ? (
-          <div className={knowledge.empty}>No articles yet</div>
-        ) : (
-          filteredArticles.map(article => (
-            <KnowledgeCard
-              key={article._id}
-              article={article}
-              liked={likedArticles.includes(article._id)}
-              onOpenDetail={handleOpenDetail}
+        {detailArticle && isNarrowScreen ? (
+          <div className={knowledge.mobileDetailPage}>
+            <div className={knowledge.mobileDetailHeader}>
+              <button type="button" className={knowledge.mobileDetailBackBtn} onClick={() => handleCloseDetail()}>
+                {t(locale, 'backToList')}
+              </button>
+            </div>
+            <ArticleDetail
+              article={detailArticle}
+              liked={detailLiked}
+              likeNumbers={detailLikes}
+              viewCount={detailViews}
+              hasPrevArticle={hasPrevArticle}
+              hasNextArticle={hasNextArticle}
+              onPrevArticle={handlePrevArticle}
+              onNextArticle={handleNextArticle}
               locale={locale}
-              isDeleting={deletingArticleIds.includes(article._id)}
+              onLikeChange={handleLikeChange}
+              onShare={handleShare}
+              onDelete={handleDelete}
+              canDelete={canDelete}
+              standalone={true}
             />
-          ))
-        )}
-        </div>
-      </div>
-      {detailArticle && isNarrowScreen && (
-        <div className={knowledge.mobileDetailPage}>
-          <div className={knowledge.mobileDetailHeader}>
-            <button type="button" className={knowledge.mobileDetailBackBtn} onClick={() => handleCloseDetail()}>
-              {t(locale, 'backToList')}
-            </button>
           </div>
-          <ArticleDetail
-            article={detailArticle}
-            liked={detailLiked}
-            likeNumbers={detailLikes}
-            viewCount={detailViews}
-            hasPrevArticle={hasPrevArticle}
-            hasNextArticle={hasNextArticle}
-            onPrevArticle={handlePrevArticle}
-            onNextArticle={handleNextArticle}
-            locale={locale}
-            onLikeChange={handleLikeChange}
-            onShare={handleShare}
-            onDelete={handleDelete}
-            canDelete={canDelete}
-            standalone={true}
-          />
-        </div>
-      )}
+        ) : (
+          <>
+            <div className={knowledge.controls}>
+              <div className={knowledge.searchBox}>
+                <input
+                  type="text"
+                  placeholder="Search articles..."
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  className={knowledge.searchInput}
+                />
+              </div>
+              <div className={knowledge.categories}>
+                {categories.map(cat => (
+                  <button
+                    key={cat}
+                    className={`${knowledge.categoryBtn} ${selectedCategory === cat ? knowledge.active : ''}`}
+                    onClick={() => setSelectedCategory(cat)}
+                  >
+                    {getCategoryLabel(cat, locale)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {pendingNewArticles.length > 0 && (
+              <button type="button" className={knowledge.newBanner} onClick={loadPendingNewArticles}>
+                {t(locale, 'pendingArticlesBanner', pendingNewArticles.length)}
+              </button>
+            )}
+
+            <div className={knowledge.articleList}>
+              {loading ? (
+                <div className={knowledge.loading}>
+                  <span className={knowledge.loadingDot} />
+                  {t(locale, 'loading')}
+                </div>
+              ) : filteredArticles.length === 0 ? (
+                <div className={knowledge.empty}>No articles yet</div>
+              ) : (
+                filteredArticles.map(article => (
+                  <KnowledgeCard
+                    key={article._id}
+                    article={article}
+                    liked={likedArticles.includes(article._id)}
+                    onOpenDetail={handleOpenDetail}
+                    locale={locale}
+                    isDeleting={deletingArticleIds.includes(article._id)}
+                  />
+                ))
+              )}
+            </div>
+          </>
+        )}
+      </div>
       {detailArticle && !isNarrowScreen && (
         <Pop isLittle={false} onClose={handleCloseDetail}>
           <ArticleDetail
