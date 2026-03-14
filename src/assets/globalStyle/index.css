@@ -36,6 +36,11 @@ body,
     min-height: 100%;
 }
 
+#root {
+    position: relative;
+    z-index: 12;
+}
+
 #portalSite,
 #littlePopPortal{
     position: absolute;
