@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { lazy, useEffect, Suspense } from "react";
+import BowClickEffect from './components/ui/clickBow/BowClickEffect';
 
 const TITLE_SUFFIX = ' - YororoIce Town';
 const PAGE_TITLES = {
@@ -91,6 +92,7 @@ function AppContent() {
 function App() {
 	return (
 		<>
+			<BowClickEffect />
 			<Router>
 				<AppContent />
 			</Router>

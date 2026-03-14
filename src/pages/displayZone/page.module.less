@@ -104,6 +104,7 @@
           flex-shrink: 0;
           text-align: center;
           padding: 8px 16px;
+          border: 1px solid transparent;
           border-radius: 8px;
           box-sizing: border-box;
           cursor: pointer;
@@ -118,8 +119,9 @@
           }
 
           &:hover {
-            color: var(--text-color);
-            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--nav-item-accent, var(--text-color));
+            border-color: color-mix(in srgb, var(--nav-item-accent, var(--accent-color)) 45%, transparent);
+            background-color: var(--nav-item-accent-soft, var(--accent-color-lighter));
             transform: translateY(-1px);
           }
         }
@@ -128,6 +130,7 @@
       .activeLink {
         color: var(--accent-color) !important;
         background-color: var(--accent-color-light) !important;
+        border-color: var(--accent-color-border) !important;
         font-weight: 600 !important;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }

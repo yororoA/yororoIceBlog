@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import logo from '../../assets/images/logo.png'
 import SwitchTheme from "../../components/switchTheme/switchTheme";
@@ -93,14 +93,80 @@ const LogoutIcon = () => (
 );
 
 const NAV_ITEMS = [
-	{ id: 'home', labelKey: 'navHome', icon: HomeIcon },
-	{ id: 'moments', labelKey: 'navMoments', icon: MomentIcon },
-	{ id: 'articles', labelKey: 'navArticles', icon: ArticleIcon },
-	{ id: 'gallery', labelKey: 'navGallery', icon: GalleryIcon },
-	{ id: 'archive', labelKey: 'navArchive', icon: ArchiveIcon },
-	{ id: 'chat', labelKey: 'navChat', icon: ChatIcon },
-	{ id: 'other', labelKey: 'navOther', icon: OtherIcon },
+	{ id: 'home', labelKey: 'navHome', icon: HomeIcon, accent: '#3b82f6', accentSoft: 'rgba(59, 130, 246, 0.14)' },
+	{ id: 'moments', labelKey: 'navMoments', icon: MomentIcon, accent: '#ec4899', accentSoft: 'rgba(236, 72, 153, 0.15)' },
+	{ id: 'articles', labelKey: 'navArticles', icon: ArticleIcon, accent: '#8b5cf6', accentSoft: 'rgba(139, 92, 246, 0.16)' },
+	{ id: 'gallery', labelKey: 'navGallery', icon: GalleryIcon, accent: '#06b6d4', accentSoft: 'rgba(6, 182, 212, 0.16)' },
+	{ id: 'archive', labelKey: 'navArchive', icon: ArchiveIcon, accent: '#f59e0b', accentSoft: 'rgba(245, 158, 11, 0.16)' },
+	{ id: 'chat', labelKey: 'navChat', icon: ChatIcon, accent: '#10b981', accentSoft: 'rgba(16, 185, 129, 0.16)' },
+	{ id: 'other', labelKey: 'navOther', icon: OtherIcon, accent: '#ef4444', accentSoft: 'rgba(239, 68, 68, 0.15)' },
 ];
+
+const SECTION_ACCENTS = {
+	home: {
+		accent: 'rgba(59, 130, 246, 1)',
+		hover: 'rgba(37, 99, 235, 1)',
+		light: 'rgba(59, 130, 246, 0.14)',
+		lighter: 'rgba(59, 130, 246, 0.08)',
+		border: 'rgba(59, 130, 246, 0.45)',
+		active: 'rgba(59, 130, 246, 0.2)',
+		activeBorder: 'rgba(59, 130, 246, 0.75)',
+	},
+	moments: {
+		accent: 'rgba(236, 72, 153, 1)',
+		hover: 'rgba(219, 39, 119, 1)',
+		light: 'rgba(236, 72, 153, 0.16)',
+		lighter: 'rgba(236, 72, 153, 0.08)',
+		border: 'rgba(236, 72, 153, 0.45)',
+		active: 'rgba(236, 72, 153, 0.22)',
+		activeBorder: 'rgba(236, 72, 153, 0.78)',
+	},
+	articles: {
+		accent: 'rgba(139, 92, 246, 1)',
+		hover: 'rgba(124, 58, 237, 1)',
+		light: 'rgba(139, 92, 246, 0.16)',
+		lighter: 'rgba(139, 92, 246, 0.08)',
+		border: 'rgba(139, 92, 246, 0.45)',
+		active: 'rgba(139, 92, 246, 0.22)',
+		activeBorder: 'rgba(139, 92, 246, 0.78)',
+	},
+	gallery: {
+		accent: 'rgba(6, 182, 212, 1)',
+		hover: 'rgba(8, 145, 178, 1)',
+		light: 'rgba(6, 182, 212, 0.16)',
+		lighter: 'rgba(6, 182, 212, 0.08)',
+		border: 'rgba(6, 182, 212, 0.45)',
+		active: 'rgba(6, 182, 212, 0.22)',
+		activeBorder: 'rgba(6, 182, 212, 0.78)',
+	},
+	archive: {
+		accent: 'rgba(245, 158, 11, 1)',
+		hover: 'rgba(217, 119, 6, 1)',
+		light: 'rgba(245, 158, 11, 0.16)',
+		lighter: 'rgba(245, 158, 11, 0.08)',
+		border: 'rgba(245, 158, 11, 0.45)',
+		active: 'rgba(245, 158, 11, 0.22)',
+		activeBorder: 'rgba(245, 158, 11, 0.78)',
+	},
+	chat: {
+		accent: 'rgba(16, 185, 129, 1)',
+		hover: 'rgba(5, 150, 105, 1)',
+		light: 'rgba(16, 185, 129, 0.16)',
+		lighter: 'rgba(16, 185, 129, 0.08)',
+		border: 'rgba(16, 185, 129, 0.45)',
+		active: 'rgba(16, 185, 129, 0.22)',
+		activeBorder: 'rgba(16, 185, 129, 0.78)',
+	},
+	other: {
+		accent: 'rgba(239, 68, 68, 1)',
+		hover: 'rgba(220, 38, 38, 1)',
+		light: 'rgba(239, 68, 68, 0.14)',
+		lighter: 'rgba(239, 68, 68, 0.08)',
+		border: 'rgba(239, 68, 68, 0.45)',
+		active: 'rgba(239, 68, 68, 0.2)',
+		activeBorder: 'rgba(239, 68, 68, 0.75)',
+	},
+};
 
 const DisplayZone = () => {
 	const uid = getUid();
@@ -179,6 +245,29 @@ const DisplayZone = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const isHomeRoute = location.pathname === '/town' || location.pathname === '/town/';
+	const activeSection = useMemo(() => {
+		if (location.pathname === '/town' || location.pathname === '/town/') return 'home';
+		if (location.pathname.includes('/moments')) return 'moments';
+		if (location.pathname.includes('/articles')) return 'articles';
+		if (location.pathname.includes('/gallery')) return 'gallery';
+		if (location.pathname.includes('/archive')) return 'archive';
+		if (location.pathname.includes('/chat')) return 'chat';
+		if (location.pathname.includes('/other')) return 'other';
+		return 'home';
+	}, [location.pathname]);
+	const accentVars = useMemo(() => {
+		const palette = SECTION_ACCENTS[activeSection] || SECTION_ACCENTS.home;
+		return {
+			'--accent-color': palette.accent,
+			'--accent-color-hover': palette.hover,
+			'--accent-color-light': palette.light,
+			'--accent-color-lighter': palette.lighter,
+			'--accent-color-border': palette.border,
+			'--accent-color-active': palette.active,
+			'--accent-color-active-border': palette.activeBorder,
+			'--nm-accent': palette.accent,
+		};
+	}, [activeSection]);
 	const scrollContainerRef = useRef(null);
 	const settingsMenuRef = useRef(null);
 	const mobileDrawerRef = useRef(null);
@@ -648,7 +737,7 @@ const DisplayZone = () => {
 					onRemoveFailed={removeFailed}
 				/>
 			)}
-			<div className={`${page.entire}${isHomeRoute ? ` ${page.entireWide}` : ''}`} ref={scrollContainerRef} onContextMenu={handleGlobalContextMenu}>
+			<div className={`${page.entire}${isHomeRoute ? ` ${page.entireWide}` : ''}`} ref={scrollContainerRef} onContextMenu={handleGlobalContextMenu} style={accentVars}>
 				<div className={page.navBox}>
 					{mobileNavOpen && (
 						<button
@@ -688,6 +777,7 @@ const DisplayZone = () => {
 									key={item.id}
 										data-nav-id={item.id}
 										className={isActive ? page.activeLink : ''}
+										style={{ '--nav-item-accent': item.accent, '--nav-item-accent-soft': item.accentSoft }}
 								>
 										{isMobileNavLayout && <Icon />}
 									{t(locale, item.labelKey)}

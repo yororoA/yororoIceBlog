@@ -1,0 +1,39 @@
+.layer {
+	position: fixed;
+	inset: 0;
+	z-index: 1400;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+.bow {
+	position: fixed;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transform: translate(-50%, -46%);
+	filter: drop-shadow(0 4px 8px rgba(90, 105, 97, 0.18)) hue-rotate(var(--bow-hue));
+	opacity: 0;
+	animation: bowFloat var(--bow-duration) ease-out forwards;
+	will-change: transform, opacity;
+}
+
+.bow svg {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+@keyframes bowFloat {
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -45%) scale(0.74) rotate(calc(var(--bow-rotate) * 0.45));
+	}
+	18% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		transform: translate(calc(-50% + var(--bow-drift-x)), calc(-46% + var(--bow-drift-y))) scale(1.1) rotate(var(--bow-rotate));
+	}
+}

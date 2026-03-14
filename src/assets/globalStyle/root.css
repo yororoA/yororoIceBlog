@@ -51,6 +51,10 @@
     --displayzone-bgc: rgb(227, 226, 226);
 
     --entire-bgc: rgba(227, 226, 226, 0.6);
+    --page-grid-size: 34px;
+    --page-grid-color: rgba(15, 23, 42, 0.05);
+    --page-radial-1: radial-gradient(circle at 12% 14%, rgba(99, 102, 241, 0.14) 0%, rgba(99, 102, 241, 0) 42%);
+    --page-radial-2: radial-gradient(circle at 86% 82%, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0) 40%);
     /*--entire-bgc: rgba(18,19,22,1);*/
     /*--nav-bgc: rgba(255, 255, 255, .7);*/
     --nav-bgc: rgba(227,228,229,.6);
@@ -151,6 +155,9 @@
     /* 背景与容器 */
     --displayzone-bgc: rgba(18, 19, 22, 1);
     --entire-bgc: rgba(18, 19, 22, 1);
+    --page-grid-color: rgba(148, 163, 184, 0.09);
+    --page-radial-1: radial-gradient(circle at 14% 18%, rgba(129, 140, 248, 0.14) 0%, rgba(129, 140, 248, 0) 45%);
+    --page-radial-2: radial-gradient(circle at 82% 80%, rgba(56, 189, 248, 0.13) 0%, rgba(56, 189, 248, 0) 42%);
     --nav-bgc: rgba(31, 32, 36, 0.9);
     --pop-bgc: rgba(31, 32, 36, 0.94);
     --backdrop-bgc: rgba(0, 0, 0, 0.7);
