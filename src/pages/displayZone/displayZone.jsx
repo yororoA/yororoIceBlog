@@ -111,6 +111,10 @@ const SECTION_ACCENTS = {
 		border: 'rgba(59, 130, 246, 0.45)',
 		active: 'rgba(59, 130, 246, 0.2)',
 		activeBorder: 'rgba(59, 130, 246, 0.75)',
+		radial1Light: 'radial-gradient(circle at 12% 14%, rgba(59, 130, 246, 0.16) 0%, rgba(59, 130, 246, 0) 44%)',
+		radial2Light: 'radial-gradient(circle at 86% 82%, rgba(14, 165, 233, 0.13) 0%, rgba(14, 165, 233, 0) 42%)',
+		radial1Dark: 'radial-gradient(circle at 14% 18%, rgba(96, 165, 250, 0.16) 0%, rgba(96, 165, 250, 0) 46%)',
+		radial2Dark: 'radial-gradient(circle at 82% 80%, rgba(56, 189, 248, 0.14) 0%, rgba(56, 189, 248, 0) 44%)',
 	},
 	moments: {
 		accent: 'rgba(236, 72, 153, 1)',
@@ -120,6 +124,10 @@ const SECTION_ACCENTS = {
 		border: 'rgba(236, 72, 153, 0.45)',
 		active: 'rgba(236, 72, 153, 0.22)',
 		activeBorder: 'rgba(236, 72, 153, 0.78)',
+		radial1Light: 'radial-gradient(circle at 12% 14%, rgba(236, 72, 153, 0.16) 0%, rgba(236, 72, 153, 0) 45%)',
+		radial2Light: 'radial-gradient(circle at 86% 82%, rgba(244, 63, 94, 0.14) 0%, rgba(244, 63, 94, 0) 42%)',
+		radial1Dark: 'radial-gradient(circle at 14% 18%, rgba(244, 114, 182, 0.17) 0%, rgba(244, 114, 182, 0) 47%)',
+		radial2Dark: 'radial-gradient(circle at 82% 80%, rgba(251, 113, 133, 0.15) 0%, rgba(251, 113, 133, 0) 44%)',
 	},
 	articles: {
 		accent: 'rgba(139, 92, 246, 1)',
@@ -129,6 +137,10 @@ const SECTION_ACCENTS = {
 		border: 'rgba(139, 92, 246, 0.45)',
 		active: 'rgba(139, 92, 246, 0.22)',
 		activeBorder: 'rgba(139, 92, 246, 0.78)',
+		radial1Light: 'radial-gradient(circle at 12% 14%, rgba(139, 92, 246, 0.16) 0%, rgba(139, 92, 246, 0) 45%)',
+		radial2Light: 'radial-gradient(circle at 86% 82%, rgba(99, 102, 241, 0.14) 0%, rgba(99, 102, 241, 0) 42%)',
+		radial1Dark: 'radial-gradient(circle at 14% 18%, rgba(167, 139, 250, 0.17) 0%, rgba(167, 139, 250, 0) 47%)',
+		radial2Dark: 'radial-gradient(circle at 82% 80%, rgba(129, 140, 248, 0.15) 0%, rgba(129, 140, 248, 0) 44%)',
 	},
 	gallery: {
 		accent: 'rgba(6, 182, 212, 1)',
@@ -138,6 +150,10 @@ const SECTION_ACCENTS = {
 		border: 'rgba(6, 182, 212, 0.45)',
 		active: 'rgba(6, 182, 212, 0.22)',
 		activeBorder: 'rgba(6, 182, 212, 0.78)',
+		radial1Light: 'radial-gradient(circle at 12% 14%, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0) 45%)',
+		radial2Light: 'radial-gradient(circle at 86% 82%, rgba(45, 212, 191, 0.13) 0%, rgba(45, 212, 191, 0) 42%)',
+		radial1Dark: 'radial-gradient(circle at 14% 18%, rgba(34, 211, 238, 0.16) 0%, rgba(34, 211, 238, 0) 47%)',
+		radial2Dark: 'radial-gradient(circle at 82% 80%, rgba(45, 212, 191, 0.14) 0%, rgba(45, 212, 191, 0) 44%)',
 	},
 	archive: {
 		accent: 'rgba(245, 158, 11, 1)',
@@ -147,6 +163,10 @@ const SECTION_ACCENTS = {
 		border: 'rgba(245, 158, 11, 0.45)',
 		active: 'rgba(245, 158, 11, 0.22)',
 		activeBorder: 'rgba(245, 158, 11, 0.78)',
+		radial1Light: 'radial-gradient(circle at 12% 14%, rgba(245, 158, 11, 0.17) 0%, rgba(245, 158, 11, 0) 45%)',
+		radial2Light: 'radial-gradient(circle at 86% 82%, rgba(234, 179, 8, 0.14) 0%, rgba(234, 179, 8, 0) 42%)',
+		radial1Dark: 'radial-gradient(circle at 14% 18%, rgba(251, 191, 36, 0.17) 0%, rgba(251, 191, 36, 0) 47%)',
+		radial2Dark: 'radial-gradient(circle at 82% 80%, rgba(250, 204, 21, 0.15) 0%, rgba(250, 204, 21, 0) 44%)',
 	},
 	chat: {
 		accent: 'rgba(16, 185, 129, 1)',
@@ -156,6 +176,10 @@ const SECTION_ACCENTS = {
 		border: 'rgba(16, 185, 129, 0.45)',
 		active: 'rgba(16, 185, 129, 0.22)',
 		activeBorder: 'rgba(16, 185, 129, 0.78)',
+		radial1Light: 'radial-gradient(circle at 12% 14%, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0) 45%)',
+		radial2Light: 'radial-gradient(circle at 86% 82%, rgba(45, 212, 191, 0.13) 0%, rgba(45, 212, 191, 0) 42%)',
+		radial1Dark: 'radial-gradient(circle at 14% 18%, rgba(52, 211, 153, 0.17) 0%, rgba(52, 211, 153, 0) 47%)',
+		radial2Dark: 'radial-gradient(circle at 82% 80%, rgba(45, 212, 191, 0.15) 0%, rgba(45, 212, 191, 0) 44%)',
 	},
 	other: {
 		accent: 'rgba(239, 68, 68, 1)',
@@ -165,6 +189,10 @@ const SECTION_ACCENTS = {
 		border: 'rgba(239, 68, 68, 0.45)',
 		active: 'rgba(239, 68, 68, 0.2)',
 		activeBorder: 'rgba(239, 68, 68, 0.75)',
+		radial1Light: 'radial-gradient(circle at 12% 14%, rgba(239, 68, 68, 0.16) 0%, rgba(239, 68, 68, 0) 45%)',
+		radial2Light: 'radial-gradient(circle at 86% 82%, rgba(251, 113, 133, 0.13) 0%, rgba(251, 113, 133, 0) 42%)',
+		radial1Dark: 'radial-gradient(circle at 14% 18%, rgba(248, 113, 113, 0.17) 0%, rgba(248, 113, 113, 0) 47%)',
+		radial2Dark: 'radial-gradient(circle at 82% 80%, rgba(251, 113, 133, 0.15) 0%, rgba(251, 113, 133, 0) 44%)',
 	},
 };
 
@@ -266,6 +294,28 @@ const DisplayZone = () => {
 			'--accent-color-active': palette.active,
 			'--accent-color-active-border': palette.activeBorder,
 			'--nm-accent': palette.accent,
+		};
+	}, [activeSection]);
+
+	useEffect(() => {
+		const palette = SECTION_ACCENTS[activeSection] || SECTION_ACCENTS.home;
+		const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+		const radial1 = isDark ? palette.radial1Dark : palette.radial1Light;
+		const radial2 = isDark ? palette.radial2Dark : palette.radial2Light;
+		document.documentElement.style.setProperty('--page-radial-1', radial1);
+		document.documentElement.style.setProperty('--page-radial-2', radial2);
+
+		const onThemeModeChange = () => {
+			const nextDark = document.documentElement.getAttribute('data-theme') === 'dark';
+			document.documentElement.style.setProperty('--page-radial-1', nextDark ? palette.radial1Dark : palette.radial1Light);
+			document.documentElement.style.setProperty('--page-radial-2', nextDark ? palette.radial2Dark : palette.radial2Light);
+		};
+
+		window.addEventListener('theme-mode-change', onThemeModeChange);
+		return () => {
+			window.removeEventListener('theme-mode-change', onThemeModeChange);
+			document.documentElement.style.removeProperty('--page-radial-1');
+			document.documentElement.style.removeProperty('--page-radial-2');
 		};
 	}, [activeSection]);
 	const scrollContainerRef = useRef(null);
