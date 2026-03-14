@@ -42,23 +42,10 @@ const Account = () => {
 	const handleSelectLocale = useCallback((next) => setLocale(next), []);
 	const isAuthFormRoute = pathname === 'login' || pathname === 'register';
 	const isTownLawRoute = pathname === 'town-law';
-	const lawBgText = (townLawMarkdown[locale] || townLawMarkdown.en)
-		.replace(/[>#*`-]/g, ' ')
-		.replace(/\n+/g, ' ')
-		.trim();
-	const lawBgRows = Array.from({ length: 8 }, (_, i) => `${lawBgText}   •   ${lawBgText.slice(0, 220)}   •   ${i + 1}`);
 
 	return (
 		<div className={page.entire}>
 			<BirdsBackground className={page.backgroundCanvas} />
-			{isAuthFormRoute && (
-				<div className={page.backgroundLawMarquee} aria-hidden>
-					<div className={page.backgroundLawTrack}>
-						{lawBgRows.map((row, idx) => <p key={`a_${idx}`}>{row}</p>)}
-						{lawBgRows.map((row, idx) => <p key={`b_${idx}`}>{row}</p>)}
-					</div>
-				</div>
-			)}
 			<nav>
 				<img src={logo} alt="logo" />
 				<div className={page.navRight}>

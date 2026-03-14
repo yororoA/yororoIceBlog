@@ -747,14 +747,25 @@ const Knowledge = () => {
     <>
       <div className="page-enter">
         <section id="header">
-          <span>{detailArticle && isNarrowScreen ? t(locale, 'article') : t(locale, 'navArticles')}</span>
+          <span>{showNewForm && isNarrowScreen ? t(locale, 'newArticle') : detailArticle && isNarrowScreen ? t(locale, 'article') : t(locale, 'navArticles')}</span>
           {isAdmin && (
             <div className={addContent.container} onClick={() => setShowNewForm(true)}>
               <CommonBtn className={addContent.new} text={t(locale, 'newArticle')} />
             </div>
           )}
         </section>
-        {detailArticle && isNarrowScreen ? (
+        {showNewForm && isNarrowScreen ? (
+          <div className={knowledge.mobileEditorPage}>
+            <div className={knowledge.mobileEditorHeader}>
+              <button type="button" className={knowledge.mobileEditorBackBtn} onClick={() => setShowNewForm(false)}>
+                {t(locale, 'backToList')}
+              </button>
+            </div>
+            <div className={knowledge.mobileEditorPanel}>
+              <NewKnowledgeForm onClose={() => setShowNewForm(false)} onSubmit={handleSubmitArticle} />
+            </div>
+          </div>
+        ) : detailArticle && isNarrowScreen ? (
           <div className={knowledge.mobileDetailPage}>
             <div className={knowledge.mobileDetailHeader}>
               <button type="button" className={knowledge.mobileDetailBackBtn} onClick={() => handleCloseDetail()}>
@@ -852,7 +863,7 @@ const Knowledge = () => {
         </Pop>
       )}
 
-      {showNewForm && (
+      {showNewForm && !isNarrowScreen && (
         <Pop isLittle={false} onClose={(proceed) => { setShowNewForm(false); if (typeof proceed === 'function') proceed(); }}>
           <NewKnowledgeForm onClose={() => setShowNewForm(false)} onSubmit={handleSubmitArticle} />
         </Pop>

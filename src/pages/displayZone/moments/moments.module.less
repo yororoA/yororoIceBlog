@@ -117,7 +117,19 @@
   gap: 10px;
 }
 
+.mobileEditorPage {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .mobileDetailHeader {
+  display: flex;
+  align-items: center;
+}
+
+.mobileEditorHeader {
   display: flex;
   align-items: center;
 }
@@ -130,6 +142,31 @@
   padding: 6px 12px;
   font-size: var(--h5-fontsize);
   cursor: pointer;
+}
+
+.mobileEditorBackBtn {
+  border: var(--nm-input-border);
+  background: var(--card-bgc);
+  color: var(--text-color);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: var(--h5-fontsize);
+  cursor: pointer;
+}
+
+.mobileEditorPanel {
+  width: 100%;
+  border: var(--nm-input-border);
+  border-radius: 10px;
+  background: var(--card-bgc);
+  overflow: hidden;
+
+  > :global(form) {
+    width: 100%;
+    max-height: none;
+    padding: 10px;
+    box-sizing: border-box;
+  }
 }
 
 @media (max-width: 768px) {
@@ -160,6 +197,12 @@
   }
 
   .mobileDetailBackBtn {
+    width: 100%;
+    min-height: 34px;
+    font-size: 13px;
+  }
+
+  .mobileEditorBackBtn {
     width: 100%;
     min-height: 34px;
     font-size: 13px;

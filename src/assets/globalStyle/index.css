@@ -13,6 +13,18 @@ html {
     overflow-x: hidden;
     overflow-y: var(--overflow);
     background-color: var(--entire-bgc);
+    background-image:
+        var(--page-radial-1),
+        var(--page-radial-2),
+        linear-gradient(to right, var(--page-grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--page-grid-color) 1px, transparent 1px);
+    background-size:
+        auto,
+        auto,
+        var(--page-grid-size) var(--page-grid-size),
+        var(--page-grid-size) var(--page-grid-size);
+    background-position: center center;
+    background-attachment: fixed;
     color: var(--text-color);
     transition:
         background-color var(--transition-type),
@@ -22,6 +34,11 @@ html {
 body,
 #root {
     min-height: 100%;
+}
+
+#root {
+    position: relative;
+    z-index: 12;
 }
 
 #portalSite,
