@@ -371,8 +371,17 @@ const Moments = () => {
 		fetchMoments();
 	}, [fetchMoments]);
 
-	// Pop 的关闭：先请求子组件（可弹草稿确认）；无参调用表示动画结束，执行 setEditing(false)
 	const newMomentCloseRef = useRef(null);
+	const handleCloseNewMomentStandalone = useCallback(() => {
+		const proceed = () => {
+			setEditing(false);
+			fetchMoments();
+		};
+		if (newMomentCloseRef.current) newMomentCloseRef.current(proceed);
+		else proceed();
+	}, [fetchMoments]);
+
+	// Pop 的关闭：先请求子组件（可弹草稿确认）；无参调用表示动画结束，执行 setEditing(false)
 	const handlePopClose = useCallback((proceed) => {
 		if (proceed === undefined || typeof proceed !== 'function') {
 			setEditing(false);
@@ -408,7 +417,7 @@ const Moments = () => {
 		<CommentsLikedContext value={{likedComments, commentLikedChange}}>
 			<div className="page-enter">
 				<section id={'header'}>
-					<span>{detailMoment && isNarrowScreen ? t(locale, 'moment') : t(locale, 'navMoments')}</span>
+					<span>{editing && isNarrowScreen ? t(locale, 'newMoment') : detailMoment && isNarrowScreen ? t(locale, 'moment') : t(locale, 'navMoments')}</span>
 					{!isGuest() && <CommonBtn className={addContent.new} text={t(locale, 'newMoment')} onClick={() => setEditing(true)}/>}
 				</section>
 				{pendingCount > 0 && (
@@ -416,7 +425,18 @@ const Moments = () => {
 						{t(locale, 'pendingMomentsBanner', pendingCount)}
 					</button>
 				)}
-				{detailMoment && isNarrowScreen ? (
+				{editing && isNarrowScreen && !isGuest() ? (
+					<div className={moments.mobileEditorPage}>
+						<div className={moments.mobileEditorHeader}>
+							<button type="button" className={moments.mobileEditorBackBtn} onClick={handleCloseNewMomentStandalone}>
+								{t(locale, 'backToList')}
+							</button>
+						</div>
+						<div className={moments.mobileEditorPanel}>
+							<NewMoment onClose={handleCloseNewMoment} registerCloseHandler={newMomentCloseRef}/>
+						</div>
+					</div>
+				) : detailMoment && isNarrowScreen ? (
 					<div className={moments.mobileDetailPage}>
 						<div className={moments.mobileDetailHeader}>
 							<button type="button" className={moments.mobileDetailBackBtn} onClick={() => handleCloseDetailPop()}>
@@ -453,7 +473,7 @@ const Moments = () => {
 					</MomentDetailsCtx>
 				</Pop>
 			)}
-			{editing && !isGuest() &&
+			{editing && !isGuest() && !isNarrowScreen &&
 				<Pop isLittle={false} onClose={handlePopClose}>
 					<NewMoment onClose={handleCloseNewMoment} registerCloseHandler={newMomentCloseRef}/>
 				</Pop>}
