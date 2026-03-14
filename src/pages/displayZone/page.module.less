@@ -601,6 +601,28 @@
 }
 
 @media (max-width: 768px) {
+  .guestModal {
+    padding: 20px 16px;
+    min-width: min(92vw, 420px);
+  }
+
+  .guestModalTitle {
+    font-size: 15px;
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+
+  .guestModalActions {
+    gap: 10px;
+  }
+
+  .guestModalBtn,
+  .guestModalBtnPrimary {
+    min-height: 36px;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
   .entire {
     // 关键修复：backdrop-filter 会让 fixed 子元素以该容器为参考，
     // 导致移动端菜单遮罩与抽屉只覆盖导航区而非整个视口。
@@ -863,6 +885,23 @@
 }
 
 @media (max-width: 480px) {
+  .guestModal {
+    padding: 16px 12px;
+    min-width: 94vw;
+  }
+
+  .guestModalTitle {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .guestModalBtn,
+  .guestModalBtnPrimary {
+    min-height: 34px;
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+
   .entire {
     .navBox {
       nav {

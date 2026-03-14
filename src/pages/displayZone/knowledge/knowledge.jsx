@@ -160,35 +160,52 @@ const ArticleDetail = ({
   const { title, category, tags, content, createdAt, updatedAt, _id } = article;
   const imageUrls = useMemo(() => extractImageUrlsFromMarkdown(content), [content]);
   const [enlargedImageIndex, setEnlargedImageIndex] = useState(null);
-  const imgRenderIndexRef = useRef(0);
-  useEffect(() => {
-    imgRenderIndexRef.current = 0;
-  }, [imageUrls]);
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit' });
   };
 
-  const markdownComponents = useMemo(() => ({
-    img: (props) => {
-      const src = props.src || '';
-      if (imageUrls.indexOf(src) < 0) return <img {...props} alt={props.alt || ''} />;
-      const index = imgRenderIndexRef.current++;
-      return (
-        <span
-          className={knowledge.articleDetailImgWrap}
-          role="button"
-          tabIndex={0}
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setEnlargedImageIndex(index); }}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setEnlargedImageIndex(index); } }}
-          aria-label="点击放大"
-        >
-          <img src={src} alt={props.alt || ''} />
-        </span>
-      );
-    }
-  }), [imageUrls]);
+  const markdownComponents = useMemo(() => {
+    const srcSeenCount = new Map();
+    const resolveImageIndex = (src) => {
+      const seen = srcSeenCount.get(src) || 0;
+      srcSeenCount.set(src, seen + 1);
+      let matched = -1;
+      for (let i = 0; i < imageUrls.length; i++) {
+        if (imageUrls[i] !== src) continue;
+        matched += 1;
+        if (matched === seen) return i;
+      }
+      return imageUrls.indexOf(src);
+    };
+
+    return {
+      img: (props) => {
+        const src = props.src || '';
+        const index = resolveImageIndex(src);
+        if (index < 0) return <img {...props} alt={props.alt || ''} />;
+        const openPreview = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setEnlargedImageIndex(index);
+        };
+        return (
+          <span
+            className={knowledge.articleDetailImgWrap}
+            role="button"
+            tabIndex={0}
+            onClick={openPreview}
+            onTouchEnd={openPreview}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') openPreview(e); }}
+            aria-label="点击放大"
+          >
+            <img src={src} alt={props.alt || ''} />
+          </span>
+        );
+      }
+    };
+  }, [imageUrls]);
 
   const imageItems = useMemo(() => imageUrls.map((url) => [url, 'image']), [imageUrls]);
 

@@ -149,8 +149,13 @@ const DisplayZone = () => {
 	const [isMobileNavLayout, setIsMobileNavLayout] = useState(() => window.innerWidth <= 768);
 	const [isAnnouncementPageLayout, setIsAnnouncementPageLayout] = useState(() => window.innerWidth < 600);
 	const [contextMenu, setContextMenu] = useState({ open: false, x: 0, y: 0 });
+	const suppressGuestModalRef = useRef(false);
 	const hasAuth = !!(localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken'));
 	useEffect(() => {
+		if (suppressGuestModalRef.current) {
+			setShowGuestModal(false);
+			return;
+		}
 		if (!hasAuth) {
 			if (typeof sessionStorage !== 'undefined') sessionStorage.setItem('guest_auth_pending', '1');
 			setShowGuestModal(true);
@@ -361,7 +366,9 @@ const DisplayZone = () => {
 		}
 	}, [navigate]);
 	const handleLogout = useCallback(() => {
+		suppressGuestModalRef.current = true;
 		setMobileNavOpen(false);
+		setShowGuestModal(false);
 		logout();
 		navigate('/account/login');
 	}, [navigate]);
