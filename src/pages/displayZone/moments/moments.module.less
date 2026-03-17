@@ -114,7 +114,12 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  background-color: var(--moments-card-bgc);
+  overflow: hidden;
+  border: var(--nm-input-border, 1px solid rgba(0, 0, 0, 0.06));
 }
 
 .mobileEditorPage {
@@ -127,6 +132,10 @@
 .mobileDetailHeader {
   display: flex;
   align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: var(--moments-card-bgc);
+  flex-shrink: 0;
 }
 
 .mobileEditorHeader {
@@ -139,9 +148,15 @@
   background: var(--card-bgc);
   color: var(--text-color);
   border-radius: 8px;
-  padding: 6px 12px;
-  font-size: var(--h5-fontsize);
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.mobileDetailBackBtn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-color);
 }
 
 .mobileEditorBackBtn {
@@ -196,10 +211,15 @@
     gap: 8px;
   }
 
+  .mobileDetailHeader {
+    padding: 8px 10px;
+  }
+
   .mobileDetailBackBtn {
     width: 100%;
-    min-height: 34px;
-    font-size: 13px;
+    min-height: 38px;
+    font-size: 14px;
+    padding: 8px 12px;
   }
 
   .mobileEditorBackBtn {

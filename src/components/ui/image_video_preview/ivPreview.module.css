@@ -1,16 +1,14 @@
-div.iv {
+div.iv,
+div.ivGallery {
   width: 100%;
   max-width: 100%;
-  min-width: 80px;
-  min-height: 80px;
   position: relative;
   overflow: hidden;
-  /* 让容器保持正方形比例，用于裁剪内部媒体 */
-  aspect-ratio: 1 / 1;
   border-radius: var(--moments-live-radius);
   transition: transform var(--transition-type);
 }
-div.iv label {
+div.iv label,
+div.ivGallery label {
   display: block;
   opacity: 0;
   width: 100%;
@@ -18,25 +16,44 @@ div.iv label {
   position: absolute;
   background-color: var(--backdrop);
   top: 0;
+  left: 0;
   cursor: pointer;
   transition: opacity 0.2s ease-in-out;
 }
-div.iv label:hover {
+div.iv label:hover,
+div.ivGallery label:hover {
   opacity: 1;
 }
-div.iv label svg {
+div.iv label svg,
+div.ivGallery label svg {
   --w: 30%;
   width: var(--w);
   margin: calc((100% - var(--w)) / 2);
 }
 div.iv img,
-div.iv video {
+div.ivGallery img,
+div.iv video,
+div.ivGallery video {
   width: 100%;
-  height: 100%;
   display: block;
   object-fit: cover;
-  /* 填充并裁剪为正方形 */
   object-position: center;
+}
+/* 默认正方形缩略图（moments、chat 等） */
+div.iv {
+  min-width: 80px;
+  min-height: 80px;
+  /* 让容器保持正方形比例，用于裁剪内部媒体 */
+  aspect-ratio: 1 / 1;
+}
+div.iv img,
+div.iv video {
+  height: 100%;
+}
+/* gallery 模式：按原图比例拉伸高度，不强制正方形 */
+div.ivGallery img,
+div.ivGallery video {
+  height: auto;
 }
 /* 放大预览遮罩 */
 .enlargedWrap {
@@ -55,6 +72,8 @@ div.iv video {
   height: 90vh;
   max-width: 90vw;
   max-height: 90vh;
+  --preview-top-gap: 58px;
+  --preview-bottom-gap: 106px;
   cursor: default;
   display: flex;
   flex-direction: column;
@@ -66,12 +85,16 @@ div.iv video {
 }
 /* 主图与左右箭头同一行，占满上方空间 */
 .mediaRow {
+  position: absolute;
+  top: var(--preview-top-gap);
+  bottom: var(--preview-bottom-gap);
+  left: 0;
+  right: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 0;
-  flex: 1;
   min-height: 0;
   width: 100%;
 }
@@ -89,12 +112,12 @@ div.iv video {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 70vw;
-  max-width: 70vw;
-  aspect-ratio: 16 / 9;
-  min-width: 280px;
-  min-height: 158px;
-  max-height: calc(70vw / 16 * 9);
+  width: calc(100% - 128px);
+  max-width: calc(100% - 128px);
+  height: 100%;
+  max-height: 100%;
+  min-width: 0;
+  min-height: 0;
   /* 完整展示图片，且宽或高至少一边铺满显示框（等比缩放，不裁切） */
   /* 图片平移层：用于自由拖拽，可与展示区域边界存在空隙 */
   /* 图片可缩放时支持拖拽平移（translate），图片与边界可有空隙；不出现滚动条 */
@@ -135,6 +158,7 @@ div.iv video {
   overflow: hidden;
   cursor: grab;
   position: relative;
+  touch-action: none;
 }
 .mediaWrap.mediaWrapZoomable .panLayer img {
   transition: transform 0.2s ease-out;
@@ -326,4 +350,111 @@ div.iv video {
   border-right: 2px solid #fff;
   /* 右箭头再逆时针旋转 90° */
   transform: translate(calc(-50% - 3px), -50%) rotate(45deg) rotate(-90deg);
+}
+@media (max-width: 768px) {
+  .enlargedContent {
+    width: 96vw;
+    height: 92vh;
+    max-width: 96vw;
+    max-height: 92vh;
+    --preview-top-gap: 52px;
+    --preview-bottom-gap: 100px;
+    padding-bottom: 92px;
+  }
+  .mediaWrap {
+    width: calc(100% - 106px);
+    max-width: calc(100% - 106px);
+    min-width: 0;
+    min-height: 0;
+    max-height: 100%;
+  }
+  .navBtn {
+    width: 40px;
+    height: 40px;
+  }
+  .uploaderBar {
+    bottom: 92px;
+  }
+  .uploaderLabel {
+    font-size: 12px;
+  }
+  .bottomBar {
+    padding: 8px 10px;
+  }
+  .zoomBtns {
+    margin-right: 6px;
+    padding-right: 6px;
+    gap: 2px;
+  }
+  .zoomBtn {
+    width: 34px;
+    height: 34px;
+  }
+  .zoomBtn svg {
+    width: 18px;
+    height: 18px;
+  }
+  .thumb,
+  .thumbActive {
+    width: 40px;
+    height: 40px;
+  }
+  .closeBtn {
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+  }
+}
+@media (max-width: 480px) {
+  .enlargedContent {
+    width: 100vw;
+    height: 100dvh;
+    max-width: 100vw;
+    max-height: 100dvh;
+    --preview-top-gap: 48px;
+    --preview-bottom-gap: 96px;
+    padding-bottom: 88px;
+  }
+  @supports not (height: 100dvh) {
+    .enlargedContent {
+      height: 100vh;
+      max-height: 100vh;
+    }
+  }
+  .mediaRow {
+    gap: 4px;
+  }
+  .mediaWrap {
+    width: calc(100% - 92px);
+    max-width: calc(100% - 92px);
+    min-width: 0;
+    max-height: 100%;
+  }
+  .navBtn {
+    width: 34px;
+    height: 34px;
+  }
+  .navPrev {
+    margin-right: 2px;
+  }
+  .navNext {
+    margin-left: 2px;
+  }
+  .uploaderBar {
+    bottom: 88px;
+  }
+  .bottomBar {
+    padding: 8px;
+    gap: 6px;
+  }
+  .zoomBtn {
+    width: 30px;
+    height: 30px;
+  }
+  .thumb,
+  .thumbActive {
+    width: 36px;
+    height: 36px;
+  }
 }

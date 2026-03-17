@@ -1,4 +1,6 @@
 /* fetch 拦截器 */
+import { isCrawler } from './isCrawler';
+
 const originFetch = window.fetch;
 
 window.fetch = async function (input, init) {
@@ -67,7 +69,7 @@ window.fetch = async function (input, init) {
 				data = {};
 			}
 			
-			// 401错误且没有token刷新，清理所有token并跳转登录页
+			// 401错误且没有token刷新，清理所有token并跳转登录页（爬虫不重定向，便于搜索引擎索引）
 			if (data.hasOwnProperty('tokenError') || resp.status === 401) {
 				// 清理所有token和uid
 				localStorage.removeItem('token');
@@ -78,8 +80,8 @@ window.fetch = async function (input, init) {
 				localStorage.removeItem('guest_uid');
 				
 				console.log('[Fetch Interceptor] 401错误，已清理token，跳转登录页');
-				// 避免重复跳转
-				if (!window.location.pathname.includes('/account/login')) {
+				const shouldRedirect = !window.location.pathname.includes('/account/login') && !isCrawler();
+				if (shouldRedirect) {
 					window.location.href = '/account/login';
 				}
 			}

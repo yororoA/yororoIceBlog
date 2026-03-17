@@ -13,8 +13,8 @@
   margin: 0 auto;
   width: 100%;
   max-width: 100vw;
-  min-height: calc(100vh - var(--displayzone-footer-height));
-  max-height: calc(100vh - var(--displayzone-footer-height));
+  min-height: calc(100dvh - var(--displayzone-footer-height));
+  max-height: calc(100dvh - var(--displayzone-footer-height));
   overflow: auto;
   scrollbar-width: none;
   box-sizing: border-box;
@@ -27,6 +27,12 @@
 }
 .entire::-webkit-scrollbar {
   display: none;
+}
+@supports not (height: 100dvh) {
+  .entire {
+    min-height: calc(100vh - var(--displayzone-footer-height));
+    max-height: calc(100vh - var(--displayzone-footer-height));
+  }
 }
 .entire .navBox {
   position: sticky;
@@ -97,6 +103,7 @@
   flex-shrink: 0;
   text-align: center;
   padding: 8px 16px;
+  border: 1px solid transparent;
   border-radius: 8px;
   box-sizing: border-box;
   cursor: pointer;
@@ -110,13 +117,15 @@
   display: none;
 }
 .entire .navBox nav div.link span:hover {
-  color: var(--text-color);
-  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--nav-item-accent, var(--text-color));
+  border-color: color-mix(in srgb, var(--nav-item-accent, var(--accent-color)) 45%, transparent);
+  background-color: var(--nav-item-accent-soft, var(--accent-color-lighter));
   transform: translateY(-1px);
 }
 .entire .navBox nav .activeLink {
   color: var(--accent-color) !important;
   background-color: var(--accent-color-light) !important;
+  border-color: var(--accent-color-border) !important;
   font-weight: 600 !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -454,7 +463,7 @@
   display: flex;
   align-items: stretch;
   justify-content: center;
-  padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
+  padding: 10px 10px 10px;
   box-sizing: border-box;
 }
 .announcementPage {
@@ -503,8 +512,8 @@
 }
 .announcementPageMarkdown {
   padding: 10px 12px 14px;
-  font-size: 14px;
-  line-height: 1.65;
+  font-size: clamp(15px, 3.4vw, 18px);
+  line-height: 1.8;
 }
 @media (max-width: 1024px) {
   .entire main {
@@ -529,6 +538,24 @@
   }
 }
 @media (max-width: 768px) {
+  .guestModal {
+    padding: 20px 16px;
+    min-width: min(92vw, 420px);
+  }
+  .guestModalTitle {
+    font-size: 15px;
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .guestModalActions {
+    gap: 10px;
+  }
+  .guestModalBtn,
+  .guestModalBtnPrimary {
+    min-height: 36px;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
   .entire .navBox {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -592,7 +619,7 @@
     width: min(82vw, 304px);
     height: 100vh;
     height: 100dvh;
-    padding: max(10px, env(safe-area-inset-top)) 10px 14px;
+    padding: 10px 10px 14px;
     box-sizing: border-box;
     background: var(--displayzone-bgc);
     border-right: var(--nm-input-border);
@@ -747,6 +774,20 @@
   }
 }
 @media (max-width: 480px) {
+  .guestModal {
+    padding: 16px 12px;
+    min-width: 94vw;
+  }
+  .guestModalTitle {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .guestModalBtn,
+  .guestModalBtnPrimary {
+    min-height: 34px;
+    padding: 7px 12px;
+    font-size: 12px;
+  }
   .entire .navBox nav {
     padding: 5px 8px;
   }
@@ -762,7 +803,7 @@
   }
   .entire .navBox nav .navContent {
     width: min(86vw, 292px);
-    padding: max(8px, env(safe-area-inset-top)) 8px 12px;
+    padding: 8px 8px 12px;
   }
   .entire .navBox nav div.link span {
     padding: 8px 9px;
@@ -804,7 +845,7 @@
     border-radius: 7px;
   }
   .announcementPageWrap {
-    padding: max(6px, env(safe-area-inset-top)) 6px max(6px, env(safe-area-inset-bottom));
+    padding: 6px 6px 6px;
   }
   .announcementPage {
     border-radius: 10px;
@@ -813,7 +854,7 @@
     padding: 8px 10px;
   }
   .announcementPageHeader h2 {
-    font-size: 16px;
+    font-size: 17px;
   }
   .announcementPageHeader button {
     width: 30px;
@@ -821,8 +862,9 @@
     font-size: 20px;
   }
   .announcementPageMarkdown {
-    padding: 8px 10px 12px;
-    font-size: 13px;
+    padding: 10px 12px 14px;
+    font-size: clamp(16px, 3.8vw, 19px);
+    line-height: 1.85;
   }
 }
 /* 固定页脚：与导航栏对称，始终贴在视口底部（通过 Portal 挂到 body），高度与 --displayzone-footer-height 一致 */
@@ -880,4 +922,35 @@
   .globalFooterLicense {
     font-size: 10px;
   }
+}
+.globalContextMenu {
+  position: fixed;
+  z-index: 1200;
+  min-width: 180px;
+  border: var(--nm-input-border);
+  border-radius: 10px;
+  background: var(--card-bgc);
+  box-shadow: var(--card-shadow);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.globalContextMenuItem {
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  border-radius: 7px;
+  text-align: left;
+  font-size: var(--h6-fontsize);
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: background-color var(--transition-type), color var(--transition-type);
+}
+.globalContextMenuItem:hover {
+  background: var(--accent-color-light);
+  color: var(--accent-color);
+}
+.globalContextMenuDanger {
+  color: #d64545;
 }
