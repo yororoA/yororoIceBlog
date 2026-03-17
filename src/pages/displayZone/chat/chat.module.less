@@ -503,23 +503,41 @@
   .sidebar {
     width: 100%;
     border-right: none;
+    background: transparent;
   }
 
   .convList {
-    padding: 6px 8px;
-    gap: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 10px 10px 12px;
+    gap: 8px;
+    border-top: none;
   }
 
   .convItem {
+    min-height: 56px;
     padding: 12px 14px;
-    border-radius: 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: var(--input-bgc, rgba(255, 255, 255, 0.7));
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
   .convLabel {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .convAvatar,
+  .convAvatarImg,
+  .convAvatarLetter {
+    width: 38px;
+    height: 38px;
+  }
+
+  .convItemActive {
+    border-color: var(--accent-color-border);
+    background: var(--accent-color-light);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   }
 
   .main {
@@ -631,15 +649,26 @@
     border-radius: 10px;
   }
 
+  .convList {
+    padding: 8px 8px 10px;
+    gap: 6px;
+  }
+
+  .convItem {
+    min-height: 52px;
+    padding: 11px 12px;
+    border-radius: 10px;
+  }
+
   .convAvatar,
   .convAvatarImg,
   .convAvatarLetter {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
   }
 
   .convLabel {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .msgAvatar,
