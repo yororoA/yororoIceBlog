@@ -1,23 +1,25 @@
-div.iv {
+div.iv,
+div.ivGallery {
   width: 100%;
   max-width: 100%;
-  min-width: 80px;
-  min-height: 80px;
   position: relative;
+  isolation: isolate;
   overflow: hidden;
-  /* 让容器保持正方形比例，用于裁剪内部媒体 */
-  aspect-ratio: 1 / 1;
   border-radius: var(--moments-live-radius);
   transition: transform var(--transition-type);
 
   label {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     opacity: 0;
     width: 100%;
     height: 100%;
     position: absolute;
     background-color: var(--backdrop);
     top: 0;
+    left: 0;
+    z-index: 5;
     cursor: pointer;
     transition: opacity 0.2s ease-in-out;
 
@@ -26,20 +28,42 @@ div.iv {
     }
 
     svg {
-      --w: 30%;
-
-      width: var(--w);
-      margin: calc((100% - var(--w)) / 2);
+      width: clamp(34px, 28%, 110px);
+      height: auto;
+      aspect-ratio: 1 / 1;
+      pointer-events: none;
     }
   }
 
   img,
   video {
     width: 100%;
-    height: 100%;
     display: block;
-    object-fit: cover; /* 填充并裁剪为正方形 */
+    position: relative;
+    z-index: 1;
+    object-fit: cover;
     object-position: center;
+  }
+}
+
+/* 默认正方形缩略图（moments、chat 等） */
+div.iv {
+  min-width: 80px;
+  min-height: 80px;
+  /* 让容器保持正方形比例，用于裁剪内部媒体 */
+  aspect-ratio: 1 / 1;
+
+  img,
+  video {
+    height: 100%;
+  }
+}
+
+/* gallery 模式：按原图比例拉伸高度，不强制正方形 */
+div.ivGallery {
+  img,
+  video {
+    height: auto;
   }
 }
 

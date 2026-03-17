@@ -10,37 +10,58 @@
   box-sizing: border-box;
 
   &__grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: var(--moments-zone-gap);
+    /* 真正瀑布流：多列流式布局，避免 grid 行高受同排最高项牵制 */
+    column-count: 5;
+    column-gap: var(--moments-zone-gap);
     padding: calc(var(--logo-height) * 0.3) 0;
-    align-items: start;
     .gallery-grid-stagger(40);
 
     /* IvPreview 渲染的 div.iv 作为 grid 子项 */
     > div {
+      display: inline-block;
+      vertical-align: top;
       width: 100%;
       min-width: 0;
+      margin: 0 0 var(--moments-zone-gap);
       border-radius: 12px;
       overflow: hidden;
       background: var(--nm-iv-bgc);
       box-shadow: var(--card-shadow);
+      break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      page-break-inside: avoid;
+      position: relative;
+      z-index: 0;
       animation: enterFadeInUp var(--enter-duration) var(--enter-ease) both;
       transition: transform var(--hover-duration) var(--hover-ease), box-shadow var(--hover-duration) var(--hover-ease);
 
       &:hover {
-        transform: scale(1.03);
+        transform: translateY(-2px);
         box-shadow: var(--card-shadow-hover);
+        z-index: 3;
       }
 
       @media (prefers-reduced-motion: reduce) {
         animation: none;
       }
     }
+
+    > div label {
+      z-index: 4;
+    }
+
+    > div img,
+    > div video {
+      position: relative;
+      z-index: 1;
+    }
   }
 
   /* 无图时的占位 */
   &__empty {
+    column-span: all;
+    width: 100%;
+    display: block;
     padding: calc(var(--logo-height) * 2.5) 0;
     text-align: center;
     font-size: var(--h4-fontsize);
@@ -50,13 +71,19 @@
 
   /* 触底加载哨兵，仅用于 IntersectionObserver */
   &__sentinel {
-    grid-column: 1 / -1;
+    column-span: all;
+    width: 100%;
+    display: block;
     height: 1px;
     visibility: hidden;
     pointer-events: none;
+    margin: 0;
   }
 
   &__loading {
+    column-span: all;
+    width: 100%;
+    display: block;
     text-align: center;
     padding: calc(var(--logo-height) * 1.5) 0;
     font-size: var(--h4-fontsize);
@@ -64,7 +91,8 @@
   }
 
   &__loading-wrap {
-    grid-column: 1 / -1;
+    column-span: all;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,9 +114,13 @@
 @media (max-width: 1024px) {
   .gallery-page {
     &__grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      column-count: 4;
+      column-gap: 10px;
       padding: calc(var(--logo-height) * 0.24) 0;
+
+      > div {
+        margin-bottom: 10px;
+      }
     }
   }
 }
@@ -96,9 +128,13 @@
 @media (max-width: 768px) {
   .gallery-page {
     &__grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      column-count: 3;
+      column-gap: 8px;
       padding: calc(var(--logo-height) * 0.2) 0;
+
+      > div {
+        margin-bottom: 8px;
+      }
     }
 
     &__loading-wrap {
@@ -118,8 +154,12 @@
 @media (max-width: 480px) {
   .gallery-page {
     &__grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 7px;
+      column-count: 2;
+      column-gap: 7px;
+
+      > div {
+        margin-bottom: 7px;
+      }
     }
   }
 }

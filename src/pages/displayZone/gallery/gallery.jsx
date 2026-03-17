@@ -160,7 +160,7 @@ const Gallery = () => {
       <section id="gallery" className="gallery-page__grid">
         {prs.length > 0 ? (
           <>
-            <IvPreview items={prs} prefix="gallery_iv" />
+            <IvPreview items={prs} prefix="gallery_iv" mode="gallery" />
             {hasMore && <div ref={loadMoreRef} className="gallery-page__sentinel" aria-hidden />}
           </>
         ) : loading ? (

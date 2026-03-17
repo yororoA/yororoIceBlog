@@ -495,8 +495,8 @@
 
 @media (max-width: 768px) {
   .chatLayout {
-    height: calc(100dvh - var(--displayzone-footer-height) - 138px);
-    max-height: calc(100dvh - var(--displayzone-footer-height) - 138px);
+    height: calc(100dvh - var(--displayzone-footer-height) - 110px);
+    max-height: calc(100dvh - var(--displayzone-footer-height) - 110px);
     border-radius: 12px;
   }
 
@@ -506,15 +506,20 @@
   }
 
   .convList {
-    padding: 8px 8px;
+    padding: 6px 8px;
     gap: 0;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .convItem {
-    padding: 11px 12px;
+    padding: 12px 14px;
     border-radius: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .convLabel {
+    font-size: 14px;
+    font-weight: 500;
   }
 
   .main {
@@ -621,16 +626,16 @@
 
 @media (max-width: 480px) {
   .chatLayout {
-    height: calc(100dvh - var(--displayzone-footer-height) - 122px);
-    max-height: calc(100dvh - var(--displayzone-footer-height) - 122px);
+    height: calc(100dvh - var(--displayzone-footer-height) - 96px);
+    max-height: calc(100dvh - var(--displayzone-footer-height) - 96px);
     border-radius: 10px;
   }
 
   .convAvatar,
   .convAvatarImg,
   .convAvatarLetter {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
   }
 
   .convLabel {

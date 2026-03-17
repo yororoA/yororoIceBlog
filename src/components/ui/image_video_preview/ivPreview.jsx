@@ -11,8 +11,9 @@ import { t } from '../../../i18n/uiText';
 * @prefix: 任意不与其他`IvPreview`组件重复的string,用于绑定key
 * @showThumbnails: 是否渲染缩略图条（默认 true）；为 false 时仅提供放大层，由外部控制打开（如 article 详情内嵌图）
 * @enlargedIndex: 受控模式下当前放大下标，null 为关闭
-* @onEnlargedIndexChange: 受控模式下关闭/切换时回调 */
-const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: controlledIndex, onEnlargedIndexChange }) => {
+* @onEnlargedIndexChange: 受控模式下关闭/切换时回调
+* @mode: 缩略图模式；'square' 为正方形裁剪（默认），'gallery' 用于 gallery 页随图片比例自适应 */
+const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: controlledIndex, onEnlargedIndexChange, mode = 'square' }) => {
 	const { locale } = useContext(UiPersistContext);
 	const [internalIndex, setInternalIndex] = useState(null);
 	const isControlled = controlledIndex !== undefined && onEnlargedIndexChange != null;
@@ -257,7 +258,11 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	return (
 		<>
 			{showThumbnails && items.map((item, index) =>
-				<div className={preview.iv} key={prefix + index} onClick={(e) => viewIv(e, index)}>
+				<div
+					className={mode === 'gallery' ? preview.ivGallery : preview.iv}
+					key={prefix + index}
+					onClick={(e) => viewIv(e, index)}
+				>
 					{
 						item[1] === 'image'
 							? <img src={item[0]} alt="" id={`${prefix}-${index}`} loading="lazy" />

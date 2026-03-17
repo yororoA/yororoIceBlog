@@ -512,8 +512,8 @@
 }
 .announcementPageMarkdown {
   padding: 10px 12px 14px;
-  font-size: 15px;
-  line-height: 1.65;
+  font-size: clamp(15px, 3.4vw, 18px);
+  line-height: 1.8;
 }
 @media (max-width: 1024px) {
   .entire main {
@@ -863,8 +863,8 @@
   }
   .announcementPageMarkdown {
     padding: 10px 12px 14px;
-    font-size: 15px;
-    line-height: 1.7;
+    font-size: clamp(16px, 3.8vw, 19px);
+    line-height: 1.85;
   }
 }
 /* 固定页脚：与导航栏对称，始终贴在视口底部（通过 Portal 挂到 body），高度与 --displayzone-footer-height 一致 */
