@@ -12,6 +12,8 @@ import TownLaw from '../../components/ui/townLaw/townLaw';
 import { townLawMarkdown } from '../../config/townLawMarkdown';
 import BirdsBackground from './BirdsBackground';
 
+const ROBOTS_NOINDEX = 'noindex, nofollow';
+
 const LOCALE_ORDER = ['en', 'zh', 'ja'];
 
 // account page, no access with no account
@@ -38,6 +40,20 @@ const Account = () => {
 		if (pathname === 'login' || pathname === 'register') setFirstClick(true);
 		else setFirstClick(false);
 	}, [pathname]);
+
+	// 账号/登录/注册页不纳入搜索引擎索引，避免重复内容与隐私
+	useEffect(() => {
+		let meta = document.querySelector('meta[name="robots"]');
+		if (!meta) {
+			meta = document.createElement('meta');
+			meta.setAttribute('name', 'robots');
+			document.head.appendChild(meta);
+		}
+		meta.setAttribute('content', ROBOTS_NOINDEX);
+		return () => {
+			if (meta && meta.parentNode) meta.remove();
+		};
+	}, []);
 
 	const handleSelectLocale = useCallback((next) => setLocale(next), []);
 	const isAuthFormRoute = pathname === 'login' || pathname === 'register';
