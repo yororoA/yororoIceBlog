@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import { useNavigate } from "react-router-dom";
 import { lazy, useEffect, Suspense } from "react";
 import BowClickEffect from './components/ui/clickBow/BowClickEffect';
+import { isCrawler } from './utils/isCrawler';
 
 const TITLE_SUFFIX = ' - YororoIce Town';
 const PAGE_TITLES = {
@@ -46,9 +47,10 @@ function AppContent() {
 		const currentPath = window.location.pathname;
 		const pathname = currentPath.split('/').filter(item => item !== '').at(-1);
 		const isAccountRoute = currentPath.startsWith('/account');
+		const crawler = isCrawler();
 		const hasToken = localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken');
-		if (pathname === undefined && !isAccountRoute) navigate('/town');
-		if (!hasToken && !isAccountRoute && pathname !== 'login' && pathname !== 'register') {
+		if (pathname === undefined && !isAccountRoute && !crawler) navigate('/town');
+		if (!hasToken && !isAccountRoute && pathname !== 'login' && pathname !== 'register' && !crawler) {
 			sessionStorage.setItem('guest_auth_pending', '1');
 		}
 	}, [navigate]);

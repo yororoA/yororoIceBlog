@@ -25,6 +25,12 @@ const CRAWLER_UA_PATTERNS = [
 	/Sogou/i,
 	/Exabot/i,
 	/ia_archiver/i,
+	/AdsBot-Google/i,
+	/Mediapartners-Google/i,
+	/Google-InspectionTool/i,
+	/bot\b/i,
+	/crawler\b/i,
+	/spider\b/i,
 ];
 
 export function isCrawler() {
