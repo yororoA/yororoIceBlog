@@ -19,6 +19,16 @@ import IvPreview from '../../../components/ui/image_video_preview/ivPreview';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 
+const ImgWithPlaceholder = ({ src, alt = '', className = '' }) => {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <span className={`${knowledge.imgLoadingWrap} ${className}`}>
+      {!loaded && <span className={knowledge.imgLoadingPlaceholder} aria-hidden />}
+      <img src={src} alt={alt} loading="lazy" onLoad={() => setLoaded(true)} onError={() => setLoaded(true)} />
+    </span>
+  );
+};
+
 const getCategoryLabel = (cat, locale) => {
   if (cat === 'all') return t(locale, 'all');
   if (cat === 'Uncategorized' || cat === '未分类') return t(locale, 'uncategorized');
@@ -86,7 +96,7 @@ const KnowledgeCard = ({ article, liked, onOpenDetail, locale, isDeleting = fals
       <div className={`${knowledge.cardTop} ${hasCover ? knowledge.cardTopWithCover : ''}`}>
         {hasCover && (
           <div className={knowledge.cardCover}>
-            <img src={coverUrl} alt="" loading="lazy" />
+            <ImgWithPlaceholder src={coverUrl} />
           </div>
         )}
         <div className={knowledge.cardBody}>
@@ -200,7 +210,7 @@ const ArticleDetail = ({
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') openPreview(e); }}
             aria-label="点击放大"
           >
-            <img src={src} alt={props.alt || ''} />
+            <ImgWithPlaceholder src={src} alt={props.alt || ''} />
           </span>
         );
       }

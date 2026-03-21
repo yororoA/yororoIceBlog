@@ -220,3 +220,67 @@
     filter: grayscale(.2);
   }
 }
+
+@media (max-width: 768px) {
+  .entire {
+    width: 100%;
+    max-height: none;
+    padding: 10px;
+
+    section {
+      margin-bottom: 10px;
+
+      label {
+        margin-bottom: 6px;
+        font-size: 13px;
+      }
+
+      input[type='text'],
+      textarea {
+        padding: 9px 10px;
+        font-size: 13px;
+      }
+    }
+
+    section textarea {
+      min-height: 110px;
+    }
+
+    section[id='iv'] {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+
+      .nmIvRemove {
+        width: 24px;
+        height: 24px;
+        font-size: 16px;
+      }
+
+      label[for='files']::after {
+        font-size: 22px;
+      }
+    }
+
+    button[type='submit'] {
+      margin-top: 8px;
+      padding: 10px;
+      font-size: 15px;
+      gap: 0;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .entire {
+    padding: 8px;
+
+    section[id='iv'] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    section textarea {
+      min-height: 96px;
+    }
+  }
+}

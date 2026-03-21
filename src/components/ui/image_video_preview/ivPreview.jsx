@@ -4,6 +4,44 @@ import preview from './ivPreview.module.less';
 import { UiPersistContext } from '../../../pages/displayZone/context/uiPersistContext';
 import { t } from '../../../i18n/uiText';
 
+const MediaThumb = ({ item, id }) => {
+	const [loaded, setLoaded] = useState(false);
+	const type = item?.[1];
+	const src = item?.[0];
+	return (
+		<>
+			{!loaded && <span className={preview.thumbPlaceholder} aria-hidden />}
+			{type === 'image' ? (
+				<img src={src} alt="" id={id} loading="lazy" onLoad={() => setLoaded(true)} onError={() => setLoaded(true)} />
+			) : (
+				<video src={src} id={id} onLoadedData={() => setLoaded(true)} onError={() => setLoaded(true)} />
+			)}
+		</>
+	);
+};
+
+const EnlargedMedia = ({ currentItem, enlargedIndex, imageScale, panOffset, setLoaded }) => {
+	if (currentItem[1] === 'image') {
+		return (
+			<div
+				className={preview.panLayer}
+				style={{ transform: `translate(${panOffset.x}px, ${panOffset.y}px)` }}
+			>
+				<img
+					src={currentItem[0]}
+					alt=""
+					key={enlargedIndex}
+					draggable={false}
+					style={{ transform: `scale(${imageScale})`, transformOrigin: 'center center' }}
+					onLoad={() => setLoaded(true)}
+					onError={() => setLoaded(true)}
+				/>
+			</div>
+		);
+	}
+	return <video src={currentItem[0]} controls autoPlay key={enlargedIndex} onLoadedData={() => setLoaded(true)} onError={() => setLoaded(true)} />;
+};
+
 
 /* 图片预览
 * @items: 每项为 [url, type] 或 [url, type, uploaderUsername]
@@ -27,6 +65,7 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 	const thumbStripRef = useRef(null);
 	const mediaWrapRef = useRef(null);
 	const [imageScale, setImageScale] = useState(1);
+	const [enlargedMediaLoaded, setEnlargedMediaLoaded] = useState(false);
 	const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
 	const [isPanning, setIsPanning] = useState(false);
 	const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffsetX: 0, startOffsetY: 0 });
@@ -112,6 +151,7 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 
 	useEffect(() => {
 		if (enlargedIndex != null) {
+			setEnlargedMediaLoaded(false);
 			setImageScale(1);
 			setPanOffset({ x: 0, y: 0 });
 		}
@@ -264,9 +304,7 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 					onClick={(e) => viewIv(e, index)}
 				>
 					{
-						item[1] === 'image'
-							? <img src={item[0]} alt="" id={`${prefix}-${index}`} loading="lazy" />
-							: <video src={item[0]} id={`${prefix}-${index}`}/>
+						<MediaThumb item={item} id={`${prefix}-${index}`} />
 					}
 					<label htmlFor={`${prefix}-${index}`}>
 						<svg viewBox="0 0 1024 1024" version="1.1"
@@ -296,22 +334,14 @@ const IvPreview = ({ items, prefix, showThumbnails = true, enlargedIndex: contro
 								role={isImage ? 'img' : undefined}
 								aria-label={isImage ? '可拖拽平移、滚轮与双指缩放' : undefined}
 							>
-								{currentItem[1] === 'image' ? (
-									<div
-										className={preview.panLayer}
-										style={{ transform: `translate(${panOffset.x}px, ${panOffset.y}px)` }}
-									>
-										<img
-											src={currentItem[0]}
-											alt=""
-											key={enlargedIndex}
-											draggable={false}
-											style={{ transform: `scale(${imageScale})`, transformOrigin: 'center center' }}
-										/>
-									</div>
-								) : (
-									<video src={currentItem[0]} controls autoPlay key={enlargedIndex} />
-								)}
+								{!enlargedMediaLoaded && <div className={preview.enlargedLoading} aria-hidden />}
+								<EnlargedMedia
+									currentItem={currentItem}
+									enlargedIndex={enlargedIndex}
+									imageScale={imageScale}
+									panOffset={panOffset}
+									setLoaded={setEnlargedMediaLoaded}
+								/>
 							</div>
 							{hasMultiple && (
 								<button type="button" className={`${preview.navBtn} ${preview.navNext}`} onClick={goNext} aria-label="下一张" />

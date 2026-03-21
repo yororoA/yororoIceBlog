@@ -348,9 +348,18 @@ function ChatContent() {
 						onScroll={onScroll}
 					>
 						{loading && messages.length === 0 ? (
-							<div className={styles.loading}>
-								<span className={styles.loadingDot} />
-								{t(locale, 'loading')}
+							<div className={styles.loading} aria-live="polite">
+								<div className={styles.loadingSkeleton}>
+									<span className={styles.loadingSkeletonAvatar} />
+									<div className={styles.loadingSkeletonBody}>
+										<span className={styles.loadingSkeletonLine} />
+										<span className={`${styles.loadingSkeletonLine} ${styles.loadingSkeletonLineShort}`} />
+									</div>
+								</div>
+								<div className={styles.loadingText}>
+									<span className={styles.loadingDot} />
+									{t(locale, 'loading')}
+								</div>
 							</div>
 						) : (
 							<>

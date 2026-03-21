@@ -110,12 +110,56 @@
 
 .loading {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 12px;
+  font-size: var(--p-fontsize, 14px);
+  color: var(--text-color-secondary);
+}
+
+.loadingSkeleton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: var(--nm-input-border, 1px solid #e5e7eb);
+  border-radius: 12px;
+  padding: 10px;
+  background: var(--card-bgc, #fff);
+}
+
+.loadingSkeletonAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(148, 163, 184, 0.3);
+  flex-shrink: 0;
+}
+
+.loadingSkeletonBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.loadingSkeletonLine {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.28);
+  animation: chat-loading-shimmer 1.15s ease-in-out infinite;
+}
+
+.loadingSkeletonLineShort {
+  width: 68%;
+}
+
+.loadingText {
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 24px;
-  font-size: var(--p-fontsize, 14px);
-  color: var(--text-color-secondary);
 }
 
 /* 拉取更多历史时在列表顶部展示 */
@@ -140,6 +184,11 @@
 @keyframes chat-loading-pulse {
   0%, 100% { opacity: 0.4; transform: scale(0.95); }
   50% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes chat-loading-shimmer {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.9; }
 }
 
 .bubbleImg img {
@@ -581,6 +630,24 @@
   .messages {
     padding: 10px 10px 8px;
     gap: 10px;
+  }
+
+  .loading {
+    padding: 12px 4px;
+  }
+
+  .loadingSkeleton {
+    padding: 9px;
+    border-radius: 10px;
+  }
+
+  .loadingSkeletonAvatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .loadingSkeletonLine {
+    height: 7px;
   }
 
   .messageBubbleWrap {

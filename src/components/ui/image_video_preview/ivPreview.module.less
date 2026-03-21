@@ -46,6 +46,15 @@ div.ivGallery {
   }
 }
 
+.thumbPlaceholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, rgba(148, 163, 184, 0.2) 0%, rgba(148, 163, 184, 0.4) 45%, rgba(148, 163, 184, 0.2) 100%);
+  animation: iv-thumb-shimmer 1.2s ease-in-out infinite;
+  z-index: 2;
+  pointer-events: none;
+}
+
 /* 默认正方形缩略图（moments、chat 等） */
 div.iv {
   min-width: 80px;
@@ -187,6 +196,15 @@ div.ivGallery {
   &.mediaWrapPanning {
     cursor: grabbing;
   }
+}
+
+.enlargedLoading {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: linear-gradient(100deg, rgba(148, 163, 184, 0.18) 0%, rgba(148, 163, 184, 0.32) 48%, rgba(148, 163, 184, 0.18) 100%);
+  animation: iv-thumb-shimmer 1.2s ease-in-out infinite;
+  z-index: 1;
 }
 
 /* 放大时图片底部的上传者信息（如 gallery 使用） */
@@ -460,6 +478,12 @@ div.ivGallery {
     width: 34px;
     height: 34px;
   }
+}
+
+@keyframes iv-thumb-shimmer {
+  0% { opacity: 0.45; }
+  50% { opacity: 0.95; }
+  100% { opacity: 0.45; }
 }
 
 @media (max-width: 480px) {
