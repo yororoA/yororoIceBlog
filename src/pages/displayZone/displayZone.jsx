@@ -197,6 +197,8 @@ const SECTION_ACCENTS = {
 };
 
 const DisplayZone = () => {
+	const navigate = useNavigate();
+	const location = useLocation();
 	const uid = getUid();
 	const guest = isGuest();
 	const displayName = guest ? getGuestDisplayName() : (getUsername() || (uid ? `User_${String(uid).slice(-6)}` : ''));
@@ -246,6 +248,14 @@ const DisplayZone = () => {
 	const suppressGuestModalRef = useRef(false);
 	const hasAuth = !!(localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('guest_token') || sessionStorage.getItem('yororoToken'));
 	useEffect(() => {
+		const authRedirecting = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('auth_redirecting') === '1';
+		if (authRedirecting) {
+			setShowGuestModal(false);
+			if (!window.location.pathname.includes('/account/login')) {
+				navigate('/account/login', { replace: true });
+			}
+			return;
+		}
 		if (suppressGuestModalRef.current) {
 			setShowGuestModal(false);
 			return;
@@ -256,8 +266,9 @@ const DisplayZone = () => {
 			return;
 		}
 		if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('guest_auth_pending');
+		if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('auth_redirecting');
 		setShowGuestModal(false);
-	}, [hasAuth]);
+	}, [hasAuth, navigate]);
 	const showSuccess = useCallback((content) => {
 		setSuccessList(prev => [...prev, { id: Date.now(), content }]);
 	}, []);
@@ -270,8 +281,6 @@ const DisplayZone = () => {
 	const removeFailed = useCallback((id) => {
 		setFailedList(prev => prev.filter(item => item.id !== id));
 	}, []);
-	const navigate = useNavigate();
-	const location = useLocation();
 	const isHomeRoute = location.pathname === '/town' || location.pathname === '/town/';
 	const activeSection = useMemo(() => {
 		if (location.pathname === '/town' || location.pathname === '/town/') return 'home';

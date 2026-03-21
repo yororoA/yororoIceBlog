@@ -82,6 +82,10 @@ window.fetch = async function (input, init) {
 				console.log('[Fetch Interceptor] 401错误，已清理token，跳转登录页');
 				const shouldRedirect = !window.location.pathname.includes('/account/login') && !isCrawler();
 				if (shouldRedirect) {
+					// 标记鉴权重定向中，避免 DisplayZone 先弹游客弹窗再跳转登录
+					try {
+						sessionStorage.setItem('auth_redirecting', '1');
+					} catch (_) {}
 					window.location.href = '/account/login';
 				}
 			}

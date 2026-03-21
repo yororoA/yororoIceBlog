@@ -164,9 +164,14 @@ const Gallery = () => {
             {hasMore && <div ref={loadMoreRef} className="gallery-page__sentinel" aria-hidden />}
           </>
         ) : loading ? (
-          <div className="gallery-page__loading-wrap">
-            <span className="gallery-page__loading-dot" />
-            {t(locale, 'loading')}
+          <div className="gallery-page__loading-wrap" aria-live="polite">
+            <div className="gallery-page__loading-card">
+              <div className="gallery-page__loading-shimmer" />
+              <div className="gallery-page__loading-text">
+                <span className="gallery-page__loading-dot" />
+                {t(locale, 'loading')}
+              </div>
+            </div>
           </div>
         ) : (
           <p className="gallery-page__empty">{t(locale, 'galleryEmpty')}</p>

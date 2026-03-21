@@ -186,12 +186,34 @@
   border-radius: 0;
   overflow: hidden;
 
-  img {
+  :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
   }
+}
+
+.imgLoadingWrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.imgLoadingPlaceholder {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(100deg, rgba(148, 163, 184, 0.2) 0%, rgba(148, 163, 184, 0.35) 45%, rgba(148, 163, 184, 0.2) 100%);
+  animation: knowledge-img-shimmer 1.15s ease-in-out infinite;
 }
 
 .cardBody {
@@ -1139,7 +1161,7 @@
       opacity: 1;
     }
 
-    img {
+    :global(img) {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -1153,6 +1175,11 @@
     border-top: var(--nm-input-border);
     margin: 18px 0;
   }
+}
+
+@keyframes knowledge-img-shimmer {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.95; }
 }
 
 .detailFooter {
