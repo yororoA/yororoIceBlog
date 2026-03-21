@@ -55,6 +55,14 @@ function AppContent() {
 		}
 	}, [navigate]);
 
+	// 401 跳转登录的中间标记在进入 account 路由后应立即清除，避免后续返回 town 时被旧标记误判。
+	useEffect(() => {
+		if (!location.pathname.startsWith('/account')) return;
+		try {
+			sessionStorage.removeItem('auth_redirecting');
+		} catch (_) {}
+	}, [location.pathname]);
+
 	useEffect(() => {
 		const path = location.pathname.replace(/\/$/, '') || '/';
 		if (path.startsWith('/town/chat')) {
