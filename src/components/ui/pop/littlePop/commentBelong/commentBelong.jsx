@@ -30,8 +30,16 @@ const CommentBelong = ({ belongUser, belongMSG, belongId, momentId, setCommentTo
 		}
 	}, [content, momentId, belongId, setCommentToDt, onEnd, showSuccess, submitting]);
 
+	const handlePopClose = useCallback((proceed) => {
+		if (typeof proceed === 'function') {
+			proceed();
+		} else {
+			onEnd();
+		}
+	}, [onEnd]);
+
 	return (
-		<LittlePop>
+		<LittlePop onClose={handlePopClose}>
 			<form onSubmit={handleSubmit}>
 				<h3>{'Reply'}</h3>
 				<CloseButton onClick={onEnd} />

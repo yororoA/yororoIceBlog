@@ -1,4 +1,5 @@
 import React, {useCallback, useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import { ScrollContainerContext } from '../scrollContainerContext';
 import { useSearchParams } from "react-router-dom";
 import MomentsCard from "../../../components/pagesCard/moments/content/momentsCard";
 import { MomentDetailsCtx } from "../../../components/pagesCard/moments/content/momentsCard";
@@ -102,10 +103,13 @@ const Moments = () => {
 		loadPendingNewMoments,
 	] = useContext(MomentsListContext);
 	const { locale } = useContext(UiPersistContext);
+	const scrollContainerRef = useContext(ScrollContainerContext);
 	const pendingCount = pendingNewMoments.length;
 	const [editing, setEditing] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const listRef = useRef(null);
+	/* 窄屏从列表进详情再返回时恢复滚动（外层 .entire + 列表内层虚拟滚动） */
+	const savedNarrowListScrollRef = useRef({ outer: 0, inner: 0 });
 	const [viewportHeight, setViewportHeight] = useState(0);
 	const [scrollTop, setScrollTop] = useState(0);
 	const [isNarrowScreen, setIsNarrowScreen] = useState(() => window.innerWidth <= 768);
@@ -145,11 +149,22 @@ const Moments = () => {
 	const hasPrevDetail = detailIndex > 0;
 	const hasNextDetail = detailIndex >= 0 && detailIndex < momentsData.length - 1;
 
+	const captureNarrowListScroll = useCallback(() => {
+		if (!isNarrowScreen) return;
+		const outerEl = scrollContainerRef?.current;
+		const innerEl = listRef.current;
+		savedNarrowListScrollRef.current = {
+			outer: outerEl?.scrollTop ?? 0,
+			inner: innerEl?.scrollTop ?? 0,
+		};
+	}, [isNarrowScreen, scrollContainerRef]);
+
 	const handleRequestDetail = useCallback((momentItem) => {
 		if (!momentItem?._id) return;
+		captureNarrowListScroll();
 		isManuallyClosedRef.current = false;
 		setDetailMomentId(momentItem._id);
-	}, []);
+	}, [captureNarrowListScroll]);
 
 	useEffect(() => {
 		const onResize = () => setIsNarrowScreen(window.innerWidth <= 768);
@@ -168,6 +183,24 @@ const Moments = () => {
 			setDetailMomentId(midFromQuery);
 		}
 	}, [midFromQuery, momentsData]);
+
+	const prevDetailMomentIdRef = useRef(null);
+	/* 窄屏关闭详情后恢复列表滚动位置（仅由「有详情 → 无详情」触发，避免列表数据刷新误跳） */
+	useLayoutEffect(() => {
+		const wasDetailOpen = prevDetailMomentIdRef.current != null;
+		prevDetailMomentIdRef.current = detailMomentId;
+		if (!isNarrowScreen || detailMomentId != null || !wasDetailOpen) return;
+		const { outer, inner } = savedNarrowListScrollRef.current;
+		const outerEl = scrollContainerRef?.current;
+		const innerEl = listRef.current;
+		if (outerEl && outer > 0) {
+			outerEl.scrollTop = outer;
+		}
+		if (innerEl && inner > 0) {
+			innerEl.scrollTop = inner;
+			setScrollTop(inner);
+		}
+	}, [detailMomentId, isNarrowScreen, scrollContainerRef]);
 
 	useEffect(() => {
 		if (!detailMoment) return;
@@ -416,10 +449,12 @@ const Moments = () => {
 	return (
 		<CommentsLikedContext value={{likedComments, commentLikedChange}}>
 			<div className="page-enter">
-				<section id={'header'}>
-					<span>{editing && isNarrowScreen ? t(locale, 'newMoment') : detailMoment && isNarrowScreen ? t(locale, 'moment') : t(locale, 'navMoments')}</span>
-					{!isGuest() && <CommonBtn className={addContent.new} text={t(locale, 'newMoment')} onClick={() => setEditing(true)}/>}
-				</section>
+				{!(detailMoment && isNarrowScreen) && (
+					<section id={'header'}>
+						<span>{editing && isNarrowScreen ? t(locale, 'newMoment') : t(locale, 'navMoments')}</span>
+						{!isGuest() && <CommonBtn className={addContent.new} text={t(locale, 'newMoment')} onClick={() => setEditing(true)}/>}
+					</section>
+				)}
 				{pendingCount > 0 && (
 					<button type="button" className={moments.newBanner} onClick={loadPendingNewMoments}>
 						{t(locale, 'pendingMomentsBanner', pendingCount)}
@@ -438,15 +473,23 @@ const Moments = () => {
 					</div>
 				) : detailMoment && isNarrowScreen ? (
 					<div className={moments.mobileDetailPage}>
-						<div className={moments.mobileDetailHeader}>
+						<div className={moments.mobileDetailTopBar}>
 							<button type="button" className={moments.mobileDetailBackBtn} onClick={() => handleCloseDetailPop()}>
 								{t(locale, 'backToList')}
 							</button>
+							<span className={moments.mobileDetailNavTitle}>{t(locale, 'moment')}</span>
+							<div className={moments.mobileDetailTopBarEnd}>
+								{!isGuest() && (
+									<CommonBtn className={addContent.new} text={t(locale, 'newMoment')} onClick={() => setEditing(true)} />
+								)}
+							</div>
 						</div>
 						{detailCtxValue && (
-							<MomentDetailsCtx value={detailCtxValue}>
-								<MomentDetails headshotType={detailHeadshotType} forceSingleColumn={true} standalone={true} />
-							</MomentDetailsCtx>
+							<div className={moments.mobileDetailScroll}>
+								<MomentDetailsCtx value={detailCtxValue}>
+									<MomentDetails headshotType={detailHeadshotType} forceSingleColumn={true} standalone={true} />
+								</MomentDetailsCtx>
+							</div>
 						)}
 					</div>
 				) : (

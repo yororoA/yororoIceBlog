@@ -2,9 +2,9 @@
   min-height: 20rem;
   max-height: fit-content;
   display: grid;
-  grid-template-columns: var(--moments-headshot-width) 1fr;
-  gap: calc(var(--moments-zone-gap) * 1.2);
-  padding: calc(var(--moments-zone-gap) * 1) 0;
+  grid-template-columns: 36px 1fr;
+  gap: 10px;
+  padding: 12px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
   transition: background-color var(--transition-type), color var(--transition-type);
@@ -14,20 +14,20 @@
   }
 
   img.headshot {
-    width: var(--moments-headshot-width);
-    height: var(--moments-headshot-width);
+    width: 36px;
+    height: 36px;
     object-fit: cover;
     border-radius: 10px;
   }
 
   .avatarInitial {
-    width: var(--moments-headshot-width);
-    height: var(--moments-headshot-width);
+    width: 36px;
+    height: 36px;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     color: white;
     user-select: none;
@@ -43,22 +43,23 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: calc(var(--moments-zone-gap) * 0.6);
+      gap: 8px;
 
       .meta {
         display: flex;
         align-items: baseline;
-        gap: 6rem;
+        flex-wrap: wrap;
+        gap: 8px;
 
         h4 {
           margin: 0;
-          font-size: var(--h4-fontsize);
+          font-size: 14px;
           font-weight: 600;
           color: var(--heading-color);
         }
 
         .date {
-          font-size: var(--moments-meta-fontsize);
+          font-size: 12px;
           color: var(--text-color-secondary);
         }
       }
@@ -66,9 +67,9 @@
       p.text {
         margin: 0;
         overflow-wrap: break-word;
-        line-height: 1.5;
+        line-height: 1.55;
         color: var(--text-color);
-        font-size: var(--p-fontsize);
+        font-size: 14px;
       }
 
       div.imgPre {
@@ -81,21 +82,24 @@
     }
 
     .right {
-      width: var(--comment-feedback-width);
+      min-width: 52px;
+      width: auto;
       display: flex;
       flex-direction: column;
-      gap: 6rem;
+      align-items: flex-end;
+      gap: 8px;
       height: fit-content;
       border-left: 1px solid rgba(0, 0, 0, 0.06);
-      padding-left: 8rem;
+      padding-left: 10px;
       flex-shrink: 0;
 
       p.reply {
         margin: 0;
-        font-size: var(--moments-meta-fontsize);
-        font-weight: 500;
+        font-size: 13px;
+        font-weight: 600;
         color: var(--text-color-secondary);
         cursor: pointer;
+        padding: 3px 2px;
         transition: color var(--transition-type);
 
         &:hover {

@@ -14,7 +14,13 @@ const Like = (props) => {
 	const uid = useId().replace(/:/g, '_');
 	const id = `${props._id}_${props.type || 'moment'}_like_${uid}`;
 	const disabled = !!props.disabled;
-	const sizeClass = props.size === 'sm' ? like.sm : '';
+	const sizeClass = props.size === 'sm'
+		? like.sm
+		: props.size === 'md'
+			? like.md
+			: props.size === 'detail'
+				? like.detail
+				: '';
 
 	return (
 		<div className={`${like.feedback} ${sizeClass} ${disabled ? like.disabled : ''}`}>

@@ -68,7 +68,7 @@ const MomentDetails = ({ headshotType, forceSingleColumn = false, standalone = f
 				</button>
 			)}
 			<Content headshotType={headshotType} />
-			<MomentsComments />
+			<MomentsComments singleOuterScroll={standalone && isSingle} />
 		</div>
 	);
 };

@@ -146,5 +146,26 @@
       max-height: none;
       border-radius: 12px;
     }
+
+    &.entireSingleCol.entireStandalone {
+      flex: 1;
+      min-height: 0;
+      height: auto;
+      max-height: none;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+
+      /* 正文/评论按内容增高，禁止 height:100% 与内层 overflow 抢滚动 */
+      > :nth-child(1),
+      > :nth-child(2) {
+        height: auto !important;
+        min-height: 0;
+        max-height: none !important;
+        flex: 0 0 auto;
+        overflow: visible;
+      }
+    }
   }
 }

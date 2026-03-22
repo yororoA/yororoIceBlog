@@ -47,6 +47,11 @@
     /* displayZone 导航栏 / 底部声明栏高度，用于一屏判定与滚动区域计算 */
     --displayzone-nav-height: calc(var(--logo-height) * 0.9);
     --displayzone-footer-height: 44px;
+    /*
+     * 窄屏下 page-enter 内主区块相对视口的上边占用（顶栏 + section#header 等），
+     * 与 chat.chatLayout 使用同一套扣减：calc(100dvh - footer - 本变量)。
+     */
+    --displayzone-mobile-main-offset: 110px;
     /* displayZone 内容区背景（不透明，用于粘滞块等） */
     --displayzone-bgc: rgb(227, 226, 226);
 
@@ -148,6 +153,12 @@
     --statusBoard-fontsize: 6rem;              /* 提示文案字号，略小于常规段落 */
     --statusBoard-icon-fontsize: 7rem;         /* 图标字号 */
     --statusBoard-anim-duration: .4s;         /* 进出场动画时长 */
+}
+
+@media (max-width: 480px) {
+  :root {
+    --displayzone-mobile-main-offset: 96px;
+  }
 }
 
 /* 深色模式变量：通过 html[data-theme="dark"] 激活 */

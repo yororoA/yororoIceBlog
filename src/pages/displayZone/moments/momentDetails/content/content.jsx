@@ -100,7 +100,7 @@ const Content = ({ headshotType }) => {
 				</div>
 			</div>
 			<div className={card.footer}>
-				<Like onChange={onFeedBackChange} checked={like} likes={likeNumbers} _id={_id} disabled={isGuest()}/>
+				<Like onChange={onFeedBackChange} checked={like} likes={likeNumbers} _id={_id} disabled={isGuest()} size="detail" />
 				<div className={card.actions}>
 					<button type="button" className={card.actionBtn} onClick={onPrevDetail} disabled={!hasPrevDetail}>{t(locale, 'previousMoment')}</button>
 					<button type="button" className={card.actionBtn} onClick={onNextDetail} disabled={!hasNextDetail}>{t(locale, 'nextMoment')}</button>
