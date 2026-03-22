@@ -9,6 +9,8 @@ import { formatDateTime } from "../../../../../utils/formatDateTime";
 import { SuccessBoardContext } from "../../../../../components/ui/pop/status/successBoardContext";
 import { isGuest } from "../../../../../utils/auth";
 import { MomentDetailsCtx } from "../../../../../components/pagesCard/moments/content/momentsCard";
+import { UiPersistContext } from "../../../context/uiPersistContext";
+import { t } from "../../../../../i18n/uiText";
 import adminImg from '../../../../../assets/images/admin.png';
 import binesImg from '../../../../../assets/images/bines.png';
 
@@ -16,6 +18,7 @@ const CommentCard = ({ infos }) => {
 	// {content, createdAt, likes, momentId, uid, username, _id, belong}
 	const { content, createdAt, uid, username, likes, _id } = infos;
 	const { momentItem, setCommentToDt } = useContext(MomentDetailsCtx);
+	const { locale } = useContext(UiPersistContext);
 	const admin = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 	const bines = 'u_mlkpl8fl_52a3d8c2068b281a';
 	const headshotType = admin.includes(uid) ? adminImg : bines === uid ? binesImg : null;
@@ -80,9 +83,9 @@ const CommentCard = ({ infos }) => {
 					<p className={comment.text}>{content}</p>
 				</div>
 				<div className={comment.right}>
-					<Like type={'comment'} _id={_id} likes={likeCount} onChange={onChange} checked={isLiked} disabled={isGuest()} />
+					<Like type={'comment'} _id={_id} likes={likeCount} onChange={onChange} checked={isLiked} disabled={isGuest()} size="detail" />
 					{!isGuest() && (
-						<p className={comment.reply} onClick={() => setOR(true)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setOR(true)}>{'reply'}</p>
+						<p className={comment.reply} onClick={() => setOR(true)} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && setOR(true)}>{t(locale, 'momentCommentReply')}</p>
 					)}
 				</div>
 			</div>

@@ -8,6 +8,8 @@ import { treeBuilder } from '../../../../../utils/treeBuilder';
 import { MomentDetailsCtx } from '../../../../../components/pagesCard/moments/content/momentsCard';
 import { SuccessBoardContext } from '../../../../../components/ui/pop/status/successBoardContext';
 import { isGuest } from '../../../../../utils/auth';
+import { UiPersistContext } from '../../../context/uiPersistContext';
+import { t } from '../../../../../i18n/uiText';
 import { useWheelInertia } from '../../../../../hooks/useWheelInertia';
 
 /** 递归渲染单条评论及其回复（树节点） */
@@ -27,9 +29,10 @@ const CommentTreeNode = ({ node }) => {
 	);
 };
 
-const MomentsComments = () => {
+const MomentsComments = ({ singleOuterScroll = false }) => {
 	const { momentItem, setCommentToDt } = useContext(MomentDetailsCtx);
 	const { showSuccess } = useContext(SuccessBoardContext);
+	const { locale } = useContext(UiPersistContext);
 	const { _id } = momentItem;
 	const comments = momentItem.comments;
 	const guestMode = isGuest();
@@ -74,15 +77,18 @@ const MomentsComments = () => {
 	}, [_id, content, setCommentToDt, showSuccess]);
 
 	const mainScrollRef = useRef(null);
-	useWheelInertia(mainScrollRef);
+	useWheelInertia(mainScrollRef, !singleOuterScroll);
 
 	return (
-		<div className={`${card.entire}${guestMode ? ` ${card.readonly}` : ''}`} onClick={e => e.stopPropagation()}>
+		<div
+			className={`${card.entire}${guestMode ? ` ${card.readonly}` : ''}${singleOuterScroll ? ` ${card.entireOuterScroll}` : ''}`}
+			onClick={e => e.stopPropagation()}
+		>
 			<div ref={mainScrollRef} className={card.main}>
-				<h3>{'Comments'}</h3>
+				<h3>{t(locale, 'momentCommentsHeading')}</h3>
 				<section className={card.body}>
 					{comments.length === 0 ? (
-						<h4>{'this moment has no comments yet...'}</h4>
+						<p className={card.emptyHint}>{t(locale, 'momentNoCommentsYet')}</p>
 					) : (
 						commentTree.map((node) => <CommentTreeNode key={node._id} node={node} />)
 					)}
@@ -90,10 +96,15 @@ const MomentsComments = () => {
 			</div>
 			{!guestMode && (
 				<div className={card.cAll}>
-					<input type="textarea" id={'livComment'} placeholder={'Click to leave ur comment'} onChange={handleComment}
-								 value={content}/>
-					<label htmlFor="livComment"></label>
-					<CommonBtn text={'Send'} onClick={handleSend} className={`${hasContent ? card.btnActive : card.btnInacitive}`}/>
+					<textarea
+						id="livComment"
+						rows={2}
+						placeholder={t(locale, 'momentCommentPlaceholder')}
+						onChange={handleComment}
+						value={content}
+						aria-label={t(locale, 'momentCommentPlaceholder')}
+					/>
+					<CommonBtn text={t(locale, 'chatSend')} onClick={handleSend} className={`${hasContent ? card.btnActive : card.btnInacitive}`}/>
 				</div>
 			)}
 		</div>

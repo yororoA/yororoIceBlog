@@ -62,9 +62,10 @@
 
       h4:first-of-type {
         font-size: var(--h4-fontsize);
-        font-weight: 600;
-        color: var(--heading-color);
+        font-weight: 500;
+        color: var(--text-color-secondary);
         margin: 0;
+        letter-spacing: 0.01em;
       }
 
       .title {
@@ -92,6 +93,14 @@
         margin: calc(var(--moments-zone-gap) * 1) 0;
         border-radius: 8px;
         overflow: hidden;
+
+        /* 最后一行仅 1 张时居中，避免贴在左侧显得空 */
+        > *:last-child:nth-child(3n + 1) {
+          justify-self: center;
+          grid-column: 1 / -1;
+          width: 100%;
+          max-width: calc((100% - 2 * var(--moments-content-liveGap)) / 3);
+        }
       }
     }
   }
@@ -155,13 +164,16 @@
       gap: calc(var(--moments-zone-gap) * 0.9);
 
       h4:first-of-type {
-        font-size: 13px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-color-secondary);
       }
 
       .title {
         font-size: clamp(18px, 5.2vw, 22px);
         line-height: 1.35;
-        margin-bottom: 2px;
+        margin: 2px 0 4px;
+        font-weight: 700;
       }
 
       .caLink {
@@ -188,8 +200,9 @@
     }
 
     .actionBtn {
-      padding: 5px 10px;
-      font-size: 12px;
+      padding: 5px 9px;
+      min-height: 30px;
+      font-size: 11px;
       border-radius: 7px;
     }
   }

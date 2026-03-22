@@ -416,10 +416,12 @@ const Moments = () => {
 	return (
 		<CommentsLikedContext value={{likedComments, commentLikedChange}}>
 			<div className="page-enter">
-				<section id={'header'}>
-					<span>{editing && isNarrowScreen ? t(locale, 'newMoment') : detailMoment && isNarrowScreen ? t(locale, 'moment') : t(locale, 'navMoments')}</span>
-					{!isGuest() && <CommonBtn className={addContent.new} text={t(locale, 'newMoment')} onClick={() => setEditing(true)}/>}
-				</section>
+				{!(detailMoment && isNarrowScreen) && (
+					<section id={'header'}>
+						<span>{editing && isNarrowScreen ? t(locale, 'newMoment') : t(locale, 'navMoments')}</span>
+						{!isGuest() && <CommonBtn className={addContent.new} text={t(locale, 'newMoment')} onClick={() => setEditing(true)}/>}
+					</section>
+				)}
 				{pendingCount > 0 && (
 					<button type="button" className={moments.newBanner} onClick={loadPendingNewMoments}>
 						{t(locale, 'pendingMomentsBanner', pendingCount)}
@@ -438,15 +440,23 @@ const Moments = () => {
 					</div>
 				) : detailMoment && isNarrowScreen ? (
 					<div className={moments.mobileDetailPage}>
-						<div className={moments.mobileDetailHeader}>
+						<div className={moments.mobileDetailTopBar}>
 							<button type="button" className={moments.mobileDetailBackBtn} onClick={() => handleCloseDetailPop()}>
 								{t(locale, 'backToList')}
 							</button>
+							<span className={moments.mobileDetailNavTitle}>{t(locale, 'moment')}</span>
+							<div className={moments.mobileDetailTopBarEnd}>
+								{!isGuest() && (
+									<CommonBtn className={addContent.new} text={t(locale, 'newMoment')} onClick={() => setEditing(true)} />
+								)}
+							</div>
 						</div>
 						{detailCtxValue && (
-							<MomentDetailsCtx value={detailCtxValue}>
-								<MomentDetails headshotType={detailHeadshotType} forceSingleColumn={true} standalone={true} />
-							</MomentDetailsCtx>
+							<div className={moments.mobileDetailScroll}>
+								<MomentDetailsCtx value={detailCtxValue}>
+									<MomentDetails headshotType={detailHeadshotType} forceSingleColumn={true} standalone={true} />
+								</MomentDetailsCtx>
+							</div>
 						)}
 					</div>
 				) : (
