@@ -1,6 +1,5 @@
 .entire {
   --header-height: calc(var(--h3-fontsize) * 1.4);
-  --footer-height: 28rem;
 
   @media (min-width: 900px) {
     .main {
@@ -14,7 +13,7 @@
 
   box-sizing: border-box;
   display: grid;
-  grid-template-rows: 1fr var(--footer-height);
+  grid-template-rows: 1fr auto;
   background-color: var(--moments-card-bgc);
 
   &.readonly {
@@ -177,6 +176,9 @@
 }
 
 :global([class*="entireSingleCol"]) .entire {
+  height: 100%;
+  min-height: 0;
+
   .main {
     padding: calc(var(--moments-zone-gap) * 1.4);
     gap: calc(var(--moments-zone-gap) * 0.9);

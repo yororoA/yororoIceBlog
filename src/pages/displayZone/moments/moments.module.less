@@ -293,13 +293,19 @@
    * 与 --displayzone-mobile-main-offset（含外层标题）解耦，避免重复占高。
    */
   .mobileDetailPage {
-    min-height: calc(100dvh - var(--displayzone-footer-height) - var(--displayzone-nav-height) - 12px);
+    height: calc(100dvh - var(--displayzone-footer-height) - var(--displayzone-nav-height) - 12px);
   }
 
   @supports not (height: 100dvh) {
     .mobileDetailPage {
-      min-height: calc(100vh - var(--displayzone-footer-height) - var(--displayzone-nav-height) - 12px);
+      height: calc(100vh - var(--displayzone-footer-height) - var(--displayzone-nav-height) - 12px);
     }
+  }
+
+  .mobileDetailScroll {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 
   .mobileDetailTopBar {
