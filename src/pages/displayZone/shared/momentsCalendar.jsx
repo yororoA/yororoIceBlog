@@ -7,7 +7,9 @@ import { KnowledgeListContext } from '../knowledge/context/knowledgeListContext'
 import { t } from '../../../i18n/uiText';
 
 const WEEKDAY_LEN = 7;
-const getLocaleForCalendar = (locale) => (locale === 'zh' ? 'zh-CN' : locale === 'ja' ? 'ja-JP' : 'en-US');
+const getLocaleForCalendar = (locale) => (
+  locale === 'zh' ? 'zh-CN' : locale === 'ja' ? 'ja-JP' : locale === 'de' ? 'de-DE' : 'en-US'
+);
 
 const toDateKey = (date) => {
   const y = date.getFullYear();

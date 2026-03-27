@@ -115,7 +115,7 @@ const Home = () => {
 		if (!latestArticle?.content) return { coverUrl: null, contentWithoutFirstImage: '' };
 		return getFirstImageAsCover(latestArticle.content);
 	}, [latestArticle]);
-	const localeTag = locale === 'zh' ? 'zh-CN' : locale === 'ja' ? 'ja-JP' : 'en-US';
+	const localeTag = locale === 'zh' ? 'zh-CN' : locale === 'ja' ? 'ja-JP' : locale === 'de' ? 'de-DE' : 'en-US';
 	const formatPreviewTime = (value) => {
 		if (!value) return '';
 		const d = value instanceof Date ? value : new Date(value);

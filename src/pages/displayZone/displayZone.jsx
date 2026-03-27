@@ -33,7 +33,8 @@ import { guestLogin } from '../../utils/guestLogin';
 import { getInitialUiLocale } from '../../utils/uiLocale';
 import { getUserAvatar } from '../../utils/userAvatar';
 
-const LOCALE_ORDER = ['en', 'zh', 'ja'];
+const LOCALE_ORDER = ['en', 'zh', 'ja', 'de'];
+const getLocaleLabelKey = (lang) => `locale${lang.charAt(0).toUpperCase()}${lang.slice(1)}`;
 
 const SettingsIcon = () => (
 	<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
@@ -908,7 +909,7 @@ const DisplayZone = () => {
 																		className={`${page.localeMenuItem}${locale === item ? ` ${page.localeMenuItemActive}` : ''}`}
 																		onClick={() => handleSelectLocale(item)}
 																	>
-																		{item === 'en' ? t(locale, 'localeEn') : item === 'zh' ? t(locale, 'localeZh') : t(locale, 'localeJa')}
+																		{t(locale, getLocaleLabelKey(item))}
 																	</button>
 																))}
 															</div>
@@ -936,7 +937,7 @@ const DisplayZone = () => {
 														className={`${page.mobileLocaleBtn}${locale === item ? ` ${page.mobileLocaleBtnActive}` : ''}`}
 														onClick={() => handleSelectLocale(item)}
 													>
-														{item === 'en' ? t(locale, 'localeEn') : item === 'zh' ? t(locale, 'localeZh') : t(locale, 'localeJa')}
+														{t(locale, getLocaleLabelKey(item))}
 													</button>
 												))}
 											</div>
