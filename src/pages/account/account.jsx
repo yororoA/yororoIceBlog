@@ -14,7 +14,8 @@ import BirdsBackground from './BirdsBackground';
 
 const ROBOTS_NOINDEX = 'noindex, nofollow';
 
-const LOCALE_ORDER = ['en', 'zh', 'ja'];
+const LOCALE_ORDER = ['en', 'zh', 'ja', 'de'];
+const getLocaleLabelKey = (lang) => `locale${lang.charAt(0).toUpperCase()}${lang.slice(1)}`;
 
 // account page, no access with no account
 const Account = () => {
@@ -74,7 +75,7 @@ const Account = () => {
 								onClick={() => handleSelectLocale(item)}
 								aria-pressed={locale === item}
 							>
-								{item === 'en' ? t(locale, 'localeEn') : item === 'zh' ? t(locale, 'localeZh') : t(locale, 'localeJa')}
+								{t(locale, getLocaleLabelKey(item))}
 							</button>
 						))}
 					</div>

@@ -1,4 +1,4 @@
-const SUPPORTED_LOCALES = ['en', 'zh', 'ja'];
+const SUPPORTED_LOCALES = ['en', 'zh', 'ja', 'de'];
 
 function isChineseRegionByTimeZone(tz) {
 	if (!tz || typeof tz !== 'string') return false;
@@ -20,6 +20,11 @@ function isJapaneseRegionByLanguage(lang) {
 	return /^ja([_-]|$)/i.test(lang);
 }
 
+function isGermanRegionByLanguage(lang) {
+	if (!lang || typeof lang !== 'string') return false;
+	return /^de([_-]|$)/i.test(lang);
+}
+
 export function detectRegionLocale() {
 	let timeZone = '';
 	let lang = '';
@@ -34,6 +39,8 @@ export function detectRegionLocale() {
 	if (isChineseRegionByTimeZone(timeZone) || isChineseRegionByLanguage(lang)) return 'zh';
 	// 日本地区 -> en
 	if (isJapaneseRegionByTimeZone(timeZone) || isJapaneseRegionByLanguage(lang)) return 'en';
+	// 德语地区 -> de
+	if (isGermanRegionByLanguage(lang)) return 'de';
 	// 其他地区 -> en
 	return 'en';
 }

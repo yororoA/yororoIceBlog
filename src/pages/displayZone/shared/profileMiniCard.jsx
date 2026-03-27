@@ -79,7 +79,7 @@ const formatRelativeTime = (iso, locale, t) => {
   if (diffH < 24) return t(locale, 'githubHoursAgo', diffH);
   if (diffD === 1) return t(locale, 'githubYesterday');
   if (diffD < 7) return t(locale, 'githubDaysAgo', diffD);
-  return date.toLocaleString(locale === 'zh' ? 'zh-CN' : 'en-US', {
+  return date.toLocaleString(locale === 'zh' ? 'zh-CN' : locale === 'ja' ? 'ja-JP' : locale === 'de' ? 'de-DE' : 'en-US', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
