@@ -1,3 +1,5 @@
+import { compressImageFiles } from './compressImage';
+
 const API = `${process.env.REACT_APP_SERVER_HOST}/api/chat`;
 
 export async function getConversations() {
@@ -29,9 +31,14 @@ export async function sendMessage({ type, targetUserId, text, imgurl = [], reply
 }
 
 export async function uploadChatMedia(files) {
+	const processedFiles = await compressImageFiles(files, {
+		maxWidthOrHeight: 1920,
+		maxSizeMB: 1.2,
+		quality: 0.8,
+	});
 	const formData = new FormData();
-	for (let i = 0; i < files.length; i++) {
-		formData.append('files', files[i]);
+	for (let i = 0; i < processedFiles.length; i++) {
+		formData.append('files', processedFiles[i]);
 	}
 	const resp = await fetch(`${API}/upload`, { method: 'POST', body: formData });
 	const data = await resp.json();

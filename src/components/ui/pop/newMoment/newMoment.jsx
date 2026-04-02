@@ -7,6 +7,7 @@ import ToDraft from "../littlePop/toDraft/toDraft";
 import { SuccessBoardContext } from "../status/successBoardContext";
 import { UiPersistContext } from "../../../../pages/displayZone/context/uiPersistContext";
 import { t } from "../../../../i18n/uiText";
+import { compressImageFiles } from '../../../../utils/compressImage';
 
 const uidPrefix = () => localStorage.getItem('uid') || 'nm_iv';
 
@@ -159,12 +160,17 @@ const NewMoment = ({ onClose, registerCloseHandler }) => {
 		const fileDescriptions = {};
 		if (published.current === true) { // 非草稿上传文件
 			if (images.length !== 0) {
-				images.forEach((file, index) => {
+				const compressedImages = await compressImageFiles(images, {
+					maxWidthOrHeight: 2048,
+					maxSizeMB: 1.5,
+					quality: 0.82,
+				});
+				compressedImages.forEach((file, index) => {
 					fileDescriptions[file.name] = index;
 				});
 				fd.append('descriptions', JSON.stringify(fileDescriptions));
 
-				for (const file of images) {
+				for (const file of compressedImages) {
 					fd.append('files', file, file.name);
 				}
 			}
