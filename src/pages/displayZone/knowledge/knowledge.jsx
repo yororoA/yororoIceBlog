@@ -16,6 +16,7 @@ import { KnowledgeListContext } from './context/knowledgeListContext';
 import { UiPersistContext } from '../context/uiPersistContext';
 import { t } from '../../../i18n/uiText';
 import IvPreview from '../../../components/ui/image_video_preview/ivPreview';
+import { compressImageFile } from '../../../utils/compressImage';
 
 const ADMIN_UIDS = ['u_mg94ixwg_df9ff1a129ad44a6', 'u_mg94t4ce_6485ab4d88f2f8db'];
 
@@ -318,8 +319,13 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
     if (!file || !file.type.startsWith('image/')) return;
     setUploading(true);
     try {
+      const processedFile = await compressImageFile(file, {
+        maxWidthOrHeight: 2048,
+        maxSizeMB: 1.5,
+        quality: 0.82,
+      });
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('image', processedFile);
       const resp = await fetch(`${process.env.REACT_APP_SERVER_HOST}/api/knowledge/upload-image`, {
         method: 'POST',
         body: formData
@@ -377,8 +383,13 @@ const NewKnowledgeForm = ({ onClose, onSubmit }) => {
       });
       let contentMd = rawMd;
       for (const imgFile of imageFiles) {
+        const processedFile = await compressImageFile(imgFile, {
+          maxWidthOrHeight: 2048,
+          maxSizeMB: 1.5,
+          quality: 0.82,
+        });
         const formData = new FormData();
-        formData.append('image', imgFile);
+        formData.append('image', processedFile);
         const resp = await fetch(`${process.env.REACT_APP_SERVER_HOST}/api/knowledge/upload-image`, { method: 'POST', body: formData });
         const result = await resp.json();
         if (!result?.success || !result?.data?.url) continue;

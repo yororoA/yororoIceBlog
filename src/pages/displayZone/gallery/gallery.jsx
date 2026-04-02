@@ -6,6 +6,7 @@ import { ScrollContainerContext } from '../scrollContainerContext';
 import { UiPersistContext } from '../context/uiPersistContext';
 import { SuccessBoardContext } from '../../../components/ui/pop/status/successBoardContext';
 import { isGuest, getUid } from '../../../utils/auth';
+import { compressImageFiles } from '../../../utils/compressImage';
 import CommonBtn from '../../../components/btn/commonBtn/commonBtn';
 import addContent from '../../../components/btn/addContent.module.less';
 import { t } from '../../../i18n/uiText';
@@ -107,9 +108,14 @@ const Gallery = () => {
 
     setUploading(true);
     try {
+      const processedFiles = await compressImageFiles(files, {
+        maxWidthOrHeight: 2560,
+        maxSizeMB: 2,
+        quality: 0.82,
+      });
       const formData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
+      for (let i = 0; i < processedFiles.length; i++) {
+        formData.append('files', processedFiles[i]);
       }
 
       const api = `${process.env.REACT_APP_SERVER_HOST}/api/gallery/post`;
